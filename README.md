@@ -42,4 +42,12 @@ Stage	Description
 5. Bean Post-Processing (After Initialization)	BeanPostProcessor#postProcessAfterInitialization() runs.
 6. Bean is Ready to Use	The bean is fully initialized and available for use.
 7. Destruction	If the bean implements DisposableBean or has @PreDestroy, cleanup happens before destruction.
+   
+## Q4-Dependency Injection in Spring Boot 
+Ans- Dependency Injection (DI) is a design pattern where Spring Boot automatically provides the required dependencies (objects) instead of you manually creating them.
+
+## Q5- How Spring Manages Dependency Injection?
+@Component tells Spring to create and manage the object.
+@Autowired tells Spring to inject the required dependency automatically.
+Spring removes tight coupling and makes code more flexible and testable.
 
