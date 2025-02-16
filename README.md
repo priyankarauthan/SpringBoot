@@ -75,4 +75,6 @@ Removes manual object creation (new)
 Supports different injection types (Constructor, Setter, Field)
 Helps in managing dependencies, making the code flexible & testable
 
+## Circular dependency and how do we break circular dependency?
+
 
