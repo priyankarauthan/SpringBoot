@@ -77,4 +77,15 @@ Helps in managing dependencies, making the code flexible & testable
 
 ## Circular dependency and how do we break circular dependency?
 
+## Purpose and Use of API Key-Based Authorization in Spring Boot
+API key-based authorization is a simple and effective way to secure REST APIs by requiring clients to include a valid API key in their requests. It ensures that only authorized users or applications can access certain endpoints.
+
+## 📌 Purpose of API Key-Based Authorization
+Authentication: Confirms the identity of the client making the request.
+Access Control: Allows or denies access to specific endpoints based on the API key.
+Security: Prevents unauthorized access, data breaches, and misuse of APIs.
+Monitoring & Logging: Helps in tracking API usage and identifying suspicious activities.
+Throttling & Rate Limiting: Restricts the number of requests from a particular API key to prevent abuse.
+
+
 
