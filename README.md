@@ -88,4 +88,91 @@ Monitoring & Logging: Helps in tracking API usage and identifying suspicious act
 Throttling & Rate Limiting: Restricts the number of requests from a particular API key to prevent abuse.
 
 
+### To change the database in your Spring Boot project, follow these steps:
+
+
+1. Update Dependencies in pom.xml (for Maven projects)
+If you are switching from one database to another (e.g., from H2 to MySQL or PostgreSQL), update the dependencies accordingly.
+
+Example for MySQL:
+
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <scope>runtime</scope>
+</dependency>
+
+Example for PostgreSQL:
+
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <scope>runtime</scope>
+</dependency>
+
+2. Update application.properties or application.yml
+   
+Modify the database configuration in src/main/resources/application.properties (or application.yml).
+
+Example for MySQL:
+properties
+
+spring.datasource.url=jdbc:mysql://localhost:3306/your_database
+spring.datasource.username=root
+spring.datasource.password=your_password
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
+Example for PostgreSQL:
+properties
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/your_database
+spring.datasource.username=postgres
+spring.datasource.password=your_password
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+
+3. Handle Database Schema Changes
+   
+If you are using Hibernate, update spring.jpa.hibernate.ddl-auto based on your needs:
+
+create – Drops and recreates the database schema on each run.
+update – Updates the schema without dropping existing tables.
+validate – Only validates if the schema matches but doesn’t modify it.
+none – Does nothing.
+Example:
+
+properties
+
+spring.jpa.hibernate.ddl-auto=update
+If using Flyway or Liquibase for migrations, update migration scripts accordingly.
+
+4. Clear Cache and Restart
+   
+After making these changes:
+
+Clean and build the project:
+
+mvn clean package
+Restart your Spring Boot application:
+sh
+
+mvn spring-boot:run
+
+5. Check Database Connection
+   
+If using MySQL or PostgreSQL, you can test the connection using:
+
+mysql -u root -p -h localhost -P 3306
+or
+sh
+
+psql -U postgres -h localhost -p 5432
+
+7. Update schema.sql and data.sql (Optional)
+   
+If you have hardcoded SQL scripts, update them to match the new database syntax.
+
+
+
+
 
