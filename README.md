@@ -92,6 +92,7 @@ Throttling & Rate Limiting: Restricts the number of requests from a particular A
 
 
 1. Update Dependencies in pom.xml (for Maven projects)
+   
 If you are switching from one database to another (e.g., from H2 to MySQL or PostgreSQL), update the dependencies accordingly.
 
 Example for MySQL:
