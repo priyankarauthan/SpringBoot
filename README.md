@@ -219,6 +219,31 @@ View renders the response with model data (e.g., Thymeleaf).
 
 ✅ Integrating with databases using Spring JPA
 
+### Steps to Create a Custom Exception in Spring Boot
+
+a) Create a Custom Exception Class
+ Extend RuntimeException (or Exception if checked exception is needed).
+ Define constructors to accept error messages or causes.
+
+ 
+b)Create a Global Exception Handler
+ Use @ControllerAdvice to handle exceptions globally.
+ Define methods with @ExceptionHandler to return custom error responses.
+ 
+c)Throw the Custom Exception
+
+Inside the service or controller, throw the custom exception when needed.
+
+d) Customize HTTP Response (Optional)
+
+Use @ResponseStatus to set an HTTP status code.
+Return a structured response using ResponseEntity<>.
+
+e) Test the Exception Handling
+
+Use Postman or JUnit tests to verify that the exception is handled properly.
+
+
 
 
 
