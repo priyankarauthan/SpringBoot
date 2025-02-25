@@ -181,6 +181,45 @@ psql -U postgres -h localhost -p 5432
 If you have hardcoded SQL scripts, update them to match the new database syntax.
 
 
+### MVC (Model-View-Controller) in Spring Boot
+
+Spring Boot follows the MVC (Model-View-Controller) design pattern to build web applications in a structured and maintainable way.
+
+1. Components of MVC in Spring Boot
+1️⃣ Model
+Represents the application's data and business logic.
+Usually implemented using POJOs (Plain Old Java Objects), JPA Entities, or DTOs.
+
+2️⃣ View
+Represents the UI (User Interface).
+In Spring Boot, views can be created using:
+Thymeleaf (default template engine)
+JSP (Java Server Pages)
+React/Angular (in a separate frontend)
+
+3️⃣ Controller
+Handles user requests and interacts with the model.
+Uses @Controller or @RestController annotation.
+
+## 2. How MVC Works in Spring Boot
+
+User sends a request (e.g., /user).
+
+Controller processes the request and interacts with the Model.
+
+Model holds business data (e.g., fetches from a database).
+
+View renders the response with model data (e.g., Thymeleaf).
+
+## When to Use Spring MVC?
+
+✅ Building web applications with UI (e.g., Thymeleaf)
+
+✅ Creating REST APIs using Spring Boot
+
+✅ Integrating with databases using Spring JPA
+
+
 
 
 
