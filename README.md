@@ -244,6 +244,45 @@ e) Test the Exception Handling
 Use Postman or JUnit tests to verify that the exception is handled properly.
 
 
+## ANNOTATION
+
+1) @Component in Spring Boot is an annotation used to mark a class as a Spring-managed bean. In simple words, it tells Spring to automatically create an object (bean) of that class and manage its lifecycle.
+2) @Autowired in Spring is used for automatic dependency injection. It tells Spring to automatically inject an instance of the required bean into a class, so you don’t have to create it manually.
+3) @Service is a specialized version of @Component, meaning it tells Spring to create and manage an instance (bean) of the class.
+When the application starts, Spring automatically detects classes annotated with @Service (thanks to Component Scanning) and registers them as beans.
+
+4)@RestController → Used for REST APIs (returns JSON, plain text).
+✅ @Controller → Used for MVC applications (returns HTML views).
+
+5)@RequestBody in Spring Boot
+The @RequestBody annotation is used in Spring Boot to map the HTTP request body to a Java object. It is mainly used in REST APIs to receive JSON or other data formats sent by the client.
+
+
+
+
+# Difference Between Spring and Spring Boot
+
+| Feature                | Spring Framework                                         | Spring Boot                                                  |
+|------------------------|---------------------------------------------------------|--------------------------------------------------------------|
+| **Definition**         | A comprehensive framework for Java-based enterprise applications. | A subproject of Spring that simplifies application setup and development. |
+| **Configuration**      | Requires manual configuration (XML or Java-based).      | Provides auto-configuration (less boilerplate code).        |
+| **Standalone**         | Needs explicit setup of a web server like Tomcat, Jetty. | Comes with embedded servers like Tomcat, Jetty, Undertow.   |
+| **Dependency Management** | Requires manual dependency management using Maven/Gradle. | Provides pre-configured dependencies via `spring-boot-starter` dependencies. |
+| **Microservices Support** | Can be used for microservices but needs extra configurations. | Built-in support for microservices with Spring Cloud. |
+| **Application Size**   | Requires writing a lot of boilerplate code.             | Less code, production-ready in minutes.                     |
+| **Performance**        | Can be slower due to explicit configurations.           | Faster startup due to auto-configuration and optimized defaults. |
+| **Deployment**         | Generates a WAR file that needs an external server.     | Generates a JAR file with an embedded server, so it runs independently. |
+| **Spring MVC vs Spring Boot** | Spring MVC needs manual setup (dispatcher, templates, etc.). | Spring Boot auto-configures Spring MVC. |
+| **Example of Starting a Web App** | Needs `web.xml`, dispatcher servlet, and additional configs. | Just use `@SpringBootApplication`, and it runs! |
+
+
+
+
+
+
+
+
+
 
 
 
