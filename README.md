@@ -50,6 +50,7 @@ Ans- Dependency Injection (DI) is a design pattern where Spring Boot automatical
 @Component tells Spring to create and manage the object.
 @Autowired tells Spring to inject the required dependency automatically.
 Spring removes tight coupling and makes code more flexible and testable.
+
 ## Q6- Types of Dependency Injection in Spring Boot
 
 A)Constructor Injection (Recommended)
@@ -221,16 +222,16 @@ View renders the response with model data (e.g., Thymeleaf).
 
 ### Steps to Create a Custom Exception in Spring Boot
 
-a) Create a Custom Exception Class
+# a) Create a Custom Exception Class
  Extend RuntimeException (or Exception if checked exception is needed).
  Define constructors to accept error messages or causes.
 
  
-b)Create a Global Exception Handler
+# b)Create a Global Exception Handler
  Use @ControllerAdvice to handle exceptions globally.
  Define methods with @ExceptionHandler to return custom error responses.
  
-c)Throw the Custom Exception
+# c)Throw the Custom Exception
 
 Inside the service or controller, throw the custom exception when needed.
 
@@ -274,6 +275,173 @@ The @RequestBody annotation is used in Spring Boot to map the HTTP request body 
 | **Deployment**         | Generates a WAR file that needs an external server.     | Generates a JAR file with an embedded server, so it runs independently. |
 | **Spring MVC vs Spring Boot** | Spring MVC needs manual setup (dispatcher, templates, etc.). | Spring Boot auto-configures Spring MVC. |
 | **Example of Starting a Web App** | Needs `web.xml`, dispatcher servlet, and additional configs. | Just use `@SpringBootApplication`, and it runs! |
+
+
+### IOC
+
+IoC in Spring improves modularity, testability, and maintainability by handling object creation and dependency injection automatically. Instead of hardcoding dependencies, Spring injects them dynamically, making applications more flexible and scalable.
+
+### Spring MVC Architecture Diagram
+
+Client (Browser)  →  DispatcherServlet  →  Controller  →  Service Layer  →  DAO (Database Access)
+                                      ↓
+                                   View Resolver
+                                      ↓
+                                     View (JSP, Thymeleaf)
+
+
+
+### Spring MVC Flow (Step-by-Step)
+
+# Client Request
+
+A user sends a request (e.g., clicking a button or entering a URL).
+
+# DispatcherServlet (Front Controller)
+
+Intercepts the request and delegates it to the appropriate controller.
+
+# Handler Mapping
+
+Determines which controller should handle the request.
+# Controller (Request Handling)
+
+Processes the request, interacts with the service layer, and returns a response.
+# Service Layer (Business Logic - Optional)
+
+Handles business operations and communicates with the database.
+# DAO (Data Access Object) - Optional
+
+Retrieves or stores data in the database.
+# Model (Data Transfer)
+
+Stores data to be displayed in the view.
+# View Resolver
+
+Determines the correct view (JSP, Thymeleaf, etc.) to display the response.
+# View (UI Layer)
+
+Renders the response as HTML, JSON, or another format.
+# Response Sent to Client
+
+The final output is sent back to the browser.
+
+
+## How I Used Spring Batch in My Project
+I used Spring Batch to process client-provided files by implementing a multi-step batch pipeline. Here’s how I integrated it:
+
+# 1. Job Definition
+I defined a Spring Batch Job that processes files in multiple steps:
+
+Step 1: Read the file and parse it into Java objects.
+Step 2: Validate and transform the data.
+Step 3: Store the processed data into a staging table using JPA.
+Step 4: Trigger a Kafka event to notify downstream services.
+
+# 2. File Processing with Spring Batch
+I implemented chunk-based processing where data is read in batches rather than loading everything into memory at once.
+
+
+@Configuration
+@EnableBatchProcessing
+public class FileProcessingBatchConfig {
+
+    @Autowired
+    private JobBuilderFactory jobBuilderFactory;
+
+    @Autowired
+    private StepBuilderFactory stepBuilderFactory;
+
+    @Autowired
+    private DataSource dataSource;
+
+    @Bean
+    public Job fileProcessingJob(Step fileProcessingStep) {
+        return jobBuilderFactory.get("fileProcessingJob")
+                .incrementer(new RunIdIncrementer())
+                .start(fileProcessingStep)
+                .build();
+    }
+
+    @Bean
+    public Step fileProcessingStep(ItemReader<FileData> reader, 
+                                   ItemProcessor<FileData, ProcessedData> processor,
+                                   ItemWriter<ProcessedData> writer) {
+        return stepBuilderFactory.get("fileProcessingStep")
+                .<FileData, ProcessedData>chunk(100) // Process data in chunks of 100
+                .reader(reader)
+                .processor(processor)
+                .writer(writer)
+                .build();
+    }
+}
+# 3. Implementing the Reader (ItemReader)
+I used FlatFileItemReader to read CSV files and convert them into Java objects.
+
+
+@Bean
+public FlatFileItemReader<FileData> reader() {
+    return new FlatFileItemReaderBuilder<FileData>()
+            .name("fileReader")
+            .resource(new FileSystemResource("input/data.csv"))
+            .delimited()
+            .names("id", "name", "email", "amount")
+            .fieldSetMapper(new BeanWrapperFieldSetMapper<>() {{
+                setTargetType(FileData.class);
+            }})
+            .build();
+}
+
+# 4. Implementing the Processor (ItemProcessor)
+I performed data validation and transformation in the processor.
+
+
+@Component
+public class FileProcessor implements ItemProcessor<FileData, ProcessedData> {
+    @Override
+    public ProcessedData process(FileData item) {
+        // Business logic: Data validation & transformation
+        if (item.getAmount() < 0) {
+            throw new ValidationException("Invalid amount");
+        }
+        return new ProcessedData(item.getId(), item.getName().toUpperCase(), item.getEmail(), item.getAmount());
+    }
+}
+
+# 5. Implementing the Writer (ItemWriter)
+I used JPA ItemWriter to store the data in the database.
+
+
+@Bean
+public JpaItemWriter<ProcessedData> writer(EntityManagerFactory entityManagerFactory) {
+    JpaItemWriter<ProcessedData> writer = new JpaItemWriter<>();
+    writer.setEntityManagerFactory(entityManagerFactory);
+    return writer;
+}
+# 6. Integrating Kafka for Event Triggering
+After processing the data, I published Kafka events to notify downstream services.
+
+@Component
+public class KafkaNotificationListener extends JobExecutionListenerSupport {
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    @Override
+    public void afterJob(JobExecution jobExecution) {
+        if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
+            kafkaTemplate.send("processed-files-topic", "File processing completed successfully.");
+        }
+    }
+}
+### Benefits of Using Spring Batch in My Project
+✅ Efficient Large File Processing – Used chunk-based processing to avoid memory overflow.
+✅ Automatic Restart – Jobs could resume from the last successful step in case of failure.
+✅ Scalability – Kafka integration ensured faster downstream processing.
+✅ Security – Used Spring Security and OAuth2 for authentication.
+✅ Database Optimization – Used indexing and batch inserts to optimize database performance.
+
+
+
 
 
 
