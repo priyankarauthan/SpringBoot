@@ -440,6 +440,12 @@ public class KafkaNotificationListener extends JobExecutionListenerSupport {
 ✅ Security – Used Spring Security and OAuth2 for authentication.
 ✅ Database Optimization – Used indexing and batch inserts to optimize database performance.
 
+## Pageable is an interface in Spring Data that provides an abstraction for pagination and sorting when querying a database. It is mainly used with Spring Data JPA to retrieve paginated data efficiently.
+
+##To add pagination to an API response in Spring Boot, follow these steps:
+
+Use Pageable in Repository
+
 
 
 
