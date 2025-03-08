@@ -444,7 +444,179 @@ public class KafkaNotificationListener extends JobExecutionListenerSupport {
 
 ##To add pagination to an API response in Spring Boot, follow these steps:
 
-Use Pageable in Repository
+### Use Pageable in Repository
+
+To add pagination to an API response in a Spring Boot application, follow these steps:
+
+1. Use Pageable in Repository Layer
+Spring Data JPA provides built-in support for pagination using the Pageable interface.
+
+java
+Copy
+Edit
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProductRepository extends JpaRepository<Product, Long> {
+    Page<Product> findAll(Pageable pageable);
+}
+2. Modify the Service Layer
+Use Pageable in the service layer to fetch paginated data.
+
+java
+Copy
+Edit
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ProductService {
+    
+    private final ProductRepository productRepository;
+
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    public Page<Product> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
+    }
+}
+3. Update Controller to Accept Pagination Parameters
+Expose an endpoint that supports pagination using Pageable.
+
+java
+Copy
+Edit
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/products")
+public class ProductController {
+    
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
+
+    @GetMapping
+    public Page<Product> getProducts(Pageable pageable) {
+        return productService.getAllProducts(pageable);
+    }
+}
+4. How to Use Pagination in API Calls
+Spring Boot supports passing pagination parameters via query parameters:
+
+pgsql
+Copy
+Edit
+GET /api/products?page=0&size=5&sort=name,asc
+page=0 → First page (zero-based index)
+size=5 → Number of records per page
+sort=name,asc → Sort by name in ascending order
+5. Customizing the Default Pageable Configuration
+If you want to set default values for page size and sorting, use:
+
+java
+Copy
+Edit
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/products")
+public class ProductController {
+    
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
+
+    @GetMapping
+    public Page<Product> getProducts(
+        @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
+        return productService.getAllProducts(pageable);
+    }
+}
+6. Response Example
+A paginated response will look like this:
+
+json
+Copy
+Edit
+{
+    "content": [
+        { "id": 1, "name": "Product A", "price": 100 },
+        { "id": 2, "name": "Product B", "price": 200 }
+    ],
+    "pageable": {
+        "pageNumber": 0,
+        "pageSize": 5
+    },
+    "totalElements": 50,
+    "totalPages": 10,
+    "last": false,
+    "first": true
+}
+7. Handling Pagination with Custom Response DTO
+If you want to customize the response, use a DTO:
+
+java
+Copy
+Edit
+import java.util.List;
+
+public class PaginatedResponse<T> {
+    private List<T> content;
+    private int pageNumber;
+    private int pageSize;
+    private long totalElements;
+    private int totalPages;
+    private boolean last;
+
+    public PaginatedResponse(Page<T> page) {
+        this.content = page.getContent();
+        this.pageNumber = page.getNumber();
+        this.pageSize = page.getSize();
+        this.totalElements = page.getTotalElements();
+        this.totalPages = page.getTotalPages();
+        this.last = page.isLast();
+    }
+
+    // Getters & Setters
+}
+Modify the controller to return a PaginatedResponse:
+
+java
+Copy
+Edit
+@GetMapping
+public PaginatedResponse<Product> getProducts(Pageable pageable) {
+    Page<Product> productPage = productService.getAllProducts(pageable);
+    return new PaginatedResponse<>(productPage);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
