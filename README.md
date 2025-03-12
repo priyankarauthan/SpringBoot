@@ -260,6 +260,52 @@ The @RequestBody annotation is used in Spring Boot to map the HTTP request body 
 
 
 
+## @PathVariable
+It is an annotation in Spring Boot used to extract values from the URI (Uniform Resource Identifier) and pass them as method parameters in a REST controller. It is commonly used in RESTful APIs to handle dynamic path parameters.
+
+## @RequestParam (Query Parameters) in Spring Boot
+
+@RequestParam is used in Spring Boot to extract query parameters from the URL. Query parameters are typically used for filtering, sorting, pagination, or optional parameters in API requests.
+
+@RequestParam String name extracts the name query parameter from the request.
+
+If the query parameter is not present, Spring will throw an error since @RequestParam is required by default.
+
+Using @RequestParam with Default Values
+To avoid errors when a query parameter is missing, we can provide a default value.
+
+```
+@RestController
+@RequestMapping("/employees")
+public class EmployeeController {
+
+    @GetMapping("/filter")
+    public String filterEmployees(@RequestParam(defaultValue = "10") int limit) {
+        return "Fetching " + limit + " employees";
+    }
+}
+```
+
+## When to Use @PathVariable?
+Use @PathVariable when you need to extract mandatory values from the URL path to identify a resource.
+
+✅ Best for:
+
+Identifying a specific resource (id, username, etc.).
+Creating RESTful endpoints that follow best practices.
+
+## When to Use @RequestParam?
+Use @RequestParam when you need to extract optional or filtering values from the query string.
+
+✅ Best for:
+
+Filtering, sorting, and pagination (page, size, sort).
+Providing optional request parameters.
+
+
+
+
+
 
 # Difference Between Spring and Spring Boot
 
