@@ -258,6 +258,24 @@ When the application starts, Spring automatically detects classes annotated with
 5)@RequestBody in Spring Boot
 The @RequestBody annotation is used in Spring Boot to map the HTTP request body to a Java object. It is mainly used in REST APIs to receive JSON or other data formats sent by the client.
 
+### Why Use @ResponseBody?
+
+When you want to return JSON or raw data instead of a webpage.
+
+Used in REST APIs to send JSON responses.
+
+Works well with @RestController, which applies it to all methods automatically.
+
+## How It Works?
+Without @ResponseBody:
+Spring Boot assumes you want to return a webpage (view).
+
+With @ResponseBody:
+Spring Boot converts the response directly into JSON (or XML) and sends it back to the client.
+
+
+
+
 
 
 ## @PathVariable
@@ -510,9 +528,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 2. Modify the Service Layer
 Use Pageable in the service layer to fetch paginated data.
 
-java
-Copy
-Edit
+```
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -530,6 +546,7 @@ public class ProductService {
         return productRepository.findAll(pageable);
     }
 }
+```
 3. Update Controller to Accept Pagination Parameters
 Expose an endpoint that supports pagination using Pageable.
 
