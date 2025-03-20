@@ -659,14 +659,32 @@ public class PaginatedResponse<T> {
 }
 Modify the controller to return a PaginatedResponse:
 
-java
-Copy
-Edit
+```
 @GetMapping
 public PaginatedResponse<Product> getProducts(Pageable pageable) {
     Page<Product> productPage = productService.getAllProducts(pageable);
     return new PaginatedResponse<>(productPage);
 }
+```
+
+##  Role-Based Access in Security Configuration (Global Access Control)
+
+1) Spring Security allows role-based access at the request level using HttpSecurity.
+
+2) Spring Security allows us to apply role-based access control at the method level using @PreAuthorize or @Secured.
+
+Enable Method-Level Security
+Add @EnableMethodSecurity in the security configuration:
+
+```
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
+public class SecurityConfig {
+    // Security configuration goes here
+}
+```
+
 
 
 
