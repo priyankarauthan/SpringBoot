@@ -686,6 +686,32 @@ public class SecurityConfig {
 ```
 
 
+### 🔍 What is Persistence in JPA / Spring Boot?
+
+Persistence means saving an object’s state into a database so it can be retrieved and used later.
+
+In Java (especially using JPA with Spring Boot), persistence refers to mapping Java objects to database tables and managing their life cycles—this is called Object-Relational Mapping (ORM).
+
+### 🔧 Example:
+```
+@Entity
+public class User {
+    @Id
+    private Long id;
+
+    private String name;
+
+    @Transient // <-- not persisted
+    private String sessionToken;
+}
+```
+Fields like id and name are persisted — i.e., stored in the database.
+
+The sessionToken field is not persisted — JPA will ignore it while saving to or loading from the database.
+
+
+
+
 
 
 
