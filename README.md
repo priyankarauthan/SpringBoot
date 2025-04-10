@@ -187,11 +187,14 @@ If you have hardcoded SQL scripts, update them to match the new database syntax.
 Spring Boot follows the MVC (Model-View-Controller) design pattern to build web applications in a structured and maintainable way.
 
 1. Components of MVC in Spring Boot
+   
 1️⃣ Model
+
 Represents the application's data and business logic.
 Usually implemented using POJOs (Plain Old Java Objects), JPA Entities, or DTOs.
 
 2️⃣ View
+
 Represents the UI (User Interface).
 In Spring Boot, views can be created using:
 Thymeleaf (default template engine)
@@ -199,6 +202,7 @@ JSP (Java Server Pages)
 React/Angular (in a separate frontend)
 
 3️⃣ Controller
+
 Handles user requests and interacts with the model.
 Uses @Controller or @RestController annotation.
 
