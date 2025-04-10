@@ -223,12 +223,16 @@ View renders the response with model data (e.g., Thymeleaf).
 ### Steps to Create a Custom Exception in Spring Boot
 
 # a) Create a Custom Exception Class
+
  Extend RuntimeException (or Exception if checked exception is needed).
+ 
  Define constructors to accept error messages or causes.
 
  
 # b)Create a Global Exception Handler
+
  Use @ControllerAdvice to handle exceptions globally.
+ 
  Define methods with @ExceptionHandler to return custom error responses.
  
 # c)Throw the Custom Exception
@@ -405,7 +409,7 @@ Step 4: Trigger a Kafka event to notify downstream services.
 # 2. File Processing with Spring Batch
 I implemented chunk-based processing where data is read in batches rather than loading everything into memory at once.
 
-
+```
 @Configuration
 @EnableBatchProcessing
 public class FileProcessingBatchConfig {
@@ -439,10 +443,11 @@ public class FileProcessingBatchConfig {
                 .build();
     }
 }
+```
 # 3. Implementing the Reader (ItemReader)
 I used FlatFileItemReader to read CSV files and convert them into Java objects.
 
-
+```
 @Bean
 public FlatFileItemReader<FileData> reader() {
     return new FlatFileItemReaderBuilder<FileData>()
@@ -455,6 +460,7 @@ public FlatFileItemReader<FileData> reader() {
             }})
             .build();
 }
+```
 
 # 4. Implementing the Processor (ItemProcessor)
 I performed data validation and transformation in the processor.
@@ -508,7 +514,7 @@ public class KafkaNotificationListener extends JobExecutionListenerSupport {
 
 Pageable is an interface in Spring Data that provides an abstraction for pagination and sorting when querying a database. It is mainly used with Spring Data JPA to retrieve paginated data efficiently.
 
-##To add pagination to an API response in Spring Boot, follow these steps:
+To add pagination to an API response in Spring Boot, follow these steps:
 
 ### Use Pageable in Repository
 
