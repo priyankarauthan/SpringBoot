@@ -504,7 +504,9 @@ public class KafkaNotificationListener extends JobExecutionListenerSupport {
 ✅ Security – Used Spring Security and OAuth2 for authentication.
 ✅ Database Optimization – Used indexing and batch inserts to optimize database performance.
 
-## Pageable is an interface in Spring Data that provides an abstraction for pagination and sorting when querying a database. It is mainly used with Spring Data JPA to retrieve paginated data efficiently.
+### Pageable
+
+Pageable is an interface in Spring Data that provides an abstraction for pagination and sorting when querying a database. It is mainly used with Spring Data JPA to retrieve paginated data efficiently.
 
 ##To add pagination to an API response in Spring Boot, follow these steps:
 
@@ -512,12 +514,10 @@ public class KafkaNotificationListener extends JobExecutionListenerSupport {
 
 To add pagination to an API response in a Spring Boot application, follow these steps:
 
-1. Use Pageable in Repository Layer
+# 1. Use Pageable in Repository Layer
 Spring Data JPA provides built-in support for pagination using the Pageable interface.
 
-java
-Copy
-Edit
+```
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -525,7 +525,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findAll(Pageable pageable);
 }
-2. Modify the Service Layer
+```
+# 2. Modify the Service Layer
 Use Pageable in the service layer to fetch paginated data.
 
 ```
@@ -547,12 +548,10 @@ public class ProductService {
     }
 }
 ```
-3. Update Controller to Accept Pagination Parameters
+# 3. Update Controller to Accept Pagination Parameters
 Expose an endpoint that supports pagination using Pageable.
 
-java
-Copy
-Edit
+```
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -572,22 +571,20 @@ public class ProductController {
         return productService.getAllProducts(pageable);
     }
 }
-4. How to Use Pagination in API Calls
+```
+# 4. How to Use Pagination in API Calls
 Spring Boot supports passing pagination parameters via query parameters:
 
-pgsql
-Copy
-Edit
+```
 GET /api/products?page=0&size=5&sort=name,asc
 page=0 → First page (zero-based index)
 size=5 → Number of records per page
 sort=name,asc → Sort by name in ascending order
-5. Customizing the Default Pageable Configuration
+```
+# 5. Customizing the Default Pageable Configuration
 If you want to set default values for page size and sorting, use:
 
-java
-Copy
-Edit
+```
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -610,12 +607,11 @@ public class ProductController {
         return productService.getAllProducts(pageable);
     }
 }
-6. Response Example
+```
+# 6. Response Example
 A paginated response will look like this:
 
-json
-Copy
-Edit
+```
 {
     "content": [
         { "id": 1, "name": "Product A", "price": 100 },
@@ -630,12 +626,11 @@ Edit
     "last": false,
     "first": true
 }
-7. Handling Pagination with Custom Response DTO
+```
+# 7. Handling Pagination with Custom Response DTO
 If you want to customize the response, use a DTO:
 
-java
-Copy
-Edit
+```
 import java.util.List;
 
 public class PaginatedResponse<T> {
@@ -657,6 +652,7 @@ public class PaginatedResponse<T> {
 
     // Getters & Setters
 }
+```
 Modify the controller to return a PaginatedResponse:
 
 ```
