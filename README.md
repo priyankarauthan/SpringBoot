@@ -715,6 +715,73 @@ Fields like id and name are persisted — i.e., stored in the database.
 
 The sessionToken field is not persisted — JPA will ignore it while saving to or loading from the database.
 
+# 🚀 Spring Boot Performance Optimization Guide
+
+## 1. Optimize Database Access
+- ✅ **Use indexing** on frequently queried columns.
+- ✅ **Use pagination** (`Pageable`) for large result sets.
+- ✅ Avoid **N+1 queries** — use `@EntityGraph` or fetch join in JPQL.
+- ✅ **Use connection pooling** (HikariCP is default in Spring Boot 2+).
+- ✅ **Use batch inserts/updates** (`hibernate.jdbc.batch_size`).
+
+## 🧠 2. Use Caching Wisely
+- ✅ Use **Spring Cache abstraction** (`@Cacheable`, `@CacheEvict`).
+- ✅ Backend options: **Caffeine**, **EhCache**, **Redis**, etc.
+- ✅ Cache **heavy/slow computations** or **frequent DB queries**.
+
+## 🔄 3. Use Asynchronous Processing
+- ✅ Use `@Async` to **offload non-critical tasks** (e.g., sending emails).
+- ✅ Use **CompletableFuture**, **ExecutorService**, or Spring’s async support.
+
+## 🔧 4. Tune JVM and GC
+- ✅ Set appropriate **JVM heap size** (`-Xms`, `-Xmx`).
+- ✅ Choose the right **Garbage Collector** (e.g., **G1GC** for balanced latency).
+- ✅ Use tools like **JVisualVM**, **JFR**, or **YourKit** for profiling.
+
+## 📦 5. Profile and Optimize Beans
+- ✅ Reduce **autowiring of unused beans**.
+- ✅ Use `@Lazy` initialization where necessary.
+- ✅ Avoid **overuse of reflection** and **excessive logging**.
+
+## 📉 6. Minimize Startup Time
+- ✅ Use **Spring Boot 3’s improved GraalVM native support** if needed.
+- ✅ Remove unnecessary dependencies.
+- ✅ Enable lazy initialization:
+  ```properties
+  spring.main.lazy-initialization=true
+
+##  🌐 7. Optimize REST APIs
+- ✅ Use compression (GZIP/Deflate):
+server.compression.enabled=true
+
+- ✅ Use DTOs to avoid exposing entire entity trees.
+
+- ✅ Reduce payload size using Jackson annotations (@JsonIgnore, etc.)
+
+- ✅ Use HTTP/2 or WebFlux for reactive use cases.
+
+## 🧵 8. Concurrency and Thread Pool Tuning
+- ✅ Configure @Async thread pool (TaskExecutor).
+
+- ✅ For web apps: Tune Tomcat thread pool:
+
+```
+server:
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 20
+```
+##  📈 9. Use Metrics and Monitoring
+- ✅ Integrate Micrometer + Prometheus + Grafana.
+
+- ✅ Use Spring Boot Actuator for health and performance metrics.
+
+##  📁 10. Use Efficient Data Formats
+- ✅ Use Protobuf, Avro, or MessagePack for APIs where JSON is too verbose.
+
+- ✅ Enable Jackson streaming API for large JSON processing.
+
 
 
 
