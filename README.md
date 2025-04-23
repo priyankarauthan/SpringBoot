@@ -782,6 +782,20 @@ server:
 
 - ✅ Enable Jackson streaming API for large JSON processing.
 
+## Spring Boot Actuator 
+
+It is a powerful feature that helps you monitor and manage your Spring Boot application in production with minimal configuration. It exposes various endpoints over HTTP (or JMX), offering insight into your application's health, metrics, environment, and more.
+
+## Spring Boot exposes several built-in endpoints, like:
+
+/actuator/health	- App health status
+/actuator/info -	Custom app info from properties
+/actuator/metrics -	App metrics (JVM, CPU, memory, etc.)
+/actuator/env	- Environment variables
+/actuator/beans	- Beans in the app context
+/actuator/mappings	- All URL mappings
+/actuator/loggers -	Logger levels and configs
+/actuator/threaddump	- JVM thread dump
 
 
 
