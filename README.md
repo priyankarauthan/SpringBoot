@@ -289,7 +289,7 @@ Spring Boot converts the response directly into JSON (or XML) and sends it back 
 ## @PathVariable
 It is an annotation in Spring Boot used to extract values from the URI (Uniform Resource Identifier) and pass them as method parameters in a REST controller. It is commonly used in RESTful APIs to handle dynamic path parameters.
 
-## @RequestParam (Query Parameters) in Spring Boot
+### @RequestParam (Query Parameters) in Spring Boot
 
 @RequestParam is used in Spring Boot to extract query parameters from the URL. Query parameters are typically used for filtering, sorting, pagination, or optional parameters in API requests.
 
@@ -312,7 +312,7 @@ public class EmployeeController {
 }
 ```
 
-## When to Use @PathVariable?
+### When to Use @PathVariable?
 Use @PathVariable when you need to extract mandatory values from the URL path to identify a resource.
 
 ✅ Best for:
@@ -320,7 +320,7 @@ Use @PathVariable when you need to extract mandatory values from the URL path to
 Identifying a specific resource (id, username, etc.).
 Creating RESTful endpoints that follow best practices.
 
-## When to Use @RequestParam?
+### When to Use @RequestParam?
 Use @RequestParam when you need to extract optional or filtering values from the query string.
 
 ✅ Best for:
@@ -333,7 +333,7 @@ Providing optional request parameters.
 
 
 
-# Difference Between Spring and Spring Boot
+### Difference Between Spring and Spring Boot
 
 | Feature                | Spring Framework                                         | Spring Boot                                                  |
 |------------------------|---------------------------------------------------------|--------------------------------------------------------------|
@@ -365,11 +365,11 @@ Client (Browser)  →  DispatcherServlet  →  Controller  →  Service Layer  �
 
 ### Spring MVC Flow (Step-by-Step)
 
-# Client Request
+### Client Request
 
 A user sends a request (e.g., clicking a button or entering a URL).
 
-# DispatcherServlet (Front Controller)
+### DispatcherServlet (Front Controller)
 
 Intercepts the request and delegates it to the appropriate controller.
 
