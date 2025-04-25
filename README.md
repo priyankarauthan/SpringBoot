@@ -226,34 +226,34 @@ View renders the response with model data (e.g., Thymeleaf).
 
 ### Steps to Create a Custom Exception in Spring Boot
 
-# a) Create a Custom Exception Class
+### a) Create a Custom Exception Class
 
  Extend RuntimeException (or Exception if checked exception is needed).
  
  Define constructors to accept error messages or causes.
 
  
-# b)Create a Global Exception Handler
+### b)Create a Global Exception Handler
 
  Use @ControllerAdvice to handle exceptions globally.
  
  Define methods with @ExceptionHandler to return custom error responses.
  
-# c)Throw the Custom Exception
+### c)Throw the Custom Exception
 
 Inside the service or controller, throw the custom exception when needed.
 
-d) Customize HTTP Response (Optional)
+### d) Customize HTTP Response (Optional)
 
 Use @ResponseStatus to set an HTTP status code.
 Return a structured response using ResponseEntity<>.
 
-e) Test the Exception Handling
+### e) Test the Exception Handling
 
 Use Postman or JUnit tests to verify that the exception is handled properly.
 
 
-## ANNOTATION
+### ANNOTATION
 
 1) @Component in Spring Boot is an annotation used to mark a class as a Spring-managed bean. In simple words, it tells Spring to automatically create an object (bean) of that class and manage its lifecycle.
 2) @Autowired in Spring is used for automatic dependency injection. It tells Spring to automatically inject an instance of the required bean into a class, so you don’t have to create it manually.
@@ -274,7 +274,8 @@ Used in REST APIs to send JSON responses.
 
 Works well with @RestController, which applies it to all methods automatically.
 
-## How It Works?
+### How It Works?
+
 Without @ResponseBody:
 Spring Boot assumes you want to return a webpage (view).
 
@@ -286,7 +287,7 @@ Spring Boot converts the response directly into JSON (or XML) and sends it back 
 
 
 
-## @PathVariable
+### @PathVariable
 It is an annotation in Spring Boot used to extract values from the URI (Uniform Resource Identifier) and pass them as method parameters in a REST controller. It is commonly used in RESTful APIs to handle dynamic path parameters.
 
 ### @RequestParam (Query Parameters) in Spring Boot
@@ -329,10 +330,6 @@ Filtering, sorting, and pagination (page, size, sort).
 Providing optional request parameters.
 
 
-
-
-
-
 ### Difference Between Spring and Spring Boot
 
 | Feature                | Spring Framework                                         | Spring Boot                                                  |
@@ -373,28 +370,28 @@ A user sends a request (e.g., clicking a button or entering a URL).
 
 Intercepts the request and delegates it to the appropriate controller.
 
-# Handler Mapping
+### Handler Mapping
 
 Determines which controller should handle the request.
-# Controller (Request Handling)
+### Controller (Request Handling)
 
 Processes the request, interacts with the service layer, and returns a response.
-# Service Layer (Business Logic - Optional)
+### Service Layer (Business Logic - Optional)
 
 Handles business operations and communicates with the database.
-# DAO (Data Access Object) - Optional
+### DAO (Data Access Object) - Optional
 
 Retrieves or stores data in the database.
-# Model (Data Transfer)
+### Model (Data Transfer)
 
 Stores data to be displayed in the view.
-# View Resolver
+### View Resolver
 
 Determines the correct view (JSP, Thymeleaf, etc.) to display the response.
-# View (UI Layer)
+### View (UI Layer)
 
 Renders the response as HTML, JSON, or another format.
-# Response Sent to Client
+### Response Sent to Client
 
 The final output is sent back to the browser.
 
@@ -402,7 +399,7 @@ The final output is sent back to the browser.
 ## How I Used Spring Batch in My Project
 I used Spring Batch to process client-provided files by implementing a multi-step batch pipeline. Here’s how I integrated it:
 
-# 1. Job Definition
+### 1. Job Definition
 I defined a Spring Batch Job that processes files in multiple steps:
 
 Step 1: Read the file and parse it into Java objects.
@@ -410,7 +407,7 @@ Step 2: Validate and transform the data.
 Step 3: Store the processed data into a staging table using JPA.
 Step 4: Trigger a Kafka event to notify downstream services.
 
-# 2. File Processing with Spring Batch
+### 2. File Processing with Spring Batch
 I implemented chunk-based processing where data is read in batches rather than loading everything into memory at once.
 
 ```
@@ -448,7 +445,7 @@ public class FileProcessingBatchConfig {
     }
 }
 ```
-# 3. Implementing the Reader (ItemReader)
+### 3. Implementing the Reader (ItemReader)
 I used FlatFileItemReader to read CSV files and convert them into Java objects.
 
 ```
