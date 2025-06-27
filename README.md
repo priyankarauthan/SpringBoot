@@ -794,8 +794,21 @@ It is a powerful feature that helps you monitor and manage your Spring Boot appl
 /actuator/loggers -	Logger levels and configs
 /actuator/threaddump	- JVM thread dump
 
+###  What is the purpose of Spring Boot starters?
+
+Spring Boot starters are a set of predefined dependencies provided by Spring Boot to help developers quickly set up and start working with common technologies and features without manually managing individual library versions.
+
+| Starter Name                   | Use Case                                |
+| ------------------------------ | --------------------------------------- |
+| `spring-boot-starter-web`      | Build REST APIs and web apps            |
+| `spring-boot-starter-data-jpa` | Work with databases using JPA/Hibernate |
+| `spring-boot-starter-security` | Add authentication and authorization    |
+| `spring-boot-starter-test`     | Testing (JUnit, Mockito, Spring Test)   |
+| `spring-boot-starter-actuator` | Monitoring and metrics endpoints        |
 
 
+
+### @RETRYABLE
 
 
 
