@@ -832,6 +832,11 @@ Timing	Before controller methods are invoked
 Trigger	Automatically called by Spring (no manual call needed)
 Purpose	Pre-load or set up the service after construction
 
+### Conditional On Property
+
+## ScanBasePackage
+## Sending Data in Request
+
 
 
 
