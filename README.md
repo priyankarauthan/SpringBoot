@@ -845,6 +845,25 @@ E- Elasticsearch
 L - Longstash
 K - Kibana
 
+## LOGGING
+
+ERROR
+WARN
+INFO
+DEBUG
+TRACE
+
+#### Logging for a file and logging results in a file in springboot application
+
+## Change pattern of logs
+
+### HTTP FILTER
+
+### Tracing with Logging
+MDC(Mapped Diagonsitic)
+
+## Server Side Rendering and Client Side Rendering
+
 
 
 
