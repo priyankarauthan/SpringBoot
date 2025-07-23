@@ -810,6 +810,16 @@ Spring Boot starters are a set of predefined dependencies provided by Spring Boo
 
 ### @RETRYABLE
 
+### @POST CONSTRUCT
+
+The @PostConstruct annotation in Java is used to mark a method that should be executed after a bean has been fully constructed and its dependencies have been injected by a container or framework (like Spring).
+Key characteristics and usage:
+Purpose:
+It serves as a callback method for initialization logic that requires the bean to be in a complete and ready state, including all its injected dependencies. This is distinct from the constructor, which runs before dependency injection.
+Execution Timing:
+The method annotated with @PostConstruct is invoked exactly once during the bean's lifecycle, after its construction and all dependency injection has taken place, but before the bean is put into service.
+
+
 
 
 
