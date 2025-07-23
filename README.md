@@ -837,6 +837,14 @@ Purpose	Pre-load or set up the service after construction
 ## ScanBasePackage
 ## Sending Data in Request
 
+### Request Param/Query Param
+### Path Param
+### POJO
+### ELK
+E- Elasticsearch
+L - Longstash
+K - Kibana
+
 
 
 
