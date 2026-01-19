@@ -877,6 +877,59 @@ The client then sends this token in the Authorization header when calling our ba
 Each resource server validates the JWT signature using the authorization server’s public key and enforces access based on scopes and roles.
 This approach gave us stateless authentication, scalability, and secure service-to-service communication.”
 
+### Saga Pattern (In Very Simple Words)
+
+Saga Pattern is a way to complete a big task by doing many small steps, and if any step fails, we undo the previous steps.
+Online Shopping 🛒
+
+1️⃣ You place an order
+2️⃣ Money is deducted
+3️⃣ Item is reserved in warehouse
+
+Now imagine:
+❌ Money deduction fails
+
+What should happen?
+
+Order should be cancelled
+
+Item should be released
+
+👉 That undo process is Saga Pattern
+
+### 🔹 What is an API Gateway? (Very Simple)
+
+API Gateway is a single entry point for all client requests in a microservices system.
+
+Instead of calling many services directly, the client calls one gateway, and the gateway talks to the services.
+
+Client → API Gateway → Microservices
+
+### 🔹 What is Resilience4j? (Simple)
+
+Resilience4j is a Java library that helps your application handle failures gracefully.
+
+Instead of crashing or hanging, your service:
+
+Fails fast
+
+Recovers safely
+
+Protects itself
+
+🔹 Why do we need Resilience4j?
+
+In microservices:
+
+Network calls fail
+
+Services go down
+
+Responses get slow
+
+Too many retries overload system
+
+Resilience4j prevents cascading failures.
 
 
 
