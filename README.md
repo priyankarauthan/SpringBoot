@@ -932,6 +932,56 @@ Too many retries overload system
 Resilience4j prevents cascading failures.
 
 
+### How to use multiple Database in your project?
+In our project, we used multiple databases by configuring separate datasources, entity managers, and transaction managers for each database.
+Each service module had its own entities and repositories, ensuring clean separation and proper transaction handling.
+
+### 🔹 What is CAP Theorem? (One line)
+
+In a distributed system, you can guarantee only TWO out of these THREE: Consistency, Availability, and Partition Tolerance.
+
+You cannot have all three at the same time.
+
+####  🔹 What does CAP stand for?
+1️⃣ Consistency (C)
+
+Every user sees the same data at the same time.
+
+Example:
+
+You update your profile
+
+Everyone sees the updated value immediately
+
+2️⃣ Availability (A)
+
+Every request gets a response, even if it’s not the latest data.
+
+Example:
+
+App always responds
+
+Might return slightly old data
+
+3️⃣ Partition Tolerance (P)
+
+System continues to work even if network failure happens between nodes.
+
+Example:
+
+One server cannot talk to another
+
+System still works
+
+🔹 Why Partition Tolerance is mandatory?
+
+In real distributed systems:
+
+Network failures WILL happen
+
+So P is not optional
+
+👉 Real choice is between C vs A
 
 
 
