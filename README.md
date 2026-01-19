@@ -864,6 +864,19 @@ MDC(Mapped Diagonsitic)
 
 ## Server Side Rendering and Client Side Rendering
 
+### OAuth2.0 and JWT
+In my project, I used OAuth 2.0 for authorization and JWT as the access token format.
+The authorization server issues a JWT access token after successful authentication.
+This token is sent with every API request, and our resource server validates the JWT locally using the public key, checking expiry and scopes before allowing access.”
+
+### ✅ 1-Minute Answer (More Technical, Very Strong ⭐)
+
+“We implemented OAuth 2.0 with JWT to secure our APIs.
+The client application first authenticates via the authorization server, which issues a JWT-based access token.
+The client then sends this token in the Authorization header when calling our backend services.
+Each resource server validates the JWT signature using the authorization server’s public key and enforces access based on scopes and roles.
+This approach gave us stateless authentication, scalability, and secure service-to-service communication.”
+
 
 
 
