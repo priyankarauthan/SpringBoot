@@ -983,7 +983,23 @@ So P is not optional
 
 👉 Real choice is between C vs A
 
-```
+
+### ✅ @PathVariable vs @RequestBody — WHEN & WHY TO USE ?
+
+🔹 1. @PathVariable
+
+Gets data from the URL path
+
+##### Use @PathVariable when:
+
+You are fetching / updating / deleting a specific resource
+
+The value is mandatory
+
+The data is simple (id, name, code)
+
+Used to identify a resource
+
 | Feature        | `@PathVariable`     | `@RequestBody`    |
 | -------------- | ------------------- | ----------------- |
 | Data source    | URL path            | Request body      |
