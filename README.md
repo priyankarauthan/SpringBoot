@@ -983,6 +983,17 @@ So P is not optional
 
 👉 Real choice is between C vs A
 
+```
+| Feature        | `@PathVariable`     | `@RequestBody`    |
+| -------------- | ------------------- | ----------------- |
+| Data source    | URL path            | Request body      |
+| Data type      | Simple (id, string) | Complex object    |
+| Mandatory      | Usually yes         | Optional/required |
+| HTTP methods   | GET, DELETE         | POST, PUT         |
+| JSON supported | ❌ No                | ✅ Yes             |
+| Validation     | Limited             | Full (`@Valid`)   |
+```
+
 
 
 
