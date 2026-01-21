@@ -1010,6 +1010,71 @@ Used to identify a resource
 | Validation     | Limited             | Full (`@Valid`)   |
 ```
 
+# ✅ When to Use HTTP POST Instead of GET
+
+## 1️⃣ When You Are Creating New Data
+- POST is used to create a new resource on the server.
+- GET should never create or modify data.
+
+**Example:** Creating a new user, order, payment, or record.
+
+---
+
+## 2️⃣ When the Request Changes Server State
+- POST modifies data.
+- GET must be read-only — GET requests should not cause side effects.
+
+**Rule:** If server data changes → use POST.
+
+---
+
+## 3️⃣ When Sending Sensitive Data
+- GET sends data in the URL.
+  - URLs can be logged, cached, or stored in browser history.
+- POST sends data in the request body, which is preferable for sensitive information.
+
+**Example:** Passwords, tokens, personal details → POST.
+
+---
+
+## 4️⃣ When Sending Large or Complex Data
+- GET has URL length limitations.
+- POST supports large payloads, JSON, XML, and file uploads.
+
+**Example:** Submitting forms with many fields, uploading files → POST.
+
+---
+
+## 5️⃣ When Data Structure Is Complex
+- GET supports only simple key–value pairs (query strings).
+- POST supports nested objects, arrays, and complex JSON.
+
+**Example:** An order with items, addresses, and payment info → POST.
+
+---
+
+## 6️⃣ When Request Is Not Idempotent
+- POST is not idempotent: calling it multiple times can create multiple records.
+- GET is idempotent and safe for repeated calls.
+
+**Example:** Calling “create order” twice → two orders (POST).
+
+---
+
+## 7️⃣ When You Don’t Want the Request to Be Cached
+- GET requests can be cached by browsers and intermediaries.
+- POST requests are not cached by default.
+
+**Example:** Financial transactions, form submissions → POST.
+
+---
+
+## ❌ When NOT to Use POST
+- For fetching data only.
+- For searches or reads that do not modify server state.
+
+👉 Use GET instead.
+
 
 
 
