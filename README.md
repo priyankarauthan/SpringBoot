@@ -1074,6 +1074,209 @@ Used to identify a resource
 - For searches or reads that do not modify server state.
 
 👉 Use GET instead.
+```
+
+
+# Authentication Providers:-
+
+### 1️⃣ In-Memory Authentication
+
+### 🔹 What it is:
+Users are stored directly in memory (inside application config).
+
+### 🔹 Used for:
+
+Demos
+
+Learning
+
+Very small apps
+
+### 🔹 Example:
+```
+@Bean
+public UserDetailsService userDetailsService() {
+    UserDetails user = User.withUsername("admin")
+            .password("{noop}admin123")
+            .roles("ADMIN")
+            .build();
+    return new InMemoryUserDetailsManager(user);
+}
+```
+
+
+⚠️ Not for production (data lost on restart)
+
+### 2️⃣ JDBC Authentication
+ 
+#### 🔹 What it is:
+Users are stored in a relational database (MySQL, PostgreSQL, etc.).
+
+#### 🔹 Used for:
+
+Traditional applications
+
+Enterprise systems
+
+#### 🔹 How it works:
+Spring Security queries users and authorities tables.
+
+🔹 Example:
+```
+auth.jdbcAuthentication()
+    .dataSource(dataSource);
+```
+
+✅ Persistent
+❌ Less flexible than JPA
+
+#### 3️⃣ DAO Authentication (Most Common ✅)
+
+#### 🔹 What it is:
+Uses UserDetailsService + PasswordEncoder.
+
+#### 🔹 Used for:
+
+Real-world Spring Boot applications
+
+Microservices
+
+#### 🔹 How it works:
+Fetches user from DB using JPA/Hibernate.
+
+🔹 Example:
+```
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+    @Override
+    public UserDetails loadUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+}
+```
+
+
+✅ Highly flexible
+✅ Production-ready
+✅ Interview favorite
+
+#### 4️⃣ LDAP Authentication
+
+#### 🔹 What it is:
+Authentication via LDAP / Active Directory.
+
+🔹 Used for:
+
+Corporate environments
+
+Enterprise SSO
+
+🔹 Example Use Case:
+Employees logging in using company credentials.
+
+#### 5️⃣ OAuth2 Authentication
+
+#### 🔹 What it is:
+Login via external identity providers.
+
+🔹 Examples:
+
+Google
+
+GitHub
+
+Facebook
+
+🔹 Used for:
+
+Social login
+
+SSO
+
+🔹 Spring Module:
+spring-boot-starter-oauth2-client
+
+✅ Secure
+✅ No password handling by your app
+
+#### 6️⃣ JWT Authentication (Stateless 🔥)
+
+#### 🔹 What it is:
+Token-based authentication using JWT.
+
+#### 🔹 Used for:
+
+REST APIs
+
+Microservices
+
+Mobile apps
+
+🔹 Flow:
+
+User logs in
+
+Server generates JWT
+
+Client sends JWT in headers
+
+Authorization: Bearer <token>
+
+
+✅ Stateless
+✅ Scalable
+❌ Token management required
+
+#### 7️⃣ Pre-Authenticated Authentication
+
+#### 🔹 What it is:
+Authentication happens outside Spring Boot.
+
+#### 🔹 Used for:
+
+API gateways
+
+Reverse proxies
+
+#### 🔹 Example:
+User already authenticated by gateway → Spring trusts it.
+
+#### 8️⃣ Custom Authentication Provider
+
+#### 🔹 What it is:
+You write your own authentication logic.
+
+🔹 Used for:
+
+OTP login
+
+Biometric login
+
+External systems
+
+🔹 Example:
+```
+public class CustomAuthProvider implements AuthenticationProvider {
+    @Override
+    public Authentication authenticate(Authentication auth) {
+        // custom logic
+    }
+}
+```
+
+#### 🔁 How Spring Chooses the Provider
+
+Spring Security uses:
+
+AuthenticationManager
+        ↓
+AuthenticationProvider(s)
+        ↓
+UserDetailsService / External system
+
+⭐ Interview Summary (One-Liner)
+
+Spring Boot supports multiple authentication providers such as In-memory, JDBC, DAO, LDAP, OAuth2, JWT, Pre-Authenticated, and Custom providers, managed via Spring Security’s AuthenticationManager.
 
 
 
