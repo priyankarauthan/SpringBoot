@@ -1279,6 +1279,33 @@ UserDetailsService / External system
 Spring Boot supports multiple authentication providers such as In-memory, JDBC, DAO, LDAP, OAuth2, JWT, Pre-Authenticated, and Custom providers, managed via Spring Security’s AuthenticationManager.
 
 
+```
+
+Client Request
+      ↓
+Authentication Filter
+      ↓
+AuthenticationManager
+      ↓
+UserDetailsService
+      ↓
+UserDetails
+
+```
+
+
+### What is UserDetails in Spring Boot?
+
+In Spring Boot, UserDetails is a core interface of Spring Security.
+
+👉 It represents one authenticated user in the Spring Security system.
+
+In simple words:
+
+UserDetails = Who the user is, what password they have, and what roles/authorities they own.
+
+
+
 
 
 
