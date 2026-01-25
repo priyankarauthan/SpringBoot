@@ -1305,6 +1305,36 @@ In simple words:
 UserDetails = Who the user is, what password they have, and what roles/authorities they own.
 
 
+### What is JSON Back Reference ?
+
+In Spring Boot, JSON Back Reference usually refers to the annotation:
+
+@JsonBackReference
+
+It is used to prevent infinite recursion while converting Java objects to JSON.
+
+👉 It works together with:
+
+@JsonManagedReference
+
+
+Consider a bi-directional relationship in JPA:
+
+One Parent has many Child
+
+Each Child has a reference back to Parent
+
+Example Relationship
+Parent → Child → Parent → Child → ...
+
+
+#### When Jackson tries to convert this to JSON:
+👉 Infinite loop occurs
+👉 Results in StackOverflowError
+
+### @JsonBackReference is used to prevent infinite recursion in bi-directional relationships by ignoring the back reference during JSON serialization.
+
+
 
 
 
