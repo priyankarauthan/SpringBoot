@@ -1,5 +1,114 @@
 # SpringBoot
 
+### Service-to-Service Authentication using OAuth2 + JWT (Step-by-Step)
+
+Order Service  →  Payment Service
+
+
+There is no human user.
+The calling service itself acts as the client/user.
+
+#### Step 1️⃣ Service Registration (One-Time Setup)
+
+Each service is registered with the Authorization Server as an OAuth2 client.
+```
+Example:
+
+client_id     = order-service
+client_secret = ********
+allowed_scopes = payment.read, payment.write
+
+```
+👉 This represents the identity of the service.
+
+####  Step 2️⃣ Service Requests Access Token (Login Step)
+
+The calling service (Order Service) sends a request to the token endpoint using
+OAuth2 Client Credentials Grant.
+
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials
+&client_id=order-service
+&client_secret=********
+&scope=payment.write
+
+
+📌 This step is the “login” for a service.
+
+### Step 3️⃣ Authorization Server Validates Service
+
+The Authorization Server:
+
+Validates client_id and client_secret
+
+Checks allowed scopes
+
+Confirms service is trusted
+
+If valid → proceeds.
+
+#### Step 4️⃣ JWT Access Token Is Issued
+
+Authorization Server returns a JWT:
+
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIs...",
+  "token_type": "Bearer",
+  "expires_in": 3600
+}
+
+JWT Contains Claims Like:
+{
+  "sub": "order-service",
+  "scope": "payment.write",
+  "iss": "auth-server",
+  "exp": 1712345678
+}
+
+
+📌 No username
+📌 No password
+📌 Identity = service name
+
+#### Step 5️⃣ Service Calls Another Service Using JWT
+
+Order Service calls Payment Service:
+
+POST /payments
+Authorization: Bearer <JWT>
+
+#### Step 6️⃣ Receiving Service Validates JWT
+
+Payment Service:
+
+Verifies JWT signature
+
+Checks expiration (exp)
+
+Validates scope/authority
+
+Spring Security does this automatically when configured as a Resource Server.
+
+#### Step 7️⃣ Authorization Decision
+
+Based on JWT claims:
+
+@PreAuthorize("hasAuthority('payment.write')")
+@PostMapping("/payments")
+public void makePayment() { }
+
+
+✔ If scope exists → request allowed
+❌ If not → 403 Forbidden
+
+
+
+
+
+
+
 ## Q1- Why Do We Need @Bean When @Component Also Creates Beans? 🤔
 Both `@Bean` and `@Component` create Spring-managed beans, but they are used in different scenarios.
 
