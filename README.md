@@ -24,7 +24,7 @@ allowed_scopes = payment.read, payment.write
 ####  Step 2️⃣ Service Requests Access Token (Login Step)
 
 The calling service (Order Service) sends a request to the token endpoint using
-OAuth2 Client Credentials Grant.
+OAuth2 Client Credentials Grant.(✅ The token endpoint is an endpoint exposed by the Authorization Server.)
 
 POST /oauth/token
 Content-Type: application/x-www-form-urlencoded
