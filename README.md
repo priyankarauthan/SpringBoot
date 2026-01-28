@@ -162,21 +162,21 @@ Spring removes tight coupling and makes code more flexible and testable.
 
 ## Q6- Types of Dependency Injection in Spring Boot
 
-A)Constructor Injection (Recommended)
+#### A)Constructor Injection (Recommended)
 
 @Autowired
 public Car(Engine engine) {  // Injects dependency via constructor
     this.engine = engine;
 }
 
-B) Setter Injection
+#### B) Setter Injection
 
 @Autowired
 public void setEngine(Engine engine) {
     this.engine = engine;
 }
 
-C) Field Injection (Not Recommended)
+#### C) Field Injection (Not Recommended)
 
 @Autowired
 private Engine engine;
@@ -193,6 +193,167 @@ Supports different injection types (Constructor, Setter, Field)
 Helps in managing dependencies, making the code flexible & testable
 
 ## Circular dependency and how do we break circular dependency?
+
+Circular dependency occurs when beans depend on each other in a cycle.
+The best way to break it is to redesign responsibilities, introduce interfaces or an orchestrator, or use event-driven communication. 
+@Lazy should be a last resort.
+
+
+## Handling Circular Dependencies (Spring / Java)
+
+Circular dependencies often indicate a design problem — two classes depending on each other usually means responsibilities are mixed or misplaced. Below are practical strategies to resolve circular references, ranked by recommended usage.
+
+---
+
+## ✅ 1. Rethink the design (BEST solution)
+
+Often a circular dependency means the responsibilities are wrong. Extract the common/shared behavior into a third component so services depend on that component rather than each other.
+
+Bad:
+```
+OrderService ↔ PaymentService
+```
+
+Better:
+```
+OrderService → PaymentProcessor ← PaymentService
+```
+
+- Extract common logic into a third class (e.g., `PaymentProcessor`, `PaymentGateway`, or an `Adapter`).
+- Benefits: clearer responsibilities, easier to test, no framework hacks required.
+
+---
+
+## ✅ 2. Use interfaces (Dependency Inversion)
+
+Introduce an interface to invert the dependency so both sides depend on abstractions.
+
+Example:
+```java
+public interface PaymentOperations {
+    void pay(Order order);
+}
+
+@Service
+public class PaymentService implements PaymentOperations {
+    @Override
+    public void pay(Order order) { /* ... */ }
+}
+
+@Service
+public class OrderService {
+    private final PaymentOperations paymentOperations;
+
+    public OrderService(PaymentOperations paymentOperations) {
+        this.paymentOperations = paymentOperations;
+    }
+}
+```
+
+- Reduces coupling
+- Easier to substitute implementations and to mock/stub in tests
+- Encourages clean separation of concerns
+
+---
+
+## ⚠️ 3. Use @Lazy (quick fix, not best design)
+
+Spring's `@Lazy` can delay bean initialization to break circular references when a redesign is not feasible.
+
+Example:
+```java
+@Service
+public class OrderService {
+    @Autowired
+    @Lazy
+    private PaymentService paymentService;
+}
+```
+
+- What it does: delays creation of the injected bean until first use
+- Use only as a last resort or temporary workaround
+- Drawbacks: masks the underlying design problem and can make initialization order harder to reason about
+
+---
+
+## ⚠️ 4. Setter injection instead of constructor
+
+Switching to setter (or field) injection can sometimes avoid circular constructor dependencies:
+
+```java
+@Service
+public class OrderService {
+    private PaymentService paymentService;
+
+    @Autowired
+    public void setPaymentService(PaymentService ps) {
+        this.paymentService = ps;
+    }
+}
+```
+
+- Works because Spring can create the beans first and then satisfy setters
+- Downsides: hides design issues, less safe than constructor injection (objects may be partially initialized), and harder to enforce required dependencies
+
+---
+
+## ✅ 5. Event-based communication (BEST for microservices)
+
+In distributed systems or when decoupling is desired, use asynchronous events instead of direct calls.
+
+Pattern:
+- OrderService → publishes `OrderCreatedEvent`
+- PaymentService → listens for `OrderCreatedEvent` and processes payment
+
+Benefits:
+- No direct dependency between services
+- Highly scalable and resilient
+- Enables eventual consistency and simpler service boundaries
+
+Considerations:
+- Adds operational complexity (messaging infrastructure)
+- Requires handling eventual consistency and idempotency
+
+---
+
+## ✅ 6. Use Facade / Orchestrator pattern
+
+Introduce an orchestrator or facade that coordinates interactions between services so they don't call each other directly.
+
+```java
+public class OrderPaymentOrchestrator {
+    private final OrderService orderService;
+    private final PaymentService paymentService;
+
+    public OrderPaymentOrchestrator(OrderService orderService, PaymentService paymentService) {
+        this.orderService = orderService;
+        this.paymentService = paymentService;
+    }
+
+    public void createOrderAndPay(OrderRequest req) {
+        Order order = orderService.createOrder(req);
+        paymentService.pay(order);
+        // coordinate other steps, transactions, compensations, etc.
+    }
+}
+```
+
+- Keeps services focused on a single responsibility
+- Orchestrator coordinates the workflow without creating direct cyclic references between domain services
+
+---
+
+## Quick guidance: Which approach to choose?
+- If the cycle indicates mixed responsibilities: Rethink the design and extract a third component (BEST).
+- If you can introduce an abstraction: Use interfaces / dependency inversion.
+- For cross-service decoupling in microservices: Use event-driven communication.
+- For local coordination: Facade or Orchestrator.
+- If you must unblock quickly: `@Lazy` or setter injection — but treat them as temporary workarounds.
+
+---
+
+## Summary
+Prefer refactoring (extracting responsibilities or introducing abstractions) and decoupling (events or orchestrators). Use framework-specific fixes (`@Lazy`, setter injection) only when refactoring is impractical in the short term.
 
 ## Purpose and Use of API Key-Based Authorization in Spring Boot
 API key-based authorization is a simple and effective way to secure REST APIs by requiring clients to include a valid API key in their requests. It ensures that only authorized users or applications can access certain endpoints.
