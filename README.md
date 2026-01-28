@@ -163,30 +163,33 @@ Spring removes tight coupling and makes code more flexible and testable.
 ## Q6- Types of Dependency Injection in Spring Boot
 
 #### A)Constructor Injection (Recommended)
-
+```
 @Autowired
 public Car(Engine engine) {  // Injects dependency via constructor
     this.engine = engine;
 }
+```
 
 #### B) Setter Injection
-
+```
 @Autowired
 public void setEngine(Engine engine) {
     this.engine = engine;
 }
+```
 
 #### C) Field Injection (Not Recommended)
-
+```
 @Autowired
 private Engine engine;
+```
 
 ## Why Constructor Injection is Best?
 ✅ Makes objects immutable
 ✅ Works well with unit testing
 ✅ Ensures all required dependencies are available at the time of object creation
 
-🔹 Summary
+## 🔹 Summary
 Spring Boot automatically injects objects using @Autowired
 Removes manual object creation (new)
 Supports different injection types (Constructor, Setter, Field)
