@@ -105,6 +105,157 @@ public void makePayment() { }
 
 
 
+## 🔐 Step-by-Step: RBAC Configuration in Spring Boot
+
+### ✅ STEP 1: Add Spring Security Dependency
+
+```
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+```
+
+### ✅ STEP 2: Decide Where Roles Come From
+
+In real projects, roles usually come from:
+
+a) JWT token (most common)
+
+b) Database
+
+c) Identity Provider (Keycloak, Auth0, Okta)
+
+📌 We’ll assume JWT contains roles.
+      
+Example JWT payload:
+```
+{
+  "sub": "user123",
+  "roles": ["ADMIN", "USER"]
+}
+```
+
+✅ STEP 3: Configure Security Filter Chain
+
+
+Create a Security Configuration class.
+
+```
+@Configuration
+@EnableMethodSecurity   // enables @PreAuthorize
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                .anyRequest().authenticated()
+            )
+            .oauth2ResourceServer(oauth ->
+                oauth.jwt()
+            );
+
+        return http.build();
+    }
+}
+```
+##### What you configured here:
+
+✔ /admin/** → only ADMIN
+✔ /user/** → USER or ADMIN
+✔ JWT-based authentication
+
+### ✅ STEP 4: Map Roles from JWT to Spring Security
+
+Spring expects roles like:
+
+ROLE_ADMIN
+ROLE_USER
+
+So we map JWT roles properly.
+```
+@Bean
+public JwtAuthenticationConverter jwtAuthenticationConverter() {
+    JwtGrantedAuthoritiesConverter converter =
+        new JwtGrantedAuthoritiesConverter();
+
+    converter.setAuthorityPrefix("ROLE_");
+    converter.setAuthoritiesClaimName("roles");
+
+    JwtAuthenticationConverter jwtConverter =
+        new JwtAuthenticationConverter();
+    jwtConverter.setJwtGrantedAuthoritiesConverter(converter);
+
+    return jwtConverter;
+}
+```
+
+Then plug it in:
+```
+.oauth2ResourceServer(oauth ->
+    oauth.jwt(jwt ->
+        jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
+    )
+)
+```
+
+### ✅ STEP 5: Secure APIs Using Roles (Method Level)
+
+Now apply RBAC directly on APIs.
+```
+@RestController
+@RequestMapping("/admin")
+public class AdminController {
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/dashboard")
+    public String adminDashboard() {
+        return "Admin dashboard";
+    }
+}
+
+```
+```
+@RestController
+@RequestMapping("/user")
+public class UserController {
+
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @GetMapping("/profile")
+    public String userProfile() {
+        return "User profile";
+    }
+}
+```
+
+### ✅ STEP 6: application.yml Configuration
+```
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://auth-server.com/realms/demo
+```
+👉 Tells Spring where to validate JWT.
+
+### ✅ STEP 7: Test the Flow
+Case 1: USER token
+
+/user/profile → ✅ allowed
+
+/admin/dashboard → ❌ 403 Forbidden
+
+Case 2: ADMIN token
+
+/user/profile → ✅ allowed
+
+/admin/dashboard → ✅ allowed
 
 
 
