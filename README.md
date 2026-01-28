@@ -1609,6 +1609,93 @@ Parent → Child → Parent → Child → ...
 
 
 
+### 1️⃣ @PathVariable – identify the resource
+
+Use it when the value is part of the URL and uniquely identifies something.
+
+Example
+GET /users/101
+```
+@GetMapping("/users/{id}")
+public User getUser(@PathVariable Long id) {
+    return service.getUser(id);
+}
+```
+
+#### When to use
+
+✅ Fetch / update / delete one specific resource
+✅ Mandatory value
+✅ REST-friendly
+
+❌ Don’t use for optional or filter values
+
+### 2️⃣ @RequestParam – filters, flags, small values
+
+Use it for query parameters (after ? in URL).
+
+Example
+GET /users?role=admin&active=true
+```
+@GetMapping("/users")
+public List<User> getUsers(
+    @RequestParam String role,
+    @RequestParam boolean active
+) {
+    return service.getUsers(role, active);
+}
+```
+#### When to use
+
+✅ Optional parameters
+✅ Filters, sorting, pagination
+✅ Small/simple data (String, int, boolean)
+
+@RequestParam(required = false)
+@RequestParam(defaultValue = "0")
+
+
+❌ Not good for large JSON objects
+
+### 3️⃣ @RequestBody – complex / structured data
+
+Use when sending JSON/XML in request body.
+
+Example
+POST /users
+```
+{
+  "name": "Priyanka",
+  "email": "priyanka@gmail.com",
+  "age": 25
+}
+```
+```
+@PostMapping("/users")
+public User createUser(@RequestBody UserRequest request) {
+    return service.createUser(request);
+}
+```
+
+#### When to use
+
+✅ Create / update operations
+✅ Large or nested data
+✅ DTO objects
+
+❌ Not for GET requests (generally)
+
+#### 🔥 Interview-friendly comparison table
+### Situation	        ### Use
+Get user by ID	      @PathVariable
+Filter users	        @RequestParam
+Create user	          @RequestBody
+Update user	          @PathVariable + @RequestBody
+Pagination	          @RequestParam
+Search API	          @RequestBody (if complex)
+
+
+
 
 
 
