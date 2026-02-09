@@ -103,6 +103,26 @@ public void makePayment() { }
 ✔ If scope exists → request allowed
 ❌ If not → 403 Forbidden
 
+### 🔄 How it actually works (Client Credentials Flow)
+Step-by-step
+
+1️⃣ Order Service → Token Endpoint
+    client_id + client_secret
+
+2️⃣ Authorization Server
+    → validates client
+    → generates JWT access token
+
+3️⃣ Order Service
+    → stores token in memory/cache
+
+4️⃣ Order Service → Trade Service
+    Authorization: Bearer <JWT>
+
+5️⃣ Trade Service
+    → validates JWT (signature, expiry, scopes)
+
+
 
 
 ## 🔐 Step-by-Step: RBAC Configuration in Spring Boot
