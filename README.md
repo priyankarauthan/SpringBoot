@@ -1872,6 +1872,253 @@ Search API	          @RequestBody (if complex)
 Spring WebFLUX is a reactive, non-blocking web framework built on Project Reactor. It uses Mono for 0–1 elements and Flux for 0–N elements. Unlike Spring MVC, it uses an event-loop model and non-blocking I/O, making it suitable for high concurrency and streaming applications.
 Mono is a reactive Publisher in Project Reactor that emits zero or one element asynchronously. It supports various operators like map, flatMap, filter, onErrorResume, and zip to transform and control reactive data flow. It is lazy and executes only when subscribed.
 
+## 🚀 What is Spring Boot?
+
+Spring Boot is an opinionated framework built on top of Spring that helps build production-ready applications quickly with:
+
+a) Minimal configuration
+
+b) Embedded servers
+
+c) Auto-configuration
+
+d) Microservices support
+
+✅ 1️⃣ Auto-Configuration
+🔹 Feature
+
+Spring Boot automatically configures beans based on:
+
+Classpath dependencies
+
+Properties
+
+Conditions
+
+Example:
+If spring-boot-starter-data-jpa is present →
+Spring auto-configures:
+
+DataSource
+
+EntityManager
+
+TransactionManager
+
+⚠ Pitfall
+
+Hidden configurations → hard to debug
+
+You may not know which bean is getting created
+
+Can accidentally override config
+
+Example issue:
+Multiple DataSource beans → ambiguity
+
+👉 Solution:
+
+Use @ConditionalOn...
+
+Use spring.autoconfigure.exclude
+
+Enable debug logs
+
+✅ 2️⃣ Embedded Server (Tomcat/Jetty/Netty)
+🔹 Feature
+
+No need for external server deployment.
+
+mvn spring-boot:run
+
+App runs with embedded Tomcat.
+
+⚠ Pitfall
+
+Memory overhead in microservices
+
+Too many services → too many embedded servers
+
+Can increase startup time
+
+In high-scale systems → consider container tuning.
+
+✅ 3️⃣ Starter Dependencies
+🔹 Feature
+spring-boot-starter-web
+spring-boot-starter-data-jpa
+spring-boot-starter-security
+
+Pre-configured dependencies.
+
+⚠ Pitfall
+
+Pulls many transitive dependencies
+
+Can increase jar size
+
+Version conflicts sometimes hidden
+
+👉 Always check:
+
+mvn dependency:tree
+✅ 4️⃣ Production-Ready Features (Actuator)
+🔹 Feature
+
+Spring Boot Actuator provides:
+
+Health checks
+
+Metrics
+
+Prometheus integration
+
+Thread dump
+
+Environment details
+
+⚠ Pitfall
+
+If not secured:
+
+/actuator/env exposes secrets
+
+/actuator/heapdump exposes memory
+
+👉 Always:
+
+Secure actuator endpoints
+
+Restrict exposure
+
+✅ 5️⃣ Configuration Management
+🔹 Feature
+
+Supports:
+
+application.properties
+
+application.yml
+
+Profiles
+
+Environment variables
+
+Example:
+
+spring.profiles.active=prod
+⚠ Pitfall
+
+Misconfigured profiles in prod
+
+Hardcoded values
+
+Secrets in properties file
+
+👉 Use:
+
+Vault
+
+AWS Secrets Manager
+
+Environment variables
+
+✅ 6️⃣ Dependency Injection (IoC)
+🔹 Feature
+
+@Component
+
+@Service
+
+@Repository
+
+@Autowired
+
+⚠ Pitfall
+
+Field injection (hard to test)
+
+Circular dependencies
+
+Large God services
+
+👉 Best Practice:
+
+Constructor injection
+
+Follow SOLID (you already focus on this 👍)
+
+✅ 7️⃣ Spring Boot + Microservices Support
+🔹 Feature
+
+Works well with:
+
+Kafka
+
+RabbitMQ
+
+REST
+
+WebFlux
+
+Spring Cloud
+
+⚠ Pitfall
+
+Distributed transaction issues
+
+Overuse of synchronous REST calls
+
+Too many inter-service calls → latency
+
+👉 Prefer:
+
+Event-driven architecture
+
+Saga pattern
+
+✅ 8️⃣ Transaction Management
+🔹 Feature
+@Transactional
+
+Easy transaction handling.
+
+⚠ Pitfall
+
+Only works for public methods
+
+Doesn’t work on internal method calls
+
+Proxy-based limitation
+
+Very common interview trap 🔥
+
+✅ 9️⃣ Spring Boot + JPA
+🔹 Feature
+
+Very fast CRUD development.
+
+⚠ Pitfalls
+
+N+1 query problem
+
+LazyInitializationException
+
+Blocking DB driver (not reactive)
+
+In high-throughput systems → careful optimization needed.
+
+✅ 10️⃣ Logging & Monitoring
+🔹 Feature
+
+Default logging via Logback.
+
+⚠ Pitfall
+
+Excessive logging → performance impact
+
+Logging sensitive data
+
 
 
 
