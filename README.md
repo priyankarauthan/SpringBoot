@@ -1868,6 +1868,13 @@ Search API	          @RequestBody (if complex)
 
 
 
+## Spring WebFlux 
+Spring WebFLUX is a reactive, non-blocking web framework built on Project Reactor. It uses Mono for 0–1 elements and Flux for 0–N elements. Unlike Spring MVC, it uses an event-loop model and non-blocking I/O, making it suitable for high concurrency and streaming applications.
+Mono is a reactive Publisher in Project Reactor that emits zero or one element asynchronously. It supports various operators like map, flatMap, filter, onErrorResume, and zip to transform and control reactive data flow. It is lazy and executes only when subscribed.
+
+
+
+
 
 
 
