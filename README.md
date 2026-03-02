@@ -2120,6 +2120,104 @@ Excessive logging → performance impact
 Logging sensitive data
 
 
+## What is a CSRF Attack?
+
+A CSRF (Cross-Site Request Forgery) attack is when a malicious website tricks a user’s browser into making an unwanted request to another website where the user is already logged in.
+
+👉 The attack works because the browser automatically sends cookies (like session cookies) with every request.
+
+## Imagine:
+
+You log in to your bank → bank.com
+
+Your browser stores a session cookie
+
+Without logging out, you visit a malicious site → evil.com
+
+That site secretly runs this:
+
+**<img src="https://bank.com/transfer?to=attacker&amount=10000" />**
+
+Since you're logged in, your browser automatically sends the session cookie to bank.com.
+
+💥 The bank thinks YOU requested the transfer.
+
+That is CSRF.
+
+**🔥 Why It Happens** 
+
+Because:
+
+Browser automatically sends cookies
+
+Server trusts the cookie
+
+No extra validation is done
+
+
+## 🛡️ How to Prevent CSRF
+**1️⃣ CSRF Token (Most Common Solution)**
+
+Server generates a random token and sends it in a form.
+
+<input type="hidden" name="_csrf" value="abc123xyz">
+
+When form is submitted:
+
+Server checks if token matches
+
+If not → request rejected
+
+👉 This is what Spring Security does by default.
+
+**2️⃣ SameSite Cookies**
+
+Set cookie like:
+
+Set-Cookie: JSESSIONID=xyz; SameSite=Strict
+
+Prevents browser from sending cookie in cross-site requests.
+
+**3️⃣ Double Submit Cookie Pattern**
+
+Send token in:
+
+Cookie
+
+Request body/header
+
+Server compares both.
+
+**4️⃣ Use JWT in Authorization Header**
+
+Instead of cookies:
+
+Authorization: Bearer token
+
+Browser does NOT auto-send this.
+So CSRF becomes very hard.
+
+## 💡 How Spring Boot Handles CSRF
+
+If you're using:
+
+**@EnableWebSecurity**
+
+Spring Security:
+
+Automatically enables CSRF protection
+
+Adds _csrf token in forms
+
+Rejects unsafe POST/PUT/DELETE without token
+
+To disable (not recommended for forms):
+
+**http.csrf().disable();**
+
+👉 Usually disabled in stateless REST APIs using JWT.
+
+
 
 
 
