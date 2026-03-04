@@ -2938,3 +2938,186 @@ Uses PreparedStatement
 Binds values safely
 
 So structure is frozen before data is inserted.
+
+
+## 🔥 What Are Filters in Spring Boot?
+
+A Filter is a component that:
+
+Intercepts every HTTP request and/or response before it reaches your controller.
+
+Think of it like:
+```
+Client → Filter → Controller → Service → DB
+```
+
+And on response:
+```
+DB → Service → Controller → Filter → Client
+```
+## 🧠 Simple Real-Life Analogy
+
+Filter = Security guard at office gate.
+
+Every request must pass through guard.
+
+Guard checks ID (authentication).
+
+Then allows entry.
+
+📌 Where Do Filters Exist?
+
+Filters are part of:
+
+👉 Servlet API (javax.servlet / jakarta.servlet)
+Spring Boot builds on top of this.
+
+## 🔄 Request Flow in Spring Boot
+Client Request
+      ↓
+Servlet Container (Tomcat)
+      ↓
+Filter
+      ↓
+DispatcherServlet
+      ↓
+Controller
+🛠️ Why We Use Filters?
+
+## Common use cases:
+
+Use Case	Example
+Authentication	Check JWT
+Logging	Log request details
+CORS	Add CORS headers
+Rate limiting	Block too many requests
+Request modification	Add headers
+
+##  ASCII FULL FLOW DIAGRAM (Complete End-to-End)
+                  ┌──────────────────────────┐
+                  │      CLIENT (Browser)     │
+                  └──────────────┬───────────┘
+                                 │
+                                 ▼
+                  ┌──────────────────────────┐
+                  │      TOMCAT SERVER        │
+                  └──────────────┬───────────┘
+                                 │
+                                 ▼
+          ┌──────────────────────────────────────────────┐
+          │        SERVLET FILTER CHAIN (Tomcat)         │
+          │  - CORS Filter                               │
+          │  - Encoding Filter                            │
+          │  - springSecurityFilterChain  (IMPORTANT)     │
+          └──────────────┬───────────────────────────────┘
+                         │
+                         ▼
+          ┌──────────────────────────────────────────────┐
+          │      DelegatingFilterProxy ("ssfc")          │
+          │        delegates to FilterChainProxy         │
+          └──────────────┬───────────────────────────────┘
+                         │
+                         ▼
+          ┌──────────────────────────────────────────────┐
+          │           FilterChainProxy                    │
+          │   (Selects matching SecurityFilterChain)      │
+          └──────────────┬───────────────────────────────┘
+                         │
+                         ▼
+   ┌──────────────────────────────────────────────────────────┐
+   │            SECURITY FILTER CHAIN (SPRING)                │
+   │----------------------------------------------------------│
+   │  1. SecurityContextPersistenceFilter                      │
+   │  2. LogoutFilter                                          │
+   │  3. UsernamePasswordAuthenticationFilter (LOGIN)          │
+   │        │                                                  │
+   │        │ Calls AuthenticationManager → ProviderManager    │
+   │        ▼                                                  │
+   │      ┌─────────────────────────────────────────────┐     │
+   │      │           AUTHENTICATION MANAGER            │     │
+   │      └──────────────┬──────────────────────────────┘     │
+   │                     ▼                                    │
+   │      ┌─────────────────────────────────────────────┐     │
+   │      │           PROVIDER MANAGER                  │     │
+   │      │  (calls multiple AuthenticationProviders)   │     │
+   │      └──────┬───────────────────┬──────────────────┘     │
+   │             │                   │                        │
+   │             ▼                   ▼                        │
+   │   DaoAuthenticationProvider   JwtAuthenticationProvider   │
+   │   (username/password)         (JWT validation)            │
+   │             │                   │                        │
+   │             └───────► returns Authentication  ◄──────────┘
+   │
+   │  4. BasicAuthenticationFilter
+   │  5. JwtAuthenticationFilter (if JWT)
+   │  6. ExceptionTranslationFilter
+   │  7. FilterSecurityInterceptor (Authorization)
+   └──────────────────────────────────────────────────────────┘
+                         │
+                         ▼
+          ┌──────────────────────────────────────────────┐
+          │              DISPATCHERSERVLET               │
+          └──────────────┬───────────────────────────────┘
+                         │
+                         ▼
+          ┌──────────────────────────────────────────────┐
+          │             HANDLER MAPPING                  │
+          └──────────────┬───────────────────────────────┘
+                         │
+                         ▼
+          ┌──────────────────────────────────────────────┐
+          │               INTERCEPTORS                   │
+          │     - preHandle()                            │
+          └──────────────┬───────────────────────────────┘
+                         │
+                         ▼
+          ┌──────────────────────────────────────────────┐
+          │              CONTROLLER METHOD                │
+          └──────────────┬───────────────────────────────┘
+                         │
+                         ▼
+       ┌──────────────────────────────────────────────────────────┐
+       │                SERVICE LAYER (Business Logic)             │
+       └──────────────┬───────────────────────────────────────────┘
+                      │
+                      ▼
+       ┌──────────────────────────────────────────────────────────┐
+       │                 REPOSITORY / DAO                          │
+       └──────────────┬───────────────────────────────────────────┘
+                      │
+                      ▼
+               Database (MySQL, Postgres…)
+
+──────────────────────── RESPONSE PATH (BACK) ───────────────────────
+
+Database → Repository → Service → Controller →  
+Interceptors (postHandle) → DispatcherServlet →  
+Security Filters (cleanup) → Servlet Filters → Tomcat → Client
+
+## ✅ 2. Markdown Summary (Clean Explanation)
+🔵 Phase 1: Tomcat & Servlet Filters
+Tomcat receives request
+Passes through Servlet Filter Chain
+Important part: springSecurityFilterChain (DelegatingFilterProxy)
+🟢 Phase 2: Spring Security (FilterChainProxy)
+Delegates to the Security Filter Chain, which includes:
+SecurityContextPersistenceFilter
+LogoutFilter
+UsernamePasswordAuthenticationFilter
+BasicAuthenticationFilter
+JWTAuthenticationFilter (if configured)
+ExceptionTranslationFilter
+FilterSecurityInterceptor (authorization)
+🟡 Phase 3: Authentication Flow (if needed)
+UsernamePasswordAuthenticationFilter → AuthenticationManager → ProviderManager → Providers:
+DaoAuthenticationProvider
+JwtAuthenticationProvider
+LdapAuthenticationProvider
+Authentication result stored in SecurityContext.
+🟣 Phase 4: DispatcherServlet + MVC
+HandlerMapping selects Controller
+Interceptors run (preHandle)
+Controller executes
+Controller calls Service → Repository → DB
+
+Response modification	Add custom headers
