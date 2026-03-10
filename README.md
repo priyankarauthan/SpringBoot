@@ -2,7 +2,8 @@
 
 - [Dependency Injection](#dependency-injection) 
 - [HTTP Methods](#http-methods) 
-- [ACID Properties](#acid-properties) 
+- [ACID Properties](#acid-properties)
+- [REST Features](#rest-features)
 
 
 ### Service-to-Service Authentication using OAuth2 + JWT (Step-by-Step)
@@ -3177,3 +3178,151 @@ Running it multiple times still results in:
 User does not exist
 
 So the final state remains the same.
+
+## REST Features
+(Representational State Transfer) is an architectural style used to design scalable and simple web services. REST APIs follow certain principles or features (constraints) that make them efficient.
+
+The main features of REST are the following:
+
+1️⃣ Client–Server Architecture
+
+In REST, the client and server are separate.
+
+Client → sends request (browser, mobile app, frontend)
+
+Server → processes request and sends response
+
+Example
+
+Frontend (React / Angular)
+
+GET /users/10
+
+Backend (Spring Boot)
+
+returns user data
+Benefit
+
+Independent development
+
+Frontend and backend can evolve separately
+
+2️⃣ Stateless
+
+REST APIs are stateless, meaning:
+
+The server does not store any client session between requests.
+
+Every request must contain all necessary information.
+
+Example
+
+Request:
+
+GET /orders
+Authorization: Bearer token123
+
+Next request must again include authentication.
+
+Server does not remember previous requests.
+
+Benefits
+
+Easy scalability
+
+Load balancers work easily
+
+No session management needed
+
+3️⃣ Cacheable
+
+REST responses can be cached to improve performance.
+
+Example:
+
+GET /products
+Cache-Control: max-age=3600
+
+This means the response can be cached for 1 hour.
+
+Benefit
+
+Faster responses
+
+Reduced server load
+
+4️⃣ Uniform Interface
+
+REST APIs follow a standard interface to interact with resources.
+
+Main principles:
+
+Resource-based URLs
+
+/users
+/orders
+/products
+
+Standard HTTP methods
+
+Method	Operation
+GET	Retrieve
+POST	Create
+PUT	Update
+PATCH	Partial update
+DELETE	Remove
+
+Standard response formats
+
+Usually:
+
+JSON
+XML
+
+Example response:
+
+{
+ "id": 1,
+ "name": "Priyanka"
+}
+5️⃣ Layered System
+
+REST architecture can have multiple layers between client and server.
+
+Example layers:
+
+Client
+   ↓
+API Gateway
+   ↓
+Authentication Service
+   ↓
+Microservice
+   ↓
+Database
+
+Client does not know how many layers exist.
+
+Benefits
+
+Security
+
+Scalability
+
+Load balancing
+
+6️⃣ Code on Demand (Optional)
+
+Server can send executable code to the client.
+
+Example:
+
+JavaScript
+
+Applets
+
+Example:
+
+Server sends JavaScript code to browser.
+
+This feature is optional and rarely used in APIs.
