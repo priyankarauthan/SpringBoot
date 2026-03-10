@@ -1,6 +1,6 @@
 # SpringBoot
 
-- [Dependency Injection(#dependency-injection-in-spring-boot) 
+- [Dependency Injection(#dependency-injection) 
 - [HTTP Methods](#http-methods) 
 - [ACID Properties](#acid-properties) 
 
@@ -315,7 +315,7 @@ b) If a bean cannot be auto-detected (e.g., third-party classes), we register it
 | Use Case                    | Essential beans like Database Connections, Services      | Rarely used beans (e.g., large reports, email services)       |
 
 
-## Q3-Bean Lifecycle Stages
+## Bean Lifecycle
 A Spring Bean goes through the following steps:
 ![image](https://github.com/user-attachments/assets/9630d2dc-b1dc-414b-889d-b6d24e744a2f)
 
@@ -328,10 +328,10 @@ Stage	Description
 6. Bean is Ready to Use	The bean is fully initialized and available for use.
 7. Destruction	If the bean implements DisposableBean or has @PreDestroy, cleanup happens before destruction.
    
-## Q4-Dependency Injection
+## Dependency Injection
 Ans- Dependency Injection (DI) is a design pattern where Spring Boot automatically provides the required dependencies (objects) instead of you manually creating them.
 
-## Q5- How Spring Manages Dependency Injection?
+## How Spring Manages Dependency Injection?
 @Component tells Spring to create and manage the object.
 @Autowired tells Spring to inject the required dependency automatically.
 Spring removes tight coupling and makes code more flexible and testable.
