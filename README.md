@@ -1,7 +1,6 @@
 # SpringBoot
 
-- [Dependency Injection(#http-methods) 
-- [ACID Properties](#dependency-injection-in-spring-boot) 
+- [Dependency Injection(#dependency-injection-in-spring-boot) 
 - [HTTP Methods](#http-methods) 
 - [ACID Properties](#acid-properties) 
 
