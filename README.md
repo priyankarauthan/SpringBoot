@@ -1,5 +1,11 @@
 # SpringBoot
 
+- [Dependency Injection(#http-methods) 
+- [ACID Properties](#dependency-injection-in-spring-boot) 
+- [HTTP Methods](#http-methods) 
+- [ACID Properties](#acid-properties) 
+
+
 ### Service-to-Service Authentication using OAuth2 + JWT (Step-by-Step)
 
 Order Service  →  Payment Service
@@ -323,7 +329,7 @@ Stage	Description
 6. Bean is Ready to Use	The bean is fully initialized and available for use.
 7. Destruction	If the bean implements DisposableBean or has @PreDestroy, cleanup happens before destruction.
    
-## Q4-Dependency Injection in Spring Boot 
+## Q4-Dependency Injection
 Ans- Dependency Injection (DI) is a design pattern where Spring Boot automatically provides the required dependencies (objects) instead of you manually creating them.
 
 ## Q5- How Spring Manages Dependency Injection?
@@ -3121,3 +3127,54 @@ Controller executes
 Controller calls Service → Repository → DB
 
 Response modification	Add custom headers
+
+
+## HTTP Methods
+1️⃣ GET – Retrieve Data
+
+GET is used to fetch data from the server.
+
+Changes server state	❌ No
+Idempotent	✅ Yes
+Safe	✅ Yes
+
+If you run it 100 times, nothing changes.
+
+It does not modify anything in the database.
+2️⃣ POST – Create Resource
+
+POST is used to create a new resource.
+
+Each request may create a new record.
+
+Changes server state	✅ Yes
+Idempotent	❌ No
+Safe	❌ No
+If you send the request 3 times, 3 users may be created.
+3️⃣ PUT – Replace Resource
+
+PUT replaces the entire resource.
+
+Changes server state	✅ Yes
+Idempotent	✅ Yes
+
+Multiple requests → same final state.
+
+4️⃣ PATCH – Partial Update
+
+PATCH updates only specific fields.
+
+Changes server state	✅ Yes
+Idempotent	❌ Usually
+
+5️⃣ DELETE – Remove Resource
+
+DELETE removes a resource from the server.
+
+Changes server state	✅ Yes
+Idempotent	✅ Yes
+Running it multiple times still results in:
+
+User does not exist
+
+So the final state remains the same.
