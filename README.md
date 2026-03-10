@@ -4,6 +4,7 @@
 - [HTTP Methods](#http-methods) 
 - [ACID Properties](#acid-properties)
 - [REST Features](#rest-features)
+- [CRUD operations Validations](#crud-operations-validations)
 
 
 ### Service-to-Service Authentication using OAuth2 + JWT (Step-by-Step)
@@ -3326,3 +3327,166 @@ Example:
 Server sends JavaScript code to browser.
 
 This feature is optional and rarely used in APIs.
+## CRUD operations Validations
+CRUD operations are validated at multiple levels, including input validation using annotations like @Valid, business logic validation in the service layer, authorization checks, and database constraints such as primary key, unique, and foreign key validations.
+
+
+1️⃣ Input Validation (Most Important)
+
+Before processing CRUD operations, we must validate the input data.
+
+Example: Creating a user
+
+POST /users
+
+Request:
+
+{
+ "name": "",
+ "email": "invalid-email"
+}
+
+We must validate:
+
+Name should not be empty
+
+Email should be valid
+
+In Spring Boot
+
+Use Bean Validation (JSR-380) annotations.
+
+public class UserDTO {
+
+    @NotBlank
+    private String name;
+
+    @Email
+    private String email;
+
+    @Min(18)
+    private int age;
+}
+
+Controller:
+
+@PostMapping("/users")
+public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO user) {
+    return ResponseEntity.ok(userService.create(user));
+}
+
+If validation fails → 400 Bad Request.
+
+2️⃣ Business Validation
+
+Even if input format is correct, we must validate business rules.
+
+Example rules:
+
+Email must be unique
+
+Account balance cannot be negative
+
+User must exist before updating
+
+Example:
+
+if(userRepository.existsByEmail(user.getEmail())) {
+    throw new DuplicateEmailException("Email already exists");
+}
+3️⃣ Database Constraints
+
+Database also validates data to maintain data integrity.
+
+Examples:
+
+Constraint	Purpose
+Primary Key	Unique row identifier
+Unique	No duplicate values
+Foreign Key	Maintain relationships
+Check	Validate column values
+
+Example:
+
+email VARCHAR(255) UNIQUE
+
+If duplicate email is inserted → database rejects it.
+
+4️⃣ Authorization Validation
+
+Before CRUD operations, check whether the user has permission.
+
+Example:
+
+@PreAuthorize("hasRole('ADMIN')")
+@DeleteMapping("/users/{id}")
+
+Only ADMIN can delete users.
+
+5️⃣ Resource Existence Validation
+
+Before update or delete, check if resource exists.
+
+Example:
+
+User user = userRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+Otherwise return:
+
+404 Not Found
+6️⃣ Data Format Validation
+
+Validate fields like:
+
+Email
+
+Phone number
+
+Date format
+
+Example:
+
+@Pattern(regexp="^[0-9]{10}$")
+private String phoneNumber;
+7️⃣ API-Level Validation
+
+Validate request parameters.
+
+Example:
+
+GET /users?page=-1
+
+Invalid page number → reject request.
+
+**Example CRUD Validation Flow** 
+
+Client Request
+      ↓
+Controller
+      ↓
+Input Validation (@Valid)
+      ↓
+Business Validation
+      ↓
+Authorization Check
+      ↓
+Database Constraints
+      ↓
+Save/Update/Delete
+Example: Full Create Validation (Spring Boot)
+```
+@PostMapping("/users")
+public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO dto) {
+
+    if(userRepository.existsByEmail(dto.getEmail())) {
+        throw new RuntimeException("Email already exists");
+    }
+
+    User user = new User();
+    user.setName(dto.getName());
+    user.setEmail(dto.getEmail());
+
+    return ResponseEntity.ok(userRepository.save(user));
+}
+```
