@@ -3355,7 +3355,7 @@ Email should be valid
 In Spring Boot
 
 Use Bean Validation (JSR-380) annotations.
-
+```
 public class UserDTO {
 
     @NotBlank
@@ -3366,14 +3366,14 @@ public class UserDTO {
 
     @Min(18)
     private int age;
-}
+}```
 
 Controller:
-
+```
 @PostMapping("/users")
 public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO user) {
     return ResponseEntity.ok(userService.create(user));
-}
+}```
 
 If validation fails → 400 Bad Request.
 
@@ -3390,10 +3390,11 @@ Account balance cannot be negative
 User must exist before updating
 
 Example:
-
+```
 if(userRepository.existsByEmail(user.getEmail())) {
     throw new DuplicateEmailException("Email already exists");
 }
+```
 3️⃣ Database Constraints
 
 Database also validates data to maintain data integrity.
@@ -3417,9 +3418,10 @@ If duplicate email is inserted → database rejects it.
 Before CRUD operations, check whether the user has permission.
 
 Example:
-
+```
 @PreAuthorize("hasRole('ADMIN')")
 @DeleteMapping("/users/{id}")
+```
 
 Only ADMIN can delete users.
 
@@ -3428,9 +3430,10 @@ Only ADMIN can delete users.
 Before update or delete, check if resource exists.
 
 Example:
-
+```
 User user = userRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+```
 
 Otherwise return:
 
