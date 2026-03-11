@@ -3550,6 +3550,7 @@ OpenShift provides Jaeger Operator to install it.
 Vector + Loki + Grafana
 
 **Architecture:**
+
 ```
 Pods (Microservices)
         ↓
@@ -3559,6 +3560,7 @@ Loki (log storage)
         ↓
 Grafana (log visualization)
 ```
+
 **Tools  	Used**
 Tool		Purpose
 Vector		Collect logs from pods
