@@ -6,6 +6,7 @@
 - [ACID Properties](#acid-properties)
 - [REST Features](#rest-features)
 - [CRUD operations Validations](#crud-operations-validations)
+- [Dependency Management in Spring and SpringBoot](#dependency-management-in-spring-and-springboot)
 
 
 
