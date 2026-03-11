@@ -9,6 +9,7 @@
 - [Dependency Management in Spring and SpringBoot](#dependency-management-in-spring-and-springboot)
 - [Authentication using OAuth2 + JWT](#authentication-using-oauth2-and-jwt)
 - [What is JWT (JSON Web Token)?](#what-is-jwt)
+- [Annotations](#springboot-annotations)
 
 
 
@@ -109,6 +110,13 @@ No manual configuration needed.
 @Configuration → marks the class as a configuration class
 
 @Bean → tells Spring to create and manage this object
+
+In Spring Framework, @Primary and @Qualifier are used to resolve ambiguity when multiple beans of the same type exist in the Spring container.
+
+When Spring sees more than one bean of the same type, it does not know which one to inject. These annotations help tell Spring which bean to use.
+
+**4. @Primary and @Qualifier**
+@Primary and @Qualifier are used in Spring to resolve dependency injection conflicts when multiple beans of the same type exist. @Primary marks a bean as the default choice, while @Qualifier is used to explicitly specify which bean should be injected.
 
 ## Difference Between Spring and Spring Boot
 
