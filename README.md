@@ -3493,3 +3493,112 @@ public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO dto) {
     return ResponseEntity.ok(userRepository.save(user));
 }
 ```
+
+##  Service Failure Tracing
+1️⃣ Distributed Tracing in OpenShift
+
+Use:
+
+OpenTelemetry + Jaeger
+
+Architecture:
+
+Microservices
+     ↓
+OpenTelemetry instrumentation
+     ↓
+Jaeger Collector
+     ↓
+Jaeger Storage
+     ↓
+Jaeger UI
+Tools Used
+Tool	Purpose
+OpenTelemetry	Generates Trace ID & Span ID
+Jaeger	Collects traces
+Jaeger UI	Visualizes request flow
+
+Example trace visualization:
+
+Gateway
+  ↓
+UserService
+  ↓
+OrderService
+  ↓
+PaymentService ❌
+
+**Jaeger UI shows:**
+
+a)Trace ID
+
+b)service call chain
+
+c)latency
+
+d)failure points
+
+OpenShift provides Jaeger Operator to install it.
+
+2️⃣ Centralized Logging in OpenShift
+
+Use:
+
+Vector + Loki + Grafana
+
+Architecture:
+
+Pods (Microservices)
+        ↓
+Vector (log collector)
+        ↓
+Loki (log storage)
+        ↓
+Grafana (log visualization)
+**Tools  	Used**
+Tool		Purpose
+Vector		Collect logs from pods
+Loki		Store logs
+Grafana		Search and visualize logs
+
+OpenShift provides this through:
+
+Red Hat OpenShift Logging Operator
+
+3️⃣ Complete Observability Architecture in OpenShift
+
+                     Microservices
+                          │
+        ┌─────────────────┼─────────────────┐
+        │                 │                 │
+     Tracing            Logging           Metrics
+        │                 │                 │
+ OpenTelemetry          Vector         Prometheus
+        │                 │                 │
+      Jaeger             Loki            Storage
+        │                 │                 │
+     Jaeger UI           Grafana          Grafana
+	 
+4️⃣ Example Debugging Flow
+
+Request fails.
+
+Trace ID:
+
+traceId = 7fa3c21b
+Step 1 — Check Jaeger UI
+
+Trace shows:
+
+Gateway → UserService → OrderService → PaymentService ❌
+Step 2 — Check Grafana Logs
+
+Search:
+
+traceId=7fa3c21b
+
+Logs show:
+
+PaymentService - Payment gateway timeout
+
+Issue identified.
