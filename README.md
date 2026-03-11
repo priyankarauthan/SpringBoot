@@ -3497,12 +3497,12 @@ public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO dto) {
 ##  Service Failure Tracing
 1️⃣ Distributed Tracing in OpenShift
 
-Use:
+**Use:**
 
 OpenTelemetry + Jaeger
 
-Architecture:
-
+Architecture:-
+```
 Microservices
      ↓
 OpenTelemetry instrumentation
@@ -3512,14 +3512,16 @@ Jaeger Collector
 Jaeger Storage
      ↓
 Jaeger UI
-Tools Used
-Tool	Purpose
-OpenTelemetry	Generates Trace ID & Span ID
-Jaeger	Collects traces
-Jaeger UI	Visualizes request flow
+```
+**Tools Used**
+
+**Tool**				**Purpose**
+OpenTelemetry		  	Generates Trace ID & Span ID
+Jaeger					Collects traces
+Jaeger UI				Visualizes request flow
 
 Example trace visualization:
-
+```
 Gateway
   ↓
 UserService
@@ -3527,6 +3529,7 @@ UserService
 OrderService
   ↓
 PaymentService ❌
+```
 
 **Jaeger UI shows:**
 
@@ -3542,12 +3545,12 @@ OpenShift provides Jaeger Operator to install it.
 
 2️⃣ Centralized Logging in OpenShift
 
-Use:
+**Use:**
 
 Vector + Loki + Grafana
 
-Architecture:
-
+**Architecture:**
+```
 Pods (Microservices)
         ↓
 Vector (log collector)
@@ -3555,6 +3558,7 @@ Vector (log collector)
 Loki (log storage)
         ↓
 Grafana (log visualization)
+```
 **Tools  	Used**
 Tool		Purpose
 Vector		Collect logs from pods
@@ -3589,8 +3593,9 @@ traceId = 7fa3c21b
 Step 1 — Check Jaeger UI
 
 Trace shows:
-
+```
 Gateway → UserService → OrderService → PaymentService ❌
+```
 Step 2 — Check Grafana Logs
 
 Search:
