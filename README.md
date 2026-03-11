@@ -8,6 +8,7 @@
 - [CRUD operations Validations](#crud-operations-validations)
 - [Dependency Management in Spring and SpringBoot](#dependency-management-in-spring-and-springboot)
 - [Authentication using OAuth2 + JWT](#authentication-using-oauth2-and-jwt)
+- [What is JWT (JSON Web Token)?](#what-is-jwt)
 
 
 
@@ -352,7 +353,7 @@ Step-by-step
 
 
 
-## What is JWT (JSON Web Token)?
+## What is JWT?
 
 JWT (JSON Web Token) is a compact, secure way to transmit information between two parties as a JSON object.
 It is mainly used for authentication and authorization in web applications and APIs.
