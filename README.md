@@ -352,6 +352,112 @@ Step-by-step
 
 
 
+## What is JWT (JSON Web Token)?
+
+JWT (JSON Web Token) is a compact, secure way to transmit information between two parties as a JSON object.
+It is mainly used for authentication and authorization in web applications and APIs.
+
+JWT is commonly used in Spring Boot, microservices, and REST APIs.
+
+## 1️⃣ Why JWT is Used ?
+
+Traditional authentication uses sessions stored on the server.
+
+Example:
+
+Client → Login
+Server → Create Session
+Server stores session in memory
+
+Problems:
+
+server must maintain session state
+
+difficult to scale in microservices
+
+JWT solves this by using stateless authentication.
+
+Client → Login
+Server → Generate JWT
+Client stores token
+Client sends token with every request
+
+Server does not store session.
+
+## 2️⃣ Structure of JWT
+
+A JWT has three parts separated by dots (.):
+
+Header.Payload.Signature
+
+Example:
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+.
+eyJzdWIiOiJ1c2VyMSIsInJvbGUiOiJBRE1JTiJ9
+.
+SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+## 3️⃣ JWT Components 
+1️⃣ Header
+
+Contains metadata about the token.
+
+Example:
+```
+{
+ "alg": "HS256",
+ "typ": "JWT"
+}
+```
+
+Meaning:
+
+alg → hashing algorithm
+typ → token type
+2️⃣ Payload
+
+Contains claims (data about the user).
+
+Example:
+
+{
+ "sub": "12345",
+ "username": "priyanka",
+ "role": "ADMIN",
+ "exp": 1716239022
+}
+
+Common claims:
+
+Claim	Meaning
+sub	subject (user id)
+iss	issuer
+exp	expiration time
+role	user role
+
+Important:
+
+⚠️ Payload is encoded but not encrypted.
+
+3️⃣ Signature
+
+The signature ensures token integrity.
+
+Example generation:
+
+HMACSHA256(
+  base64UrlEncode(header) + "." +
+  base64UrlEncode(payload),
+  secret
+)
+
+Purpose:
+
+Verify token is not tampered
+
+
+
+
 ## 🔐 Step-by-Step: RBAC Configuration in Spring Boot
 
 ### ✅ STEP 1: Add Spring Security Dependency
