@@ -1,10 +1,124 @@
 # SpringBoot
 
+- [Difference Between Spring and Spring Boot](#difference-between-spring-and-spring-boot) 
 - [Dependency Injection](#dependency-injection) 
 - [HTTP Methods](#http-methods) 
 - [ACID Properties](#acid-properties)
 - [REST Features](#rest-features)
 - [CRUD operations Validations](#crud-operations-validations)
+
+
+
+
+## Difference Between Spring and Spring Boot
+
+## 1. Overview
+
+| Spring                                                                | Spring Boot                                                                          |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Spring is a **Java framework** used to build enterprise applications. | Spring Boot is built **on top of Spring** to simplify development and configuration. |
+| Requires more setup and configuration.                                | Provides **auto-configuration** and reduces boilerplate code.                        |
+
+---
+
+## 2. Configuration
+
+| Spring                                        | Spring Boot                                           |
+| --------------------------------------------- | ----------------------------------------------------- |
+| Requires **XML or Java-based configuration**. | Uses **auto-configuration** with minimal setup.       |
+| Developers configure beans manually.          | Automatically configures beans based on dependencies. |
+
+Example (Spring):
+
+```xml
+<bean id="userService" class="com.example.UserService"/>
+```
+
+Example (Spring Boot):
+
+```java
+@SpringBootApplication
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+---
+
+## 3. Dependency Management
+
+| Spring                                               | Spring Boot                                                      |
+| ---------------------------------------------------- | ---------------------------------------------------------------- |
+| Developers must manage dependency versions manually. | Uses **starter dependencies** to simplify dependency management. |
+
+Example:
+
+Spring dependency:
+
+```xml
+<dependency>
+ <groupId>org.springframework</groupId>
+ <artifactId>spring-web</artifactId>
+</dependency>
+```
+
+Spring Boot dependency:
+
+```xml
+<dependency>
+ <groupId>org.springframework.boot</groupId>
+ <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+---
+
+## 4. Server Deployment
+
+| Spring                                                              | Spring Boot                                                        |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Requires deployment on an **external server** like Tomcat or Jetty. | Provides **embedded servers** such as Tomcat, Jetty, and Undertow. |
+| Applications are typically packaged as **WAR files**.               | Applications are usually packaged as **JAR files**.                |
+
+Run Spring Boot application:
+
+```bash
+java -jar application.jar
+```
+
+---
+
+## 5. Development Speed
+
+| Spring                                  | Spring Boot                                    |
+| --------------------------------------- | ---------------------------------------------- |
+| Setup and configuration take more time. | Faster development with minimal configuration. |
+
+---
+
+## 6. Production Features
+
+| Spring                                  | Spring Boot                                                                   |
+| --------------------------------------- | ----------------------------------------------------------------------------- |
+| Requires external tools for monitoring. | Provides **Spring Boot Actuator** for monitoring, metrics, and health checks. |
+
+---
+
+## 7. Microservices Support
+
+| Spring                                       | Spring Boot                                                      |
+| -------------------------------------------- | ---------------------------------------------------------------- |
+| Not specifically designed for microservices. | Commonly used for building **microservices-based applications**. |
+
+---
+
+## Summary
+
+* **Spring** provides the core framework features such as dependency injection, AOP, and transaction management.
+* **Spring Boot** simplifies Spring application development by providing auto-configuration, embedded servers, and starter dependencies.
+
 
 
 ### Service-to-Service Authentication using OAuth2 + JWT (Step-by-Step)
