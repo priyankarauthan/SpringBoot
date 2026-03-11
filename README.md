@@ -113,12 +113,116 @@ java -jar application.jar
 | Not specifically designed for microservices. | Commonly used for building **microservices-based applications**. |
 
 ---
-
 ## Summary
 
 * **Spring** provides the core framework features such as dependency injection, AOP, and transaction management.
 * **Spring Boot** simplifies Spring application development by providing auto-configuration, embedded servers, and starter dependencies.
 
+
+## Dependency Management in Spring and SpringBoot
+
+1️⃣ Dependency Management in Spring (Traditional Spring)
+
+In Spring Framework, you must manually add every dependency and its version.
+
+Example: If you want to build a REST API, you need multiple dependencies.
+
+**Problems:**
+
+a) You must find compatible versions
+
+b) You must add many dependencies manually
+
+c) If versions conflict → application fails
+
+Spring Boot solves this using Starter Dependencies.
+
+Instead of adding many dependencies, you add one starter dependency.
+
+Example:
+```
+<dependency>
+ <groupId>org.springframework.boot</groupId>
+ <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+This single dependency automatically includes:
+
+Spring MVC
+Spring Core
+Spring Context
+Jackson
+Validation
+Embedded Tomcat
+Logging
+
+You don't need to specify versions.
+
+Spring Boot manages versions using:
+Spring Boot Dependency Management (BOM)
+
+3️⃣ Example Comparison 
+In Spring (Manual), you add manually:- 
+
+spring-core 
+spring-web 
+spring-context 
+spring-beans 
+jackson 
+tomcat 
+In Spring Boot (Automatic), you add one dependency:-
+
+spring-boot-starter-web
+
+Spring Boot internally adds everything needed.
+
+4️⃣ Why Spring Boot Is Easier
+
+Spring Boot provides:-
+
+Starter dependencies
+Dependency version compatibility
+Auto configuration
+
+So developers don't worry about:
+
+Which version of Spring?
+Which version of Jackson?
+Which version of Tomcat?
+5️⃣ Real Example
+
+Spring Boot:
+```
+<dependency>
+ <groupId>org.springframework.boot</groupId>
+ <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+```
+
+Automatically adds:-
+```
+Hibernate
+Spring Data JPA
+Spring ORM
+Transaction Manager
+JPA API
+```
+6️⃣ Simple Analogy
+
+Think of it like ordering food.
+
+Spring:
+
+Order rice
+Order curry
+Order salad
+Order water
+
+Spring Boot:
+
+Order "Meal Combo"
+
+Everything comes together.
 
 
 ### Service-to-Service Authentication using OAuth2 + JWT (Step-by-Step)
