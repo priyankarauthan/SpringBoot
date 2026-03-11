@@ -7,7 +7,7 @@
 - [REST Features](#rest-features)
 - [CRUD operations Validations](#crud-operations-validations)
 - [Dependency Management in Spring and SpringBoot](#dependency-management-in-spring-and-springboot)
-- [Authentication using OAuth2 + JWT](#authentication )
+- [Authentication using OAuth2 + JWT](#authentication-using-oauth2-+-jwt)
 
 
 
