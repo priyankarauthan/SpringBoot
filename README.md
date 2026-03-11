@@ -227,7 +227,7 @@ Order "Meal Combo"
 Everything comes together.
 
 
-### Service-to-Service Authentication using OAuth2 + JWT (Step-by-Step)
+## Authentication using OAuth2 + JWT (Service-to-Service Authentication)
 
 Order Service  →  Payment Service
 
