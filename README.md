@@ -414,8 +414,9 @@ Example:
 Meaning:
 
 alg → hashing algorithm
-typ → token type
-2️⃣ Payload
+typ → token type 
+
+2️⃣ Payload 
 
 Contains claims (data about the user).
 
@@ -440,7 +441,7 @@ Important:
 
 ⚠️ Payload is encoded but not encrypted.
 
-3️⃣ Signature
+3️⃣ Signature 
 
 The signature ensures token integrity.
 
