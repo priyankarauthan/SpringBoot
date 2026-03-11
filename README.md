@@ -3095,13 +3095,14 @@ ALTER permission
 🔥 Real Example in Spring Boot
 
 Bad Controller:
-
+```
 @GetMapping("/user")
 public List<User> getUser(@RequestParam String name) {
     return entityManager.createNativeQuery(
         "SELECT * FROM users WHERE name = '" + name + "'"
     ).getResultList();
 }
+```
 
 Attacker sends:
 
