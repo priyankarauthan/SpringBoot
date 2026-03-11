@@ -13,6 +13,103 @@
 
 
 
+
+
+
+## SpringBoot Annotations
+**a) @SpringBootApplication**
+
+@SpringBootApplication is a combination of three annotations:
+
+@SpringBootApplication
+    =
+@Configuration
+@ComponentScan
+@EnableAutoConfiguration
+
+**b) @Configuration**
+
+@Configuration is used to define a class that contains Spring bean definitions.
+
+It is part of Spring Framework and tells Spring that this class is used to configure beans for the application context.
+```
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public UserService userService() {
+        return new UserService();
+    }
+}
+```
+
+**c) @ComponentScan**
+
+Spring automatically scans packages for components such as:
+
+@Component
+
+@Service
+
+@Repository
+
+@Controller
+
+@RestController
+
+Example:
+```
+@Service
+public class UserService {
+}
+```
+
+Spring will automatically detect and register this bean.
+
+Important rule:
+
+Component scanning starts from the package where the main class exists.
+
+Example project structure:
+
+com.example
+   ├── DemoApplication
+   ├── controller
+   ├── service
+   └── repository
+
+Everything under com.example will be scanned.
+
+**3. @EnableAutoConfiguration**
+
+Spring Boot automatically configures components based on:
+
+classpath
+
+dependencies
+
+properties
+
+Example:
+
+If dependency exists:
+
+spring-boot-starter-web
+
+Spring Boot automatically configures:
+
+Tomcat server
+
+DispatcherServlet
+
+REST configuration
+
+No manual configuration needed.
+
+@Configuration → marks the class as a configuration class
+
+@Bean → tells Spring to create and manage this object
+
 ## Difference Between Spring and Spring Boot
 
 ## 1. Overview
