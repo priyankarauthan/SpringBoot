@@ -13,7 +13,15 @@
 - [Steps to Create a Custom Exception in Spring Boot](#steps-to-create-a-custom-exception-in-spring-boot)
 - [AOP](#aop)
 - [Steps to Create a Custom Annotation](#steps-to-create-custom-annotation)
+- [Testing static method](#testing-static-method)
 
+## Testing Static Method
+
+Static methods are hard to test and mock, so in Spring Boot we prefer:-
+
+a) Dependency Injection
+
+b) Service classes instead of static utilities
 
 
 
