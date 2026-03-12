@@ -11,10 +11,207 @@
 - [What is JWT (JSON Web Token)?](#what-is-jwt)
 - [Annotations](#springboot-annotations)
 - [Steps to Create a Custom Exception in Spring Boot](#steps-to-create-a-custom-exception-in-spring-boot)
+- [AOP](#aop)
 
 
 
+## AOP 
 
+Aspect-Oriented Programming (AOP) is a programming technique used to separate cross-cutting concerns from business logic.
+
+Cross-cutting concerns are functionalities that affect multiple parts of an application, such as:
+
+Logging
+
+Security
+
+Transactions
+
+Caching
+
+Monitoring
+
+Instead of writing this code repeatedly in many places, AOP allows you to write it once and apply it wherever needed.
+
+## 1. Problem Without AOP
+
+Suppose you have a service:
+```
+public void processOrder() {
+    System.out.println("Logging start");
+    
+    // Business logic
+    System.out.println("Processing order");
+
+    System.out.println("Logging end");
+}
+```
+
+If you have 100 methods, you would need to add logging in all of them.
+
+This causes:
+
+Code duplication
+
+Harder maintenance
+
+Mixed business logic and technical logic
+
+## 2. Solution With AOP
+
+With AOP, the logging logic is separated.
+
+Business logic:
+```
+public void processOrder() {
+    System.out.println("Processing order");
+}
+```
+
+Logging aspect:
+```
+@Aspect
+@Component
+public class LoggingAspect {
+
+    @Before("execution(* com.example.service.*.*(..))")
+    public void logBefore() {
+        System.out.println("Logging before method execution");
+    }
+}
+```
+
+Now logging runs automatically before every method.
+
+## 3. Key Concepts in AOP
+1️⃣ Aspect
+
+A class that contains cross-cutting logic.
+
+@Aspect
+public class LoggingAspect {}
+
+Example:
+
+Logging
+
+Security
+
+Transaction management
+
+2️⃣ Join Point
+
+A point during program execution where an aspect can be applied.
+
+Examples:
+
+Method execution
+
+Exception thrown
+
+Method call
+
+In Spring AOP, join point = method execution.
+
+3️⃣ Advice
+
+The action performed by the aspect.
+
+## Types of advice:
+
+
+@Before	- Runs before method execution
+@After	- Runs after method execution
+@AfterReturning	- Runs after successful execution
+@AfterThrowing	- Runs when exception occurs
+@Around	- Runs Before and after method
+
+Example:
+
+@Before("execution(* com.app.service.*.*(..))")
+4️⃣ Pointcut
+
+A rule that defines where advice should apply.
+
+Example:
+
+execution(* com.app.service.*.*(..))
+
+Meaning:
+
+any method
+in service package
+with any parameters
+5️⃣ Weaving
+
+The process of linking aspects with the main code.
+
+Types:
+
+Type	Meaning
+Compile-time	during compilation
+Load-time	during class loading
+Runtime	during execution (Spring AOP uses this)
+
+Spring uses runtime weaving via proxies.
+
+## 4. Simple Spring Boot Example
+```
+Dependency
+<dependency>
+ <groupId>org.springframework.boot</groupId>
+ <artifactId>spring-boot-starter-aop</artifactId>
+</dependency>
+```
+```
+Service
+@Service
+public class PaymentService {
+
+    public void pay() {
+        System.out.println("Payment processing...");
+    }
+}
+```
+```
+Aspect
+@Aspect
+@Component
+public class LoggingAspect {
+
+    @Before("execution(* com.example.service.*.*(..))")
+    public void logBefore() {
+        System.out.println("Logging before method execution");
+    }
+}
+```
+Output:-
+Logging before method execution
+Payment processing...
+## 5. Real Spring Boot Features Using AOP
+
+Spring internally uses AOP for:
+
+Feature	Annotation
+Transactions	@Transactional
+Caching	@Cacheable
+Security	@PreAuthorize
+Async processing	@Async
+## 6. Simple Diagram
+
+Client
+  |
+  v
+Proxy (AOP)
+  |
+  |---- Logging Aspect
+  |---- Security Aspect
+  |---- Transaction Aspect
+  |
+  v
+Business Method
+
+Spring creates a proxy object that intercepts method calls.# SpringBoot
 
 
 
