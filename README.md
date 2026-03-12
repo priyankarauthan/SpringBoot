@@ -11,6 +11,21 @@
 - [Spring Boot Actuator](#spring-boot-actuator)
 - [Spring Boot Profile](#spring-boot-profile)
 - [Conditional](#conditional)
+- [Pagination](#pagination)
+
+
+
+## Pagination  
+
+Pagination in Spring Boot is used to retrieve large datasets in smaller chunks. Spring Data JPA provides pagination support using the Pageable interface and PageRequest class. The repository methods like findAll(Pageable pageable) return a Page object containing paginated results along with metadata such as total pages and total elements.    
+
+This improves:
+
+Performance    
+
+Memory usage    
+
+API response time    
 
 
 ## SpringBoot Profile
