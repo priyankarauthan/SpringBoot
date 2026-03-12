@@ -9,9 +9,238 @@
 - [If you committed code with the wrong commit message in Git, you can update it using git commit --amend](#git-wrong-commit-update)
 - [How do you Dockerize a Spring Boot Application?](#how-do-you-dockerize-a-spring-boot-application?)
 - [Spring Boot Actuator](#spring-boot-actuator)
+- [Spring Boot Profile](#spring-boot-profile)
+- [Conditional](#conditional)
+
+
+## SpringBoot Profile
+
+Spring Boot Profiles allow developers to run the same application with different configurations for different environments like development, testing, and production. Spring loads configuration files based on the active profile, such as application-dev.properties or application-prod.properties. Profiles can also be used with the @Profile annotation to load specific beans for particular environments.
+
+
+## 1️⃣ Why Profiles Are Needed?
+
+Different environments require different configurations.
+
+Example:
+
+Environment	Database
+Dev	H2
+Test	MySQL
+Prod	PostgreSQL
+
+Profiles allow Spring Boot to load environment-specific configuration.
+
+## 2️⃣ Profile-Based Configuration Files 
+
+Spring Boot supports:
+
+application-dev.properties
+application-test.properties
+application-prod.properties
+
+Example structure:
+
+src/main/resources
+
+application.properties
+application-dev.properties
+application-prod.properties
+## 3️⃣ Example Configuration 
+application-dev.properties
+server.port=8081
+spring.datasource.url=jdbc:h2:mem:testdb
+application-prod.properties
+server.port=8080
+spring.datasource.url=jdbc:mysql://prod-db:3306/mydb
+## 4️⃣ Activate Profile 
+
+You can activate profiles in multiple ways.
+
+Method 1 — application.properties
+spring.profiles.active=dev
+Method 2 — Command Line
+java -jar app.jar --spring.profiles.active=prod
+Method 3 — Environment Variable
+export SPRING_PROFILES_ACTIVE=dev
+## 5️⃣ Using @Profile Annotation 
+
+You can load beans only for specific profiles.
+
+Example:
+```
+@Configuration
+@Profile("dev")
+public class DevConfig {
+
+    @Bean
+    public String devBean() {
+        return "Development Bean";
+    }
+}
+```
+
+Production version:
+```
+@Configuration
+@Profile("prod")
+public class ProdConfig {
+
+    @Bean
+    public String prodBean() {
+        return "Production Bean";
+    }
+}
+```
+
+Only the active profile bean will be loaded.
+
+## 6️⃣ Multiple Profiles
+
+You can activate multiple profiles.
+
+spring.profiles.active=dev,test
+## 7️⃣ Default Profile
+
+If no profile is specified, Spring uses default profile.
+
+You can define:
+
+spring.profiles.default=dev
+## 8️⃣ Check Active Profile in Code
+```
+@Autowired
+private Environment environment;
+
+public void printProfile() {
+    System.out.println(Arrays.toString(environment.getActiveProfiles()));
+}
+```
+## 9️⃣ Real Microservice Example
+
+In real projects:
+
+Profile	Usage
+dev	local development
+test	CI/CD pipeline
+stage	staging environment
+prod	production environment
+
+## @Conditional in Spring Boot
+
+@Conditional is used to create beans only when certain conditions are satisfied.
+
+It allows conditional bean creation at runtime.
+
+This is commonly used in Spring Boot auto-configuration.
 
 
 
+## 1️⃣ Why @Conditional is Used
+
+Sometimes we want a bean to be created only when a specific condition is true.
+
+Examples:
+
+Only create a bean if a property exists
+
+Only create a bean if another bean exists
+
+Only create a bean if a class is present in classpath
+
+Only create a bean for a specific environment
+
+@Conditional helps achieve this.
+
+## 2️⃣ Basic Syntax
+@Conditional(ConditionClass.class) 
+
+You must implement the Condition interface.
+
+## 3️⃣ Example: Custom Condition 
+Step 1 Create Condition 
+```
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.core.type.AnnotatedTypeMetadata;
+
+public class MyCondition implements Condition {
+
+    @Override
+    public boolean matches(ConditionContext context,
+                           AnnotatedTypeMetadata metadata) {
+
+        String os = System.getProperty("os.name");
+
+        return os.contains("Windows");
+    }
+}
+```
+
+This condition checks the OS.
+
+Step 2 Use @Conditional  
+```
+@Configuration
+public class AppConfig {
+
+    @Bean
+    @Conditional(MyCondition.class)
+    public String windowsBean() {
+        return "Windows Bean Loaded";
+    }
+}
+```
+
+The bean will load only if OS is Windows.
+
+## 4️⃣ Spring Boot Predefined Conditional Annotations 
+
+Spring Boot provides many built-in conditional annotations.
+
+**Annotation**	                         **Purpose** 
+@ConditionalOnProperty	-               Load bean if property exists 
+@ConditionalOnBean -                   Load if bean exists 
+@ConditionalOnMissingBean -        	   Load if bean does NOT exist 
+@ConditionalOnClass	-                  Load if class exists 
+@ConditionalOnMissingClass	-           Load if class does NOT exist 
+@ConditionalOnExpression	-             Load if SpEL condition is true  
+
+These are used heavily in Spring Boot auto configuration.
+
+## 5️⃣ Example: @ConditionalOnProperty 
+```
+@Configuration
+public class FeatureConfig {
+
+    @Bean
+    @ConditionalOnProperty(name = "feature.enabled", havingValue = "true")
+    public FeatureService featureService() {
+        return new FeatureService();
+    }
+}
+```
+
+application.properties
+
+feature.enabled=true
+
+If property is true, the bean is created.
+
+## 6️⃣ Example: @ConditionalOnMissingBean 
+```
+@Bean
+@ConditionalOnMissingBean
+public ObjectMapper objectMapper() {
+    return new ObjectMapper();
+}
+```
+
+Meaning:
+
+Create ObjectMapper only if user has not defined one.
+
+Spring Boot uses this a lot internally.
 
 
 ## Spring Boot Actuator
