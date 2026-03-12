@@ -12,6 +12,155 @@
 - [Annotations](#springboot-annotations)
 - [Steps to Create a Custom Exception in Spring Boot](#steps-to-create-a-custom-exception-in-spring-boot)
 - [AOP](#aop)
+- [Steps to Create a Custom Annotation](#steps-to-create-custom-annotation)
+
+
+
+
+
+## Steps to create a custom annotation in Java/Spring Boot:-
+
+a) Create an annotation using @interface
+
+b) Define where it can be used using @Target
+
+c) Define when it is available using @Retention
+
+d) Optionally process it using AOP or Reflection
+
+
+
+## Step 1: Create Annotation
+
+```
+@Target(ElementType.METHOD)   // can be used on methods
+@Retention(RetentionPolicy.RUNTIME)  // available at runtime
+@Documented
+public @interface LogExecutionTime {
+
+}
+```
+
+@Target	- Defines where annotation can be used
+@Retention	- Defines lifecycle of annotation
+@Documented	- Included in Java docs
+
+## 3. Create Aspect to Process Annotation
+
+Spring uses AOP (Aspect Oriented Programming) to implement the logic.
+
+```
+@Aspect
+@Component
+public class LogExecutionTimeAspect {
+
+    @Around("@annotation(LogExecutionTime)")
+    public Object logTime(ProceedingJoinPoint joinPoint) throws Throwable {
+
+        long start = System.currentTimeMillis();
+
+        Object result = joinPoint.proceed();
+
+        long end = System.currentTimeMillis();
+
+        System.out.println(joinPoint.getSignature() +
+                " executed in " + (end - start) + " ms");
+
+        return result;
+    }
+}
+```
+## 4. Enable AOP in Spring Boot
+
+Add dependency:
+```
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-aop</artifactId>
+</dependency>
+```
+## 5. Use the Custom Annotation
+```
+@Service
+public class UserService {
+
+    @LogExecutionTime
+    public void processUser() {
+        try {
+            Thread.sleep(2000);
+        } catch (Exception e) {
+        }
+    }
+}
+```
+
+## 6. Important Annotation Meta-Annotations
+
+@Target -	Where annotation can be used 
+@Retention -	When annotation is available 
+@Inherited - Child classes inherit annotation 
+@Documented - Included in Javadoc 
+
+Example:
+```
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface CustomService {
+}
+```
+## 7. Target Types
+
+ElementType.TYPE	class 
+ElementType.METHOD	method 
+ElementType.FIELD	variable 
+ElementType.PARAMETER	method parameter 
+ElementType.CONSTRUCTOR	constructor 
+## 8. Custom Annotation with Parameters 
+
+You can also pass values.
+```
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Audit {
+
+    String action();
+    String user();
+}
+```
+
+Usage:
+```
+@Audit(action="CREATE_USER", user="admin")
+public void createUser() {
+
+}
+```
+## 9. Real World Spring Boot Uses
+
+Custom annotations are commonly used for:
+
+Logging
+
+Security
+
+Validation
+
+Caching
+
+Transactions
+
+Rate limiting
+
+Examples already in Spring:
+
+@Transactional
+@Cacheable
+@Async
+@Scheduled
+
+These are custom annotations internally implemented by Spring.
+
+
 
 
 
