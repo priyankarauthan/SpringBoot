@@ -117,14 +117,14 @@ In Spring AOP, join point = method execution.
 
 The action performed by the aspect.
 
-## Types of advice:
+## Types of advice: 
 
 
-@Before	- Runs before method execution
-@After	- Runs after method execution
-@AfterReturning	- Runs after successful execution
-@AfterThrowing	- Runs when exception occurs
-@Around	- Runs Before and after method
+@Before	- Runs before method execution 
+@After	- Runs after method execution 
+@AfterReturning	- Runs after successful execution 
+@AfterThrowing	- Runs when exception occurs 
+@Around	- Runs Before and after method 
 
 Example:
 
