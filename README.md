@@ -10,6 +10,7 @@
 - [Authentication using OAuth2 + JWT](#authentication-using-oauth2-and-jwt)
 - [What is JWT (JSON Web Token)?](#what-is-jwt)
 - [Annotations](#springboot-annotations)
+- [Steps to Create a Custom Exception in Spring Boot](#steps-to-create-a-custom-exception-in-spring-boot)
 
 
 
