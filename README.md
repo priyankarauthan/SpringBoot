@@ -550,16 +550,19 @@ Important:
 
 The signature ensures token integrity.
 
-Example generation:
+The signature is used to verify that the token was not changed and that it was issued by the trusted server.
 
-HMACSHA256(
-  base64UrlEncode(header) + "." +
-  base64UrlEncode(payload),
-  secret
-)
+The signature is created using:
 
-Purpose:
+Signature = Hash(
+              Base64UrlEncode(Header) + "." +
+              Base64UrlEncode(Payload),
+              SecretKey
+            )
 
+Depending on the algorithm in the header (like HS256, RS256), the signature is generated.
+
+**Purpose:**
 Verify token is not tampered
 
 
