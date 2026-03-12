@@ -12,8 +12,61 @@
 - [Spring Boot Profile](#spring-boot-profile)
 - [Conditional](#conditional)
 - [Pagination](#pagination)
+- [Difference Between @PathVariable and @RequestParam in Spring Boot](#difference-between-@pathvariable-and-@requestparam)
 
 
+
+## Difference Between @PathVariable and @RequestParam
+
+Both are used to retrieve values from an HTTP request, but they come from different parts of the URL.
+
+## 1️⃣ @PathVariable
+
+@PathVariable is used to extract values from the URI path.
+
+Example URL
+/users/10
+
+Here 10 is part of the path.
+
+Controller Example
+```
+@GetMapping("/users/{id}")
+public String getUser(@PathVariable int id) {
+    return "User id is " + id;
+}
+```
+Request:
+
+GET /users/10
+
+Output:
+
+User id is 10
+## 2️⃣ @RequestParam
+
+@RequestParam is used to read query parameters.
+
+Example URL
+/users?id=10
+
+Here id is a query parameter.
+
+Controller Example
+```
+@GetMapping("/users")
+public String getUser(@RequestParam int id) {
+    return "User id is " + id;
+}
+```
+
+Request:
+
+GET /users?id=10
+
+Output:
+
+User id is 10
 
 ## Pagination  
 
