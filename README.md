@@ -1,4 +1,4 @@
-## Java-Interview-Questions
+## Spring Boot -Interview-Questions
 
 - [Executor Service](#executorservice)
 - [Serializable](#serializable)
