@@ -13,7 +13,8 @@
 - [Conditional](#conditional)
 - [Pagination](#pagination)
 - [Difference Between @PathVariable and @RequestParam in Spring Boot](#difference-between-@pathvariable-and-@requestparam)
-- [Transactional](#transactional)
+- [@Transactional](#@transactional-annotaion-in-spring-boot)
+- [String Pool](#string-pool)
 
 
 
@@ -2327,11 +2328,11 @@ Database ORM (JPA/Hibernate)	Objects are deserialized when retrieved from DB
 File Storage (S3, Local, NFS)	Stored objects are deserialized when loaded
 
 
-### String Pool in Java
+## String Pool
 
 The String Pool in Java is a special memory area inside the heap called the String Constant Pool (SCP) or String Intern Pool. It optimizes memory usage by storing only one copy of each unique string literal, reducing redundancy and improving performance.
 
-# 1. How String Pool Works?
+## 1. How String Pool Works?
 
 When a string literal (e.g., "Hello") is created, Java first checks the String Pool.
 If the literal already exists in the pool, Java returns a reference to the existing object.
