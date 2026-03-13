@@ -13,7 +13,7 @@
 - [Conditional](#conditional)
 - [Pagination](#pagination)
 - [Difference Between @PathVariable and @RequestParam in Spring Boot](#difference-between-@pathvariable-and-@requestparam)
-- [@Transactional](#@transactional-annotaion-in-spring-boot)
+- [@Transactional](#@transactional-annotaion)
 - [String Pool](#string-pool)
 
 
@@ -1174,7 +1174,7 @@ class MyClass implements A, B {
     }
 }
 ```
-## @Transactional Annotation in Spring Boot
+## @Transactional Annotation
 
 The @Transactional annotation in Spring Boot is used to manage database transactions. It ensures that a series of database operations are executed as a single unit of work—either all succeed or all fail (rollback in case of an error).
 
