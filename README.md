@@ -15,6 +15,216 @@
 - [Difference Between @PathVariable and @RequestParam in Spring Boot](#difference-between-@pathvariable-and-@requestparam)
 - [Transactional](#transactional-annotation)
 - [String Pool](#string-pool)
+- [How to design good APIs](#how-to-design-good-apis)
+
+
+
+## How TO Design Good APIs :-     
+1️⃣ Use Proper Layered Architecture    
+
+Separate responsibilities so developers cannot access internal layers directly.
+
+Typical structure:
+
+Controller → Service → Repository → Database
+
+Example:
+```
+@RestController
+class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService){
+        this.userService = userService;
+    }
+
+    @GetMapping("/users/{id}")
+    public UserDTO getUser(@PathVariable Long id){
+        return userService.getUser(id);
+    }
+}
+```
+Other developers only interact with the Controller, not the database.
+
+2️⃣ Never Expose Database Entities    
+
+Expose DTOs instead of entities.
+
+Bad:
+```
+@GetMapping("/users/{id}")
+public User getUser(Long id)
+
+Problem:
+Developers may rely on internal DB fields.
+
+Good:
+
+@GetMapping("/users/{id}")
+public UserResponse getUser(Long id)
+```
+
+DTO example:
+```
+class UserResponse {
+    private String name;
+    private String email;
+}
+```
+
+This protects your internal data model.
+
+3️⃣ Use Strong Validation
+
+Always validate input.
+
+Example:
+```
+class CreateUserRequest {
+
+    @NotBlank
+    private String name;
+
+    @Email
+    private String email;
+}
+```
+Controller:
+```
+@PostMapping("/users")
+public void createUser(@Valid @RequestBody CreateUserRequest request) {
+}
+```
+This prevents bad data from breaking your system.
+
+4️⃣ Use Clear API Contracts
+
+Define clear request and response formats.
+
+Example:
+
+Request
+```
+{
+  "name": "Priyanka",
+  "email": "abc@gmail.com"
+}
+```
+Response
+```
+{
+  "id": 101,
+  "name": "Priyanka"
+}```
+
+Developers know exactly what is expected.
+
+5️⃣ Version Your APIs
+
+Never change existing APIs directly.
+
+Example:
+
+/api/v1/users
+/api/v2/users
+
+If you change API behavior, create a new version.
+
+This prevents breaking other systems.
+
+6️⃣ Proper HTTP Methods
+
+Use correct REST conventions.
+
+Method	Purpose
+GET	Read data
+POST	Create data
+PUT	Update entire resource
+PATCH	Partial update
+DELETE	Remove resource
+
+Example:
+
+GET /users/10
+POST /users
+PUT /users/10
+DELETE /users/10
+7️⃣ Use Idempotent APIs
+
+Repeated calls should not break data.
+
+Example:
+
+PUT /users/10
+
+Calling it multiple times gives the same result.
+
+8️⃣ Use Proper Error Handling
+
+Return clear error responses.
+
+Example:
+```
+{
+  "error": "USER_NOT_FOUND",
+  "message": "User does not exist"
+}
+```
+
+In Spring Boot:
+```
+@ControllerAdvice
+public class GlobalExceptionHandler {
+}```
+9️⃣ Secure Your API
+
+Use authentication and authorization.
+
+Example:
+
+OAuth2
+
+JWT
+
+API Keys
+
+Example header:
+
+Authorization: Bearer <token>
+🔟 Document Your API
+
+Use OpenAPI / Swagger.
+
+Spring Boot:
+
+@Operation(summary = "Get user by id")
+
+Swagger UI shows:
+
+GET /users/{id}
+POST /users
+DELETE /users/{id}
+
+Developers know exact usage.
+
+1️⃣1️⃣ Rate Limiting
+
+Prevent misuse.
+
+Example:
+
+100 requests per minute
+
+Tools:
+
+API Gateway
+
+Kong
+
+Nginx
+
+Spring Cloud Gateway
 
 
 
