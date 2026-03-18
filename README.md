@@ -16,6 +16,43 @@
 - [Transactional](#transactional-annotation)
 - [String Pool](#string-pool)
 - [How to design good APIs](#how-to-design-good-apis)
+- [Strangler Fig Pattern](#strangler-fig-pattern)
+
+
+
+## Strangler Fig Pattern
+
+The Strangler Fig Pattern is a way to gradually replace a legacy (monolithic) system with a new system without breaking everything at once.
+
+👉 Inspired by a real strangler fig tree that grows around a tree and slowly replaces it.
+
+Instead of rewriting the entire system at once, you incrementally build new services around the old system, and slowly phase the old system out.
+
+## 🔄 How it Works (Step-by-Step)
+1. Start with Legacy System
+
+You already have a monolith
+
+User → Monolith App → DB
+2. Add a Proxy / Gateway
+
+Introduce a routing layer (API Gateway)
+
+It decides where requests go
+
+3. Build New Services Gradually
+
+Move one feature at a time
+
+/users → New Service  
+/orders → Still in Monolith
+4. Redirect Traffic
+
+Slowly route more requests to new services
+
+5. Kill the Monolith 💀
+
+Once everything is migrated → remove old system
 
 
 ## 🔹 What is REST?
