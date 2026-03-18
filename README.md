@@ -29,31 +29,134 @@ The Strangler Fig Pattern is a way to gradually replace a legacy (monolithic) sy
 Instead of rewriting the entire system at once, you incrementally build new services around the old system, and slowly phase the old system out.
 
 ## 🔄 How it Works (Step-by-Step)
-1. Start with Legacy System
+🔹 Step 1: Understand the Existing Monolith
 
-You already have a monolith
+Identify:
 
-User → Monolith App → DB
-2. Add a Proxy / Gateway
+Core modules (Users, Orders, Payments…)
 
-Introduce a routing layer (API Gateway)
+Pain points (scalability, deployment, coupling)
 
-It decides where requests go
+👉 Goal: Don’t touch everything at once
 
-3. Build New Services Gradually
+🔹 Step 2: Apply DDD → Identify Domains & Bounded Contexts
 
-Move one feature at a time
+Use Domain Driven Design
 
-/users → New Service  
-/orders → Still in Monolith
-4. Redirect Traffic
+Break system into business domains:
 
-Slowly route more requests to new services
+Example:
 
-5. Kill the Monolith 💀
+User Management
 
-Once everything is migrated → remove old system
+Order Management
 
+Payment Processing
+
+Inventory
+
+👉 Each becomes a bounded context
+
+🔹 Step 3: Define Service Boundaries
+
+For each bounded context:
+
+Define:
+
+Responsibilities
+
+Data ownership
+
+APIs
+
+👉 Example:
+
+Order Service → owns orders DB
+
+Payment Service → owns payments DB
+
+🔹 Step 4: Introduce an API Gateway / Proxy Layer
+
+Add a routing layer in front of monolith
+
+Client → API Gateway → Monolith (initially)
+
+👉 This is the key enabler of strangler pattern
+
+🔹 Step 5: Extract First Microservice (Low Risk Domain)
+
+Pick:
+
+Independent
+
+Less coupled domain
+
+👉 Example:
+
+Notification Service
+
+User Profile Service
+
+🔹 Step 6: Build New Microservice Using DDD
+
+For that domain:
+
+Create:
+
+Separate codebase
+
+Separate database
+
+Clear APIs
+
+👉 Follow:
+
+High cohesion
+
+Loose coupling
+
+🔹 Step 7: Route Traffic Gradually
+
+Update gateway:
+
+/users → New User Service  
+/others → Monolith
+
+👉 Only part of traffic goes to new service
+
+🔹 Step 8: Handle Data Migration & Consistency
+
+Options:
+
+Database sync
+
+Event-driven approach (Kafka)
+
+API composition
+
+👉 Important:
+
+Each service should own its data (DDD principle)
+
+🔹 Step 9: Repeat for Other Bounded Contexts
+
+Gradually extract:
+
+User Service
+
+Order Service
+
+Payment Service
+
+👉 One domain at a time
+
+🔹 Step 10: Decommission the Monolith
+
+Once all domains are migrated:
+
+Client → API Gateway → Microservices only
+
+👉 Remove legacy system completely
 
 ## 🔹 What is REST?
 
