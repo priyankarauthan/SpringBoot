@@ -19,6 +19,107 @@
 - [Strangler Fig Pattern](#strangler-fig-pattern)
 
 
+## ⚙️ How Caching Works in Spring Boot
+
+Spring Boot provides caching via:
+👉 @EnableCaching + annotations
+
+✅ Step 1: Enable Caching  
+```
+@EnableCaching
+@SpringBootApplication
+public class Application {
+}
+```
+✅ Step 2: Use @Cacheable  
+```
+@Cacheable("users")
+public User getUserById(Long id) {
+    return userRepository.findById(id).orElse(null);
+}
+```
+## 🔄 Flow of @Cacheable
+
+Method is called
+
+Spring checks cache (users)
+
+If data exists → return from cache ✅
+
+If not → call DB → store in cache → return
+
+
+## 🧩 Types of Cache Annotations
+
+**1. 🟢 @Cacheable (Most Used)**
+
+👉 Reads from cache if present
+
+@Cacheable(value = "products", key = "#id")
+public Product getProduct(Long id)
+
+**2. 🔄 @CachePut**  
+
+👉 Always executes method and updates cache
+@CachePut(value = "products", key = "#product.id")public Product updateProduct(Product product)
+
+**3. ❌ @CacheEvict**  
+👉 Removes data from cache
+```
+@CacheEvict(value = "products", key = "#id")
+public void deleteProduct(Long id)
+```
+
+**4. 🧹 Clear All Cache**
+```
+@CacheEvict(value = "products", allEntries = true)
+public void clearCache()
+```
+
+
+| Feature          | Cacheable           | CachePut      |
+| ---------------- | ------------------- | ------------- |
+| Method execution | ❌ Skipped if cached | ✅ Always runs |
+| Use case         | Read                | Update        |
+
+## 🏗️ Cache Providers (Very Important)
+
+Spring Boot doesn’t store cache itself — it uses providers:
+
+ **🔹 In-Memory**
+
+ConcurrentHashMap (default)
+
+## 🟢 Local Cache (In-Memory Cache)
+
+👉 Stored inside application (JVM)
+
+Examples:-
+
+Caffeine
+
+Ehcache
+
+✔ Very fast
+❌ Not shared across instances
+
+## 🔵 Distributed Cache
+
+👉 Stored outside application (shared)
+
+Examples:-
+
+Redis
+
+Memcached
+
+✔ Shared across services
+✔ Good for microservices
+
+
+
+
+
 
 ## Strangler Fig Pattern
 
