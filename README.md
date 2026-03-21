@@ -17,6 +17,31 @@
 - [String Pool](#string-pool)
 - [How to design good APIs](#how-to-design-good-apis)
 - [Strangler Fig Pattern](#strangler-fig-pattern)
+- [Different Versioning Strategies ](#different-versioning-strategies)
+
+
+##  Different Versioning Strategies    
+
+🔹 1. URI Versioning (BEST)
+/api/v1/users
+🔹 2. Request Parameter
+/users?version=1
+🔹 3. Header Versioning
+Header: X-API-VERSION: 1
+🔹 4. Media Type Versioning
+Accept: application/vnd.company.v1+json
+⚖️ Which One to Use?
+
+👉 In most Spring Boot projects:
+
+✔ Use URI Versioning
+👉 Because:
+
+Easy
+
+Clear
+
+Debuggable
 
 
 ## ⚙️ How Caching Works in Spring Boot
