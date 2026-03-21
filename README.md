@@ -23,13 +23,13 @@
 ##  Different Versioning Strategies    
 
 🔹 1. URI Versioning (BEST)    
-/api/v1/users
+/api/v1/users    
 🔹 2. Request Parameter    
-/users?version=1
+/users?version=1    
 🔹 3. Header Versioning    
-Header: X-API-VERSION: 1
+Header: X-API-VERSION: 1    
 🔹 4. Media Type Versioning    
-Accept: application/vnd.company.v1+json
+Accept: application/vnd.company.v1+json    
 
 ## ⚖️ Which One to Use?
 
