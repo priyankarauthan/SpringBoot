@@ -667,6 +667,60 @@ Nginx
 
 Spring Cloud Gateway
 
+### 🔹 What is Idempotent?
+
+👉 A request is idempotent if:
+
+Making the same request multiple times has the same effect as making it once
+
+PUT is idempotent because it replaces the resource with a fixed state, while PATCH may be non-idempotent because it represents operations that can accumulate, like increments or appends.
+
+🔹 HTTP Methods & Idempotency
+✅ Idempotent Methods
+1. GET
+Used to fetch data
+No change in server state
+GET /users/1
+
+👉 Call it 10 times → same result
+
+2. PUT
+Used to replace resource
+PUT /users/1
+{
+  "name": "Priyanka"
+}
+
+👉 Calling multiple times → same final state
+
+3. DELETE
+Used to delete resource
+DELETE /users/1
+
+👉 First call → deletes
+👉 Next calls → already deleted (no change)
+
+4. HEAD / OPTIONS
+Metadata operations
+No state change
+❌ Non-Idempotent Methods
+1. POST
+Used to create resource
+POST /users
+{
+  "name": "Priyanka"
+}
+
+👉 Call twice → 2 users created ❌
+
+2. PATCH (Usually non-idempotent)
+PATCH /users/1
+{
+  "incrementPoints": 10
+}
+
+👉 Call twice → +20 points ❌    
+
 
 
 ## Difference Between @PathVariable and @RequestParam
