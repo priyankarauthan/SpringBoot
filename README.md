@@ -55,7 +55,7 @@ public class Application {
 ```
 ✅ Step 2: Use @Cacheable  
 ```
-@Cacheable("users")
+@Cacheable("users")    
 public User getUserById(Long id) {
     return userRepository.findById(id).orElse(null);
 }
@@ -75,14 +75,14 @@ If not → call DB → store in cache → return
 
 **1. 🟢 @Cacheable (Most Used)**
 
-👉 Reads from cache if present
+👉 Reads from cache if present    
 
-@Cacheable(value = "products", key = "#id")
-public Product getProduct(Long id)
+@Cacheable(value = "products", key = "#id")    
+public Product getProduct(Long id)    
 
 **2. 🔄 @CachePut**  
 
-👉 Always executes method and updates cache
+👉 Always executes method and updates cache    
 @CachePut(value = "products", key = "#product.id")public Product updateProduct(Product product)
 
 **3. ❌ @CacheEvict**  
