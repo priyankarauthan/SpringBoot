@@ -67,7 +67,7 @@ Impact:
 👉 Useful for:
 
 Microservices
-Serverless
+Serverless    
 **4. 🌐 Observability (Metrics + Tracing)**    
 Improvements:
 Better integration with:
@@ -79,7 +79,7 @@ Better logs + metrics correlation
 
 👉 For you:
 
-Debugging Kafka pipelines becomes easier
+Debugging Kafka pipelines becomes easier    
 **5. 📦 Modularization (Lightweight Apps)**
 
 Spring Boot 4 is more modular
