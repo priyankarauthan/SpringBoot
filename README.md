@@ -22,7 +22,7 @@
 
 
 ## SpringBoot 4 Features    
-**1. 🧵 First-Class Support for Java 21 (Virtual Threads)**    
+**1. 🧵 First-Class Support for Java 21 (Virtual Threads)**        
 Before (Spring Boot 3)        
 Virtual threads → experimental/manual config    
 Now (Spring Boot 4)        
@@ -39,7 +39,7 @@ DB calls
 
 👉 For you: no more thread pool tuning headaches
 
-**2. 🧠 Built on Spring Framework 7**
+**2. 🧠 Built on Spring Framework 7**    
 
 Major internal upgrade:
 
@@ -51,7 +51,7 @@ Benefit:
 ✔ Better performance
 ✔ Future-ready
 
-**3. ⚡ Improved Native Image (GraalVM)**
+**3. ⚡ Improved Native Image (GraalVM)**    
 Before:    
 Complex setup
 Reflection issues
@@ -68,7 +68,7 @@ Impact:
 
 Microservices
 Serverless
-**4. 🌐 Observability (Metrics + Tracing)**
+**4. 🌐 Observability (Metrics + Tracing)**    
 Improvements:
 Better integration with:
 Micrometer
@@ -92,26 +92,26 @@ Faster startup
 
 ✔ Only required modules loaded
 
-**6. 🔐 Improved Security (Spring Security 7)**
+**6. 🔐 Improved Security (Spring Security 7)**    
 Better OAuth2 / OIDC support
 Stronger defaults
 Simplified configuration
 
 👉 Matches your interest in SSO + OAuth2
 
-**7. ⚙️ Configuration Improvements**
-Cleaner application.yml handling
-Better validation
-Improved config binding
-**8. 🚀 Better Kubernetes & Cloud Support**
+**7. ⚙️ Configuration Improvements**    
+Cleaner application.yml handling    
+Better validation    
+Improved config binding    
+**8. 🚀 Better Kubernetes & Cloud Support**    
 Improved readiness/liveness probes
 Better container support
 
 👉 Important for your K8s + AWS experience
 
-**9. 🧩 HTTP & REST Improvements**
-Better HTTP interface clients
-Improved REST handling
+**9. 🧩 HTTP & REST Improvements**    
+Better HTTP interface clients    
+Improved REST handling    
 ```
 @HttpExchange("/users")
 interface UserClient {
