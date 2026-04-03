@@ -133,6 +133,49 @@ Legacy configs
 ✔ Less confusion
 
 
+
+## 🚀 1. HTTP Interface Clients (BIGGEST CHANGE)
+
+👉 This is the highlight feature (@HttpExchange)
+
+Before
+RestTemplate → verbose
+WebClient → powerful but complex
+Now
+```
+@HttpExchange("/users")
+interface UserClient {
+
+    @GetExchange("/{id}")
+    User getUser(@PathVariable Long id);
+}
+```
+## 🔥 Why this is a big improvement    
+✔ Declarative (like Feign but native)
+✔ Less boilerplate
+✔ Better readability
+✔ Integrated with Spring ecosystem
+
+👉 Internally uses:
+
+WebClient / RestClient (pluggable)
+🚀 2. Introduction of RestClient (Modern Replacement)
+
+👉 New HTTP client (middle ground between RestTemplate & WebClient)
+
+Example
+RestClient restClient = RestClient.create("http://user-service");
+```
+User user = restClient.get()
+    .uri("/users/{id}", 1)
+    .retrieve()
+    .body(User.class);
+```
+
+
+👉 RestClient = clean + modern + simple
+
+
 ##  Different Versioning Strategies    
 
 🔹 1. URI Versioning (BEST)    
