@@ -18,6 +18,119 @@
 - [How to design good APIs](#how-to-design-good-apis)
 - [Strangler Fig Pattern](#strangler-fig-pattern)
 - [Different Versioning Strategies ](#different-versioning-strategies)
+- [SpringBoot 4 Features](#springboot-4-features)
+
+
+## SpringBoot 4 Features    
+**1. 🧵 First-Class Support for Java 21 (Virtual Threads)**
+Before (Spring Boot 3)    
+Virtual threads → experimental/manual config
+Now (Spring Boot 4)    
+Native integration    
+```
+spring.threads.virtual.enabled=true
+```
+Why it matters ?    
+Massive concurrency boost
+Perfect for:
+Kafka consumers
+REST APIs
+DB calls
+
+👉 For you: no more thread pool tuning headaches
+
+**2. 🧠 Built on Spring Framework 7**
+
+Major internal upgrade:
+
+Jakarta EE 11 support
+Cleaner APIs
+Removed legacy/deprecated code
+Benefit:
+
+✔ Better performance
+✔ Future-ready
+
+**3. ⚡ Improved Native Image (GraalVM)**
+Before:    
+Complex setup
+Reflection issues
+Now:    
+Faster builds
+Better compatibility
+mvn -Pnative native:compile
+Impact:
+
+✔ Startup time → milliseconds
+✔ Memory → very low
+
+👉 Useful for:
+
+Microservices
+Serverless
+**4. 🌐 Observability (Metrics + Tracing)**
+Improvements:
+Better integration with:
+Micrometer
+OpenTelemetry
+New capabilities:
+Distributed tracing improved
+Better logs + metrics correlation
+
+👉 For you:
+
+Debugging Kafka pipelines becomes easier
+**5. 📦 Modularization (Lightweight Apps)**
+
+Spring Boot 4 is more modular
+
+Before:
+Heavy dependencies
+Now:
+Smaller footprint
+Faster startup
+
+✔ Only required modules loaded
+
+**6. 🔐 Improved Security (Spring Security 7)**
+Better OAuth2 / OIDC support
+Stronger defaults
+Simplified configuration
+
+👉 Matches your interest in SSO + OAuth2
+
+**7. ⚙️ Configuration Improvements**
+Cleaner application.yml handling
+Better validation
+Improved config binding
+**8. 🚀 Better Kubernetes & Cloud Support**
+Improved readiness/liveness probes
+Better container support
+
+👉 Important for your K8s + AWS experience
+
+**9. 🧩 HTTP & REST Improvements**
+Better HTTP interface clients
+Improved REST handling
+```
+@HttpExchange("/users")
+interface UserClient {
+    @GetExchange
+    List<User> getUsers();
+}
+```
+
+✔ Cleaner than RestTemplate
+
+**10. 🗑️ Removal of Deprecated Stuff**
+
+Removed:
+
+Old APIs
+Legacy configs
+
+✔ Cleaner ecosystem
+✔ Less confusion
 
 
 ##  Different Versioning Strategies    
