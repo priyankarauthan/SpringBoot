@@ -22,11 +22,11 @@
 
 
 ## SpringBoot 4 Features    
-**1. 🧵 First-Class Support for Java 21 (Virtual Threads)**
-Before (Spring Boot 3)    
-Virtual threads → experimental/manual config
-Now (Spring Boot 4)    
-Native integration    
+**1. 🧵 First-Class Support for Java 21 (Virtual Threads)**    
+Before (Spring Boot 3)        
+Virtual threads → experimental/manual config    
+Now (Spring Boot 4)        
+Native integration        
 ```
 spring.threads.virtual.enabled=true
 ```
