@@ -184,6 +184,51 @@ If data exists → return from cache ✅
 If not → call DB → store in cache → return
 
 
+## 🚀 What is a Declarative HTTP Client?
+
+👉 A declarative HTTP client means:
+
+You declare WHAT API you want to call, not HOW to call it
+
+🧠 Simple Definition:-     
+- You define an interface
+- Add annotations
+- Framework generates the implementation
+
+- 👉 No manual HTTP handling
+
+🔥 Example (Declarative Style)
+```
+@FeignClient(name = "user-service")
+public interface UserClient {
+
+    @GetMapping("/users/{id}")
+    User getUser(@PathVariable Long id);
+}
+```
+
+👉 You just call:
+
+userClient.getUser(1);
+
+✔ No URL building
+✔ No request handling
+✔ No parsing
+
+## ❌ Imperative (Traditional Way)
+
+👉 You write how to call API
+```
+WebClient webClient = WebClient.create("http://user-service");
+
+User user = webClient.get()
+    .uri("/users/1")
+    .retrieve()
+    .bodyToMono(User.class)
+    .block();
+```
+
+
 ## 🧩 Types of Cache Annotations
 
 **1. 🟢 @Cacheable (Most Used)**
