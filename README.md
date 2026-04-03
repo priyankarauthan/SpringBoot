@@ -154,6 +154,106 @@ Accept: application/vnd.company.v1+json
 Easy, Clear & Debuggable
 
 
+
+## Practical Difference Between Web Client and Feign Client Core Difference
+
+👉 Feign = Declarative + auto-integrated ecosystem
+👉 WebClient = Powerful but manual + flexible
+
+**🔁 1. Retry**
+✅ Feign (Very Easy)
+
+Just config:
+```
+feign:
+  client:
+    config:
+      default:
+        retryer: feign.Retryer.Default
+```
+
+✔ No code needed
+✔ Works automatically
+
+⚠️ WebClient (Manual)
+
+You must use Reactor:
+```
+webClient.get()
+    .uri("/users")
+    .retrieve()
+    .bodyToMono(User.class)
+    .retryWhen(Retry.backoff(3, Duration.ofSeconds(1)));
+```
+
+👉 You write logic yourself
+
+|       | Feign    | WebClient     |
+| ----- | -------- | ------------- |
+| Retry | ✅ Config | ❌ Manual code |
+
+
+
+**⚖️ 2. Load Balancing** 
+
+✅ Feign (Auto with Spring Cloud)
+```
+@FeignClient(name = "user-service")
+```
+
+👉 Automatically works with:
+
+Service discovery (Eureka, Consul)
+Client-side load balancing
+
+✔ No extra work
+
+⚠️ WebClient
+
+You must configure:
+```
+@LoadBalanced
+@Bean
+WebClient.Builder webClientBuilder() {
+    return WebClient.builder();
+}
+```
+
+👉 Then use service name instead of URL
+
+✔ Works
+❌ Needs setup
+
+**⚖️ 3. Circuit Breaker**    
+
+✅ Feign (Simple)
+```
+spring:
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+@FeignClient(name = "user-service", fallback = Fallback.class)
+```
+
+✔ Done
+
+⚠️ WebClient
+
+You must integrate Resilience4j manually:
+```
+@CircuitBreaker(name = "userService", fallbackMethod = "fallback")
+public Mono<User> getUser() {
+    return webClient.get()
+        .uri("/users")
+        .retrieve()
+        .bodyToMono(User.class);
+}
+```
+
+👉 More control, more code
+
+
 ## ⚙️ How Caching Works in Spring Boot
 
 Spring Boot provides caching via:
