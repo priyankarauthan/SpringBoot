@@ -20,6 +20,7 @@
 - [Different Versioning Strategies ](#different-versioning-strategies)
 - [SpringBoot 4 Features](#springboot-4-features)
 - [@Transactional in Spring Boot](#transactional-in-spring-boot)
+- [Bulkhead Pattern](#bulkhead-pattern)
 
 
 ## SpringBoot 4 Features    
@@ -175,6 +176,27 @@ User user = restClient.get()
 
 
 👉 RestClient = clean + modern + simple
+
+## Bulkhead Pattern?
+
+Bulkhead = isolate resources so one failure doesn’t affect everything.
+Divide resources like:-
+
+Threads
+Connections
+Services
+
+So that:
+
+❌ One slow/failing service
+👉 does NOT block entire system
+
+## Problem Without Bulkhead
+All threads → used by Payment Service (slow)
+Inventory service → no threads available ❌
+System → stuck ❌
+
+👉 One service kills everything
 
 
 ##  Different Versioning Strategies    
