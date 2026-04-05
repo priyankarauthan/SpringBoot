@@ -19,7 +19,7 @@
 - [Strangler Fig Pattern](#strangler-fig-pattern)
 - [Different Versioning Strategies ](#different-versioning-strategies)
 - [SpringBoot 4 Features](#springboot-4-features)
-- [@Transactional in Spring Boot](#@transactional-in-spring-boot)
+- [@Transactional in Spring Boot](#transactional-in-spring-boot)
 
 
 ## SpringBoot 4 Features    
@@ -232,7 +232,7 @@ webClient.get()
 
 
 
-## @Transactional in Spring Boot
+## Transactional in Spring Boot
 
 @Transactional is used to manage database transactions automatically in Spring Boot.
 
