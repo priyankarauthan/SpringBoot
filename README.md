@@ -189,6 +189,8 @@ Two cases:
 👉 “I don’t trust you”
 👉 Connection fails 🚫    
 
+Keystore stores our own certificate and private key, while truststore stores certificates we trust.
+
 
 ## mTLS (Mutual TLS)
 
