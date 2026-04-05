@@ -137,7 +137,7 @@ Legacy configs
 
 ## SSL Certificate
 
-🎯 Step 1: Server gets an ID card + lock
+🎯 Step 1: Server gets an ID card + lock    
 
 👉 Your service (server) creates:
 
@@ -147,7 +147,7 @@ Legacy configs
 👉 This is called:
 
 Keystore (just a file storing lock + ID card)
-🎯 Step 2: Server says “I am secure now”
+🎯 Step 2: Server says “I am secure now”    
 
 👉 In code, you tell Spring Boot:
 
@@ -160,18 +160,18 @@ https:// (secure)
 instead of
 
 http:// (not secure)
-🎯 Step 3: Client wants to talk
+🎯 Step 3: Client wants to talk    
 
 👉 Another service (client) calls:
 
 https://service-b
-🎯 Step 4: Server shows its ID card
+🎯 Step 4: Server shows its ID card    
 
 👉 Server says:
 
 “Here is my certificate (ID card), trust me”
 
-🎯 Step 5: Client checks — “Can I trust this?”
+🎯 Step 5: Client checks — “Can I trust this?”    
 
 👉 Client looks into its truststore
 
@@ -192,30 +192,28 @@ Two cases:
 
 ## mTLS (Mutual TLS)
 
+🟢 Step 1: Client calls server    
+Client → “Hi, I want to connect”    
+🟢 Step 2: Server shows ID    
+Server → “Here is my certificate”    
+🟢 Step 3: Client verifies    
 
-🔁 Step-by-Step Flow (Super Simple)
-🟢 Step 1: Client calls server
-Client → “Hi, I want to connect”
-🟢 Step 2: Server shows ID
-Server → “Here is my certificate”
-🟢 Step 3: Client verifies
+👉 Checks truststore    
+✔️ If trusted → OK    
 
-👉 Checks truststore
-✔️ If trusted → OK
+🟢 Step 4: Server asks client    
+Server → “Now YOU show your ID”    
+🟢 Step 5: Client shows its certificate    
+Client → “Here is my certificate”    
+🟢 Step 6: Server verifies client    
 
-🟢 Step 4: Server asks client
-Server → “Now YOU show your ID”
-🟢 Step 5: Client shows its certificate
-Client → “Here is my certificate”
-🟢 Step 6: Server verifies client
+👉 Server checks its truststore    
+✔️ If trusted → OK    
 
-👉 Server checks its truststore
-✔️ If trusted → OK
+🟢 Step 7: Secure communication starts    
 
-🟢 Step 7: Secure communication starts
-
-✔️ Both trust each other
-✔️ Data is encrypted    
+✔️ Both trust each other    
+✔️ Data is encrypted        
 
 
 
