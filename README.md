@@ -21,6 +21,7 @@
 - [SpringBoot 4 Features](#springboot-4-features)
 - [@Transactional in Spring Boot](#transactional-in-spring-boot)
 - [Bulkhead Pattern](#bulkhead-pattern)
+- [OAUTH2 and JWT in Project](#oauth2-and-jwt-in-project)
 
 
 ## SpringBoot 4 Features    
@@ -133,6 +134,10 @@ Legacy configs
 
 ✔ Cleaner ecosystem
 ✔ Less confusion
+
+## OAUTH2 and JWT in Project
+
+In our microservices architecture, we used OAuth2 with JWT for secure inter-service communication. Each service is registered with an authorization server. The calling service obtains a JWT token using client credentials flow and includes it in the Authorization header while making requests. The receiving service validates the token using Spring Security and allows access only if the token is valid.
 
 
 ## SSL Certificate
