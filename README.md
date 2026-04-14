@@ -24,6 +24,45 @@
 - [OAUTH2 and JWT in Project](#oauth2-and-jwt-in-project)
 
 
+
+## What is SecurityFilterChain?
+
+SecurityFilterChain defines a chain of security filters that intercept every HTTP request in a Spring Boot application.
+
+👉 Think of it as:
+
+Request → Multiple Security Checks → Controller
+
+
+##  Why do we need it?    
+
+To secure endpoints
+To apply:
+Authentication
+Authorization
+Security rules    
+## 🔁 How it Works (Step-by-Step)
+Client Request
+   ↓
+SecurityFilterChain
+   ↓
+[Filter 1] Authentication check
+[Filter 2] Authorization check
+[Filter 3] CSRF, etc.
+   ↓
+Controller (if allowed)
+
+
+## Common Filters in Chain
+
+Some important filters:
+
+UsernamePasswordAuthenticationFilter
+BasicAuthenticationFilter
+Custom JWT Filter 🔥
+ExceptionTranslationFilter
+FilterSecurityInterceptor
+
 ## SpringBoot 4 Features    
 **1. 🧵 First-Class Support for Java 21 (Virtual Threads)**        
 Before (Spring Boot 3)        
