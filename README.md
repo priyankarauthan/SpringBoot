@@ -37,9 +37,9 @@ Hibernate chooses:
 SEQUENCE (if supported)
 otherwise TABLE or IDENTITY
 
-👉 Use case:
+👉 Use case:   
 
-When you don’t care about DB-specific behavior
+When you don’t care about DB-specific behavior   
 2. IDENTITY   
 
 👉 DB auto-increment column generates ID
@@ -57,7 +57,7 @@ No batching (performance impact)
 
 👉 Use case:
 
-Simple applications   
+Simple applications      
 3. SEQUENCE   
 
 👉 Uses database sequence object
