@@ -25,6 +25,103 @@
 
 
 
+
+## 🎯 Main ID Generation Strategies   
+1. AUTO (Default)   
+
+👉 Let JPA decide the best strategy based on DB
+```
+@GeneratedValue(strategy = GenerationType.AUTO)
+```   
+Hibernate chooses:
+SEQUENCE (if supported)
+otherwise TABLE or IDENTITY
+
+👉 Use case:
+
+When you don’t care about DB-specific behavior
+2. IDENTITY   
+
+👉 DB auto-increment column generates ID
+```
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+```
+Uses:
+AUTO_INCREMENT (MySQL)
+IDENTITY (SQL Server)
+
+👉 Characteristics:
+
+ID generated after insert
+No batching (performance impact)
+
+👉 Use case:
+
+Simple applications   
+3. SEQUENCE   
+
+👉 Uses database sequence object
+```
+@GeneratedValue(strategy = GenerationType.SEQUENCE)
+```
+Optionally:
+```
+@SequenceGenerator(name = "seq", sequenceName = "my_seq", allocationSize = 1)
+```
+👉 Characteristics:
+
+ID generated before insert
+Supports batching (better performance)
+
+👉 Use case:
+
+Oracle, PostgreSQL (preferred)   
+4. TABLE
+
+👉 Uses a separate table to generate IDs
+```
+@GeneratedValue(strategy = GenerationType.TABLE)
+```
+👉 Characteristics:
+
+Stores last ID in a table
+Slower (extra DB calls)
+
+👉 Use case:
+
+Rarely used nowadays   
+🎯 5. CUSTOM Strategy   
+
+👉 You can define your own generator
+```
+@GeneratedValue(generator = "custom-gen")
+```
+👉 Used for:
+
+UUID
+Custom business IDs
+
+Example:
+```
+@GenericGenerator(name = "uuid", strategy = "uuid2")
+```
+🎯 Bonus: UUID Strategy (Common in Microservices)
+@Id
+@GeneratedValue
+private UUID id;
+
+👉 Advantages:
+
+Globally unique
+No DB dependency
+
+👉 Disadvantages:
+
+Bigger size
+Not sequential (index impact)   
+
+
+
 ## What is SecurityFilterChain?
 
 SecurityFilterChain defines a chain of security filters that intercept every HTTP request in a Spring Boot application.
