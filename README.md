@@ -41,16 +41,16 @@ To apply:
 Authentication
 Authorization
 Security rules    
-## 🔁 How it Works (Step-by-Step)
-Client Request
+## 🔁 How it Works (Step-by-Step)   
+Client Request   
+   ↓   
+SecurityFilterChain   
+   ↓   
+[Filter 1] Authentication check   
+[Filter 2] Authorization check   
+[Filter 3] CSRF, etc.   
    ↓
-SecurityFilterChain
-   ↓
-[Filter 1] Authentication check
-[Filter 2] Authorization check
-[Filter 3] CSRF, etc.
-   ↓
-Controller (if allowed)
+Controller (if allowed)   
 
 
 ## Common Filters in Chain
