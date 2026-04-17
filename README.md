@@ -181,59 +181,102 @@ In our microservices architecture, we used OAuth2 with JWT for secure inter-serv
 
 ## SSL Certificate
 
-🎯 Step 1: Server gets an ID card + lock    
 
-👉 Your service (server) creates:
+#### 🎯 Step 1: Server creates identity (Keystore)   
 
-🔑 A lock (encryption key)
-🪪 An ID card (certificate)
+👉 Your server creates:   
 
-👉 This is called:
+🔐 Private Key → secret (never shared)   
+🔓 Public Key → shared with others   
+🪪 Certificate → contains:   
+Public key
+Server identity (domain, org, etc.)
+Signed by CA (Certificate Authority)
 
-Keystore (just a file storing lock + ID card)
-🎯 Step 2: Server says “I am secure now”    
+👉 Stored in Keystore:
 
-👉 In code, you tell Spring Boot:
+Private Key 🔐
+Certificate 🪪 (with Public Key 🔓)   
+#### 🎯 Step 2: Server enables HTTPS
 
-“Use this lock and ID card”
+👉 Spring Boot uses keystore:
 
-👉 Now your service runs on:
+Uses private key 🔐 for encryption/decryption
+Shares certificate (public key) 🔓 with clients
 
-https:// (secure)
+👉 Now server runs on:
 
-instead of
+https:// (SSL/TLS enabled)
+#### 🎯 Step 3: Client initiates request   
 
-http:// (not secure)
-🎯 Step 3: Client wants to talk    
-
-👉 Another service (client) calls:
+👉 Client calls:
 
 https://service-b
-🎯 Step 4: Server shows its ID card    
+#### 🎯 Step 4: Server sends certificate (Public Key)   
 
-👉 Server says:
+👉 Server sends:
 
-“Here is my certificate (ID card), trust me”
+🪪 Certificate (contains public key 🔓)
 
-🎯 Step 5: Client checks — “Can I trust this?”    
+👉 Important:
 
-👉 Client looks into its truststore
+Private key is NEVER shared
+#### 🎯 Step 5: Client verifies trust (Truststore)   
 
-👉 Truststore =
-🪪 “List of trusted ID cards”
+👉 Client checks Truststore:
+
+Contains trusted CA certificates 🪪
 
 Two cases:
-✅ If found → trust
 
-👉 “Yes, I know you”
-👉 Communication starts 🔐
+✅ Trusted
 
-❌ If NOT found → reject
+Certificate is signed by known CA
+Client accepts server
 
-👉 “I don’t trust you”
-👉 Connection fails 🚫    
+❌ Not trusted
 
-Keystore stores our own certificate and private key, while truststore stores certificates we trust.
+Unknown CA or self-signed
+Connection fails 🚫
+#### 🎯 Step 6: Secure communication using keys   
+
+👉 Now comes the actual role of keys:
+
+🔑 Step 6.1: Session Key Creation
+Client generates a random symmetric key (session key)
+🔐 Step 6.2: Encrypt with Public Key
+Client encrypts session key using:
+Server’s public key 🔓
+🔓 Step 6.3: Server decrypts
+Server uses:
+Its private key 🔐
+To decrypt the session key
+#### 🎯 Step 7: Fast encrypted communication   
+
+👉 Now both use:
+
+Same session key (symmetric encryption)
+
+Why?
+
+Faster than public/private key encryption
+
+👉 So:
+
+Public/Private keys → used for secure key exchange
+Session key → used for actual data transfer   
+## 🔥 Final Summary
+Private Key 🔐
+Stays in server (keystore)
+Used to decrypt & prove identity
+Public Key 🔓
+Shared via certificate
+Used by client to encrypt data
+Keystore
+Stores server’s private key + certificate
+Truststore
+Stores trusted certificates (CA)
+
 
 
 ## mTLS (Mutual TLS)
