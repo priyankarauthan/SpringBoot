@@ -536,6 +536,31 @@ Deposit to Account B
 
 If deposit fails → withdrawal should also be rolled back.
 
+## How does @Transactional work internally?
+
+In Spring Framework, @Transactional works internally using:
+
+AOP
+proxy objects
+
+When a method annotated with:-
+```
+@Transactional
+public void transfer() {
+}
+```
+
+is called:
+
+Spring creates a proxy around the class   
+Proxy intercepts method call   
+Transaction starts before method execution   
+Business logic executes   
+If successful → commit transaction   
+If exception occurs → rollback transaction   
+
+
+
 ## 1️⃣ What @Transactional Does ?
 
 @Transactional ensures:
