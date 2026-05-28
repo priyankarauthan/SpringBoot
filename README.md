@@ -643,7 +643,7 @@ Common types:
 **Propagation**                **Meaning**
 REQUIRED	-                     Join existing transaction   
 REQUIRES_NEW	-               Create new transaction   
-SUPPORTS	-                      Use transaction if exists   
+SUPPORTS	-                     Use transaction if exists   
 
 
 👉 You write logic yourself
